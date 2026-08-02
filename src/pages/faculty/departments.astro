@@ -1,0 +1,31 @@
+---
+// /faculty/departments/ — уся сторінка = layout + дані + компонент.
+// Порівняйте з рукописним HTML: тут немає повторюваної розмітки карток.
+import Base from "../../layouts/Base.astro";
+import DepartmentCard from "../../components/DepartmentCard.astro";
+import departments from "../../data/departments.json";
+---
+<Base title="Кафедри та лабораторії · ФКНТ">
+  <section class="wrap page">
+    <nav class="crumbs" aria-label="Хлібні крихти">
+      <a href="/">Головна</a> › <a href="/faculty/">Факультет</a> › <span>Кафедри</span>
+    </nav>
+    <h1 class="display">Кафедри та лабораторії</h1>
+    <p class="lead">Шість профільних кафедр, навчальний центр і науково-дослідні лабораторії.</p>
+
+    <div class="grid">
+      {departments.map((d) => <DepartmentCard {...d} />)}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page{padding:40px 24px 20px}
+  .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:16px}
+  .crumbs a:hover{color:var(--primary)}
+  h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem)}
+  .lead{color:var(--muted);font-size:1.05rem;margin:14px 0 32px;max-width:52ch}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:900px){.grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:600px){.grid{grid-template-columns:1fr}}
+</style>

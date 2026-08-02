@@ -1,0 +1,26 @@
+---
+// DepartmentCard.astro — один шаблон картки. Множиться по даних, не копіюється руками.
+const { kind, name, desc, tags = [], url = "#" } = Astro.props;
+---
+<article class="card">
+  <div class="kind">{kind}</div>
+  <h3>{name}</h3>
+  <p>{desc}</p>
+  <div class="tags">
+    {tags.map((t) => <span>{t}</span>)}
+  </div>
+  <a class="lnk" href={url} target="_blank" rel="noopener">Детальніше →</a>
+</article>
+
+<style>
+  .card{border:1px solid var(--line);border-radius:var(--radius);padding:24px;background:#fff;
+    transition:transform .2s,box-shadow .2s,border-color .2s;display:flex;flex-direction:column}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:transparent}
+  .kind{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--sky)}
+  h3{color:var(--deep);font-size:1.08rem;margin:6px 0 10px}
+  p{color:var(--muted);font-size:.9rem;margin:0 0 14px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+  .tags span{font-size:.7rem;font-weight:700;color:#39406a;background:var(--tint);
+    border:1px solid var(--line);padding:4px 9px;border-radius:20px}
+  .lnk{margin-top:auto;font-weight:800;font-size:.86rem;color:var(--primary)}
+</style>

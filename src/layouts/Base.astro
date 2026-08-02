@@ -1,0 +1,77 @@
+---
+// Base.astro — СПІЛЬНА ОБОЛОНКА. Пишеться один раз, підставляється в кожну сторінку.
+// Правка меню/футера тут застосовується на всьому сайті (жодного дублювання).
+import "../styles/tokens.css";
+
+const { title = "ФКНТ — Факультет комп'ютерних наук та технологій", description = "Вивчай ІТ, досліджуючи!" } = Astro.props;
+
+// Навігація як дані. У повній версії — окремий src/data/nav.json з мега-меню.
+const nav = [
+  { label: "Факультет",  href: "/faculty/" },
+  { label: "Вступнику",  href: "/admission/" },
+  { label: "Здобувачу",  href: "/students/" },
+  { label: "Викладачу",  href: "/staff/" },
+  { label: "Наука",      href: "/research/" },
+  { label: "Новини",     href: "/news/" },
+  { label: "Контакти",   href: "/contacts/" },
+];
+const path = Astro.url.pathname;
+---
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Mulish:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="site">
+    <div class="wrap bar">
+      <a class="logo" href="/">
+        <span class="mark">
+          <svg width="24" height="24" viewBox="0 0 26 26" fill="none">
+            <path d="M4 20a9 9 0 0 1 18 0" stroke="#FEAB24" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M7.5 20a5.5 5.5 0 0 1 11 0" stroke="#8FC3FF" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="13" cy="20" r="1.9" fill="#fff"/>
+          </svg>
+        </span>
+        <b class="display">ФКНТ</b>
+      </a>
+      <nav aria-label="Головне меню">
+        {nav.map((i) => (
+          <a href={i.href} aria-current={path.startsWith(i.href) && i.href !== "/" ? "page" : undefined}>{i.label}</a>
+        ))}
+      </nav>
+      <a class="btn" href="/admission/">Вступ 2026 →</a>
+    </div>
+  </header>
+
+  <main><slot /></main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <p class="display">Вивчай ІТ, досліджуючи!</p>
+      <p>© {new Date().getFullYear()} Факультет комп'ютерних наук та технологій · Est. 1965</p>
+    </div>
+  </footer>
+
+  <style>
+    .site{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);
+      backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .bar{display:flex;align-items:center;justify-content:space-between;height:72px;gap:20px}
+    .logo{display:flex;align-items:center;gap:11px}
+    .mark{width:42px;height:42px;border-radius:11px;background:var(--grad-dark);display:grid;place-items:center}
+    .logo b{color:var(--deep);font-size:1.15rem}
+    nav{display:flex;gap:4px;flex-wrap:wrap}
+    nav a{padding:9px 14px;border-radius:8px;font-weight:700;font-size:.94rem}
+    nav a:hover,nav a[aria-current="page"]{background:var(--tint);color:var(--primary)}
+    .foot{background:var(--deep);color:#c4cdf5;padding:48px 0;margin-top:60px}
+    .foot .display{color:var(--signal);font-size:1.3rem;margin-bottom:8px}
+    @media(max-width:820px){nav{display:none}}
+  </style>
+</body>
+</html>

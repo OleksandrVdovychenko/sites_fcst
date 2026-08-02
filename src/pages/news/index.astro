@@ -1,0 +1,41 @@
+---
+// /news/ — стрічка новин генерується з файлів колекції на білді.
+// Додав markdown-файл → зʼявилась картка + окрема сторінка статті. Без ручної верстки.
+import Base from "../../layouts/Base.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("news", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<Base title="Новини · ФКНТ">
+  <section class="wrap page">
+    <h1 class="display">Новини</h1>
+    <div class="feed">
+      {posts.map((p) => (
+        <a class="item" href={`/news/${p.slug}/`}>
+          <time datetime={p.data.date.toISOString()}>
+            {p.data.date.toLocaleDateString("uk-UA", { day: "numeric", month: "long", year: "numeric" })}
+          </time>
+          <span class="cat">{p.data.category}</span>
+          <h2>{p.data.title}</h2>
+          <p>{p.data.summary}</p>
+        </a>
+      ))}
+    </div>
+    {/* Тут же: пагінація через getStaticPaths, RSS через @astrojs/rss */}
+  </section>
+</Base>
+
+<style>
+  .page{padding:40px 24px 20px}
+  h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem);margin-bottom:28px}
+  .feed{display:grid;gap:16px}
+  .item{border:1px solid var(--line);border-left:4px solid var(--sky);border-radius:12px;
+    padding:22px 24px;background:#fff;transition:transform .2s,border-color .2s}
+  .item:hover{transform:translateY(-3px);border-left-color:var(--signal)}
+  time{font-size:.8rem;color:var(--muted);font-weight:700}
+  .cat{font-size:.66rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--sky);margin-left:10px}
+  .item h2{color:var(--deep);font-size:1.15rem;margin:8px 0 6px}
+  .item p{color:var(--muted);font-size:.92rem;margin:0}
+</style>
