@@ -192,7 +192,8 @@ const isActive = (href) => href !== "/" && path.startsWith(href);
   <style>
     .site{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
     .bar{display:flex;align-items:center;justify-content:space-between;height:72px;gap:16px}
-    .logo img{display:block;height:44px;width:auto}
+    .logo{flex:none}
+    .logo img{display:block;height:44px;width:auto;flex-shrink:0}
 
     /* desktop nav */
     .nav{display:flex;gap:2px;align-items:center}
