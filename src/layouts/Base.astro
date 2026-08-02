@@ -129,11 +129,7 @@ const isReady = (href) => isExternal(href) || builtPages.has(href);
       <nav class="nav" aria-label="Головне меню">
         {nav.map((i) => i.mega ? (
           <div class="nav-item">
-            {isReady(i.href) ? (
-              <a href={i.href} aria-current={isActive(i.href) ? "page" : undefined}>{i.label}<span class="caret"></span></a>
-            ) : (
-              <span class="soon">{i.label}<span class="caret"></span></span>
-            )}
+            <a href={i.href} aria-current={isActive(i.href) ? "page" : undefined}>{i.label}<span class="caret"></span></a>
             <div class="dd">
               <div class={`panel panel-grid ${i.mega.cols}`}>
                 {i.mega.groups.map((g) => (
@@ -164,10 +160,8 @@ const isReady = (href) => isExternal(href) || builtPages.has(href);
               </div>
             </div>
           </div>
-        ) : isReady(i.href) ? (
-          <a class="nav-link" href={i.href} aria-current={isActive(i.href) ? "page" : undefined}>{i.label}</a>
         ) : (
-          <span class="nav-link soon">{i.label}</span>
+          <a class="nav-link" href={i.href} aria-current={isActive(i.href) ? "page" : undefined}>{i.label}</a>
         ))}
       </nav>
 
@@ -197,10 +191,8 @@ const isReady = (href) => isExternal(href) || builtPages.has(href);
             ))}
           </div>
         </details>
-      ) : isReady(i.href) ? (
-        <a class="m-link" href={i.href}>{i.label}</a>
       ) : (
-        <span class="m-link soon">{i.label}</span>
+        <a class="m-link" href={i.href}>{i.label}</a>
       ))}
       <a class="btn" href="https://pk.kai.edu.ua/faculties/fakultet-kompyuternyh-nauk-ta-tehnologij/" target="_blank" rel="noopener">Вступ 2026 →</a>
     </div>
@@ -224,7 +216,7 @@ const isReady = (href) => isExternal(href) || builtPages.has(href);
     /* desktop nav */
     .nav{display:flex;gap:2px;align-items:center}
     .nav-item{position:relative}
-    .nav-item>a,.nav-item>.soon,.nav-link{display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:8px;font-weight:700;font-size:.93rem;white-space:nowrap}
+    .nav-item>a,.nav-link{display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:8px;font-weight:700;font-size:.93rem;white-space:nowrap}
     .nav-item>a:hover,.nav-link:hover,.nav a[aria-current="page"]{background:var(--tint);color:var(--primary)}
     .caret{width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin-top:-3px;opacity:.55}
 
@@ -274,7 +266,7 @@ const isReady = (href) => isExternal(href) || builtPages.has(href);
     .sheet .sub .grp:first-child{margin-top:4px}
     .sheet .sub a,.sheet .sub .soon{display:block;padding:9px 10px;border-radius:8px;font-weight:600;font-size:.92rem;color:#39406a}
     .sheet .m-link{display:block;padding:14px 6px;font-weight:800;color:var(--deep);border-bottom:1px solid var(--line)}
-    .sheet .sub .soon,.sheet .m-link.soon{color:var(--muted)}
+    .sheet .sub .soon{color:var(--muted)}
     .sheet .btn{width:100%;justify-content:center;margin-top:16px}
 
     .foot{background:var(--deep);color:#c4cdf5;padding:48px 0;margin-top:60px}
