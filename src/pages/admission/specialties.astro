@@ -1,6 +1,7 @@
 ---
 // /admission/specialties/ — повний перелік спеціальностей та освітніх програм ФКНТ.
-// Контент зі старого сайту (головна сторінка fcst.kai.edu.ua).
+// Описи, кар'єрні перспективи та зарплати — офіційний контент із сайту приймальної
+// комісії: https://pk.kai.edu.ua/faculties/fakultet-kompyuternyh-nauk-ta-tehnologij/
 import Base from "../../layouts/Base.astro";
 import specialties from "../../data/specialties.json";
 ---
@@ -10,7 +11,7 @@ import specialties from "../../data/specialties.json";
       <a href="/">Головна</a> › <a href="/admission/">Вступнику</a> › <span>Спеціальності ФКНТ</span>
     </nav>
     <h1 class="display">Спеціальності факультету</h1>
-    <p class="lead">Шість спеціальностей на трьох освітніх рівнях — бакалавр, магістр, доктор філософії (PhD).</p>
+    <p class="lead">Сім спеціальностей на трьох освітніх рівнях — бакалавр, магістр, доктор філософії (PhD). Описи та кар'єрні перспективи — з сайту приймальної комісії КАІ.</p>
 
     <div class="list">
       {specialties.map((s) => (
@@ -19,21 +20,38 @@ import specialties from "../../data/specialties.json";
             <span class="code">{s.code} · {s.num}</span>
             <h2>{s.name}</h2>
           </div>
+
+          <p class="desc">{s.desc}</p>
+
           <div class="levels">
             <div class="level">
               <h3>Бакалавр</h3>
               <ul>{s.bachelor.map((p) => <li>{p}</li>)}</ul>
             </div>
-            <div class="level">
-              <h3>Магістр</h3>
-              <ul>{s.master.map((p) => <li>{p}</li>)}</ul>
-            </div>
+            {s.master.length > 0 && (
+              <div class="level">
+                <h3>Магістр</h3>
+                <ul>{s.master.map((p) => <li>{p}</li>)}</ul>
+              </div>
+            )}
             {s.phd.length > 0 && (
               <div class="level">
                 <h3>PhD</h3>
                 <ul>{s.phd.map((p) => <li>{p}</li>)}</ul>
               </div>
             )}
+          </div>
+
+          {s.careers?.length > 0 && (
+            <div class="careers">
+              <h3>Кар'єрні перспективи</h3>
+              <div class="tags">{s.careers.map((c) => <span>{c}</span>)}</div>
+            </div>
+          )}
+
+          <div class="foot">
+            {s.salary && <span class="salary">Середня зарплата випускника: <b>{s.salary}</b></span>}
+            {s.link && <a class="lnk" href={s.link} target="_blank" rel="noopener">Повний опис на сайті ПК →</a>}
           </div>
         </article>
       ))}
@@ -46,18 +64,30 @@ import specialties from "../../data/specialties.json";
   .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:16px}
   .crumbs a:hover{color:var(--primary)}
   h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem)}
-  .lead{color:var(--muted);font-size:1.05rem;margin:14px 0 36px;max-width:60ch}
+  .lead{color:var(--muted);font-size:1.05rem;margin:14px 0 36px;max-width:64ch}
 
   .list{display:flex;flex-direction:column;gap:18px}
   .spec{border:1px solid var(--line);border-radius:var(--radius);padding:28px;scroll-margin-top:96px}
-  .head{margin-bottom:18px}
+  .head{margin-bottom:14px}
   .code{font-family:"Dela Gothic One",sans-serif;font-size:.85rem;color:var(--signal);letter-spacing:.02em}
   .head h2{color:var(--deep);font-size:1.3rem;margin-top:6px}
-  .levels{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .desc{color:#404869;font-size:.96rem;line-height:1.6;margin:0 0 22px;max-width:76ch}
+
+  .levels{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:22px}
   .level h3{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--sky);font-weight:800;margin:0 0 10px}
   .level ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
   .level li{font-size:.9rem;color:#404869;padding-left:16px;position:relative}
   .level li::before{content:"";position:absolute;left:0;top:.5em;width:5px;height:5px;border-radius:50%;background:var(--primary)}
+
+  .careers{border-top:1px solid var(--line);padding-top:18px;margin-bottom:18px}
+  .careers h3{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--sky);font-weight:800;margin:0 0 12px}
+  .tags{display:flex;flex-wrap:wrap;gap:7px}
+  .tags span{font-size:.78rem;font-weight:600;color:#39406a;background:var(--tint);border:1px solid var(--line);padding:5px 11px;border-radius:20px}
+
+  .foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line);padding-top:16px}
+  .salary{font-size:.88rem;color:var(--muted)}
+  .salary b{color:var(--deep)}
+  .lnk{font-weight:800;font-size:.88rem;color:var(--primary)}
 
   @media(max-width:800px){.levels{grid-template-columns:1fr}}
 </style>
