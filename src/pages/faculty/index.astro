@@ -1,0 +1,127 @@
+---
+// /faculty/ — «Про факультет». Контент адаптовано зі старого сайту fcst.kai.edu.ua/about-us/.
+import Base from "../../layouts/Base.astro";
+
+const values = [
+  { title: "Відкритість", text: "Ми приділяємо увагу усім учасникам навчального (наукового) процесу та іншим зацікавленим особам, завжди відкриті до комунікації, готові до нового досвіду і нових викликів." },
+  { title: "Прозорість", text: "Про будь-які наші дії ми сповіщаємо громадськість публічно нашими каналами медіа комунікації (офіційний веб-сайт, сторінка Facebook, телеграм канал), а принципи діяльності факультету є зрозумілими як учасникам навчального процесу, так і іншим зацікавленим особам." },
+  { title: "Відповідальне лідерство", text: "Ми готові адекватно оцінювати ситуацію, ухвалювати складні рішення і брати на себе відповідальність у необхідний момент." },
+  { title: "Оптимізм", text: "Ми віримо у силу нашої команди, ніколи не опускаємо руки і впевнені в тому, що робимо; усе, що ми робимо, — направлене на позитивні зміни факультету, університету, суспільства та держави." },
+  { title: "Справедливість", text: "Ми цінуємо прикладені зусилля, дотримання дисципліни і морально-етичних норм усіма суб'єктами у різних видах діяльності, спрямованої на досягнення спільного результату." },
+];
+
+const departmentList = [
+  "Кафедра прикладної математики (спеціальності 113, 122)",
+  "Кафедра комп'ютерних інформаційних технологій (спеціальність 122)",
+  "Кафедра інтелектуальних кібернетичних систем (спеціальності 123, 126)",
+  "Кафедра інженерії програмного забезпечення (спеціальність 121)",
+  "Кафедра комп'ютерних систем та мереж (спеціальність 123)",
+  "Кафедра кібербезпеки (спеціальність 125)",
+  "Кафедра технічних засобів захисту (спеціальність 125)",
+  "Кафедра вищої математики",
+];
+
+const partners = ["Microsoft", "Scientific Cyber Security Association", "AUES", "ISCA", "OmegaTelecom"];
+---
+<Base title="Про факультет · ФКНТ" description="Наш Факультет комп'ютерних наук та технологій — історія, цінності, кафедри та партнери.">
+  <section class="wrap page">
+    <nav class="crumbs" aria-label="Хлібні крихти">
+      <a href="/">Головна</a> › <span>Про факультет</span>
+    </nav>
+
+    <p class="eyebrow">Вивчай ІТ, досліджуючи!</p>
+    <h1 class="display">Наш Факультет комп'ютерних наук та технологій</h1>
+
+    <div class="intro">
+      <p>Факультет було засновано у далекому 1965 році. За цей час він пройшов тривалу еволюцію та складні випробування часом. Сьогодні Факультет комп'ютерних наук та технологій (сучасна назва з 2023 року) готує висококласних та успішних ІТ-фахівців для різних галузей промисловості, у тому числі й для таких високотехнологічних, як авіаційна техніка та авіабудування.</p>
+      <p>Наші викладачі регулярно підвищують кваліфікацію у провідних ІТ-компаніях та закордонних університетах. Науковці факультету успішно беруть участь у виконанні вітчизняних і закордонних науково-дослідних робіт та дослідницьких проєктів у галузі інформаційних технологій, що стосуються обробки та аналізу даних, машинного навчання і штучного інтелекту, захисту критичної інформаційної інфраструктури держави.</p>
+    </div>
+
+    <div class="stats">
+      <div><b class="display">1965</b><span>Рік заснування</span></div>
+      <div><b class="display">8</b><span>Кафедр</span></div>
+      <div><b class="display">7</b><span>Спеціальностей</span></div>
+      <div><b class="display">60+</b><span>Років досвіду</span></div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="depts-block">
+      <h2 class="display">На факультеті функціонують такі кафедри</h2>
+      <ul class="dept-list">
+        {departmentList.map((d) => <li>{d}</li>)}
+      </ul>
+      <a class="lnk" href="/faculty/departments/">Детальніше про кафедри та лабораторії →</a>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <p class="eyebrow">Принципи роботи</p>
+    <h2 class="display">Наші цінності</h2>
+    <div class="values">
+      {values.map((v) => (
+        <div class="value">
+          <b class="display">{v.title}</b>
+          <p>{v.text}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap section partners">
+    <p class="eyebrow">Спільно з індустрією</p>
+    <h2 class="display">Наші партнери</h2>
+    <div class="plogos">
+      {partners.map((p) => <div class="plogo">{p}</div>)}
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="cta-band">
+      <h2 class="display">Готовий вступити на ФКНТ?</h2>
+      <a class="btn dark" href="/admission/">Умови вступу →</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page{padding:40px 24px 20px}
+  .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:16px}
+  .crumbs a:hover{color:var(--primary)}
+  .eyebrow{font-weight:800;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--sky)}
+  h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem);margin:12px 0 24px}
+  .intro{max-width:70ch;display:flex;flex-direction:column;gap:14px}
+  .intro p{color:#404869;font-size:1.02rem;margin:0}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:44px 0 0;text-align:center;margin-top:24px;border-top:1px solid var(--line)}
+  .stats b{display:block;font-size:2.2rem;color:var(--primary)}
+  .stats span{font-size:.85rem;color:var(--muted)}
+
+  .section{padding:56px 24px}
+  .depts-block{background:var(--tint);border-radius:var(--radius);padding:36px}
+  .depts-block h2{color:var(--deep);font-size:clamp(1.4rem,3vw,1.8rem);margin:0 0 20px}
+  .dept-list{list-style:none;margin:0 0 20px;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px}
+  .dept-list li{font-size:.94rem;color:#39406a;padding-left:18px;position:relative}
+  .dept-list li::before{content:"";position:absolute;left:0;top:.55em;width:6px;height:6px;border-radius:50%;background:var(--signal)}
+  .lnk{font-weight:800;font-size:.9rem;color:var(--primary)}
+
+  h2.display{color:var(--deep);font-size:clamp(1.8rem,3.6vw,2.4rem);margin:14px 0 30px}
+  .values{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .value{border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+  .value b{color:var(--primary);font-size:1rem;display:block;margin-bottom:8px}
+  .value p{color:var(--muted);font-size:.9rem;margin:0}
+
+  .partners{text-align:center}
+  .partners h2{text-align:center}
+  .partners .eyebrow{justify-content:center;display:flex}
+  .plogos{display:flex;flex-wrap:wrap;justify-content:center;gap:16px}
+  .plogo{height:60px;min-width:150px;display:grid;place-items:center;border:1px solid var(--line);border-radius:12px;
+    padding:0 24px;color:var(--muted);font-weight:800;letter-spacing:.02em;background:#fff;font-size:.92rem}
+
+  .cta-band{background:var(--signal);color:var(--ink);border-radius:20px;padding:36px;display:flex;justify-content:space-between;align-items:center;gap:20px;margin:20px 0 60px;flex-wrap:wrap}
+  .cta-band h2{margin:0;font-size:clamp(1.4rem,3vw,2rem);color:var(--deep)}
+  .btn.dark{display:inline-flex;align-items:center;gap:8px;font-weight:800;padding:13px 24px;border-radius:8px;background:var(--primary);color:#fff}
+
+  @media(max-width:900px){.values{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr;gap:24px}}
+  @media(max-width:600px){.values{grid-template-columns:1fr}.dept-list{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+</style>
