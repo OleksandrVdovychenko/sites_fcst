@@ -27,7 +27,7 @@ const nav = [
     cols: "pg-3",
     groups: [
       { title: "Вступ", links: [
-        { label: "Вступ · 1 курс", href: "/admission/bachelor/" },
+        { label: "Вступ · 1 курс", href: "https://pk.kai.edu.ua/faculties/fakultet-kompyuternyh-nauk-ta-tehnologij/" },
         { label: "Магістратура", href: "/admission/master/" },
         { label: "Аспірантура", href: "/admission/phd/" },
       ]},
@@ -99,6 +99,8 @@ const nav = [
 ];
 const path = Astro.url.pathname;
 const isActive = (href) => href !== "/" && path.startsWith(href);
+const isExternal = (href) => href.startsWith("http");
+const extAttrs = (href) => isExternal(href) ? { target: "_blank", rel: "noopener" } : {};
 ---
 <!DOCTYPE html>
 <html lang="uk">
@@ -128,7 +130,7 @@ const isActive = (href) => href !== "/" && path.startsWith(href);
                   <div class="col">
                     <h5>{g.title}</h5>
                     <ul>
-                      {g.links.map((c) => <li><a href={c.href}>{c.label}</a></li>)}
+                      {g.links.map((c) => <li><a href={c.href} {...extAttrs(c.href)}>{c.label}</a></li>)}
                     </ul>
                   </div>
                 ))}
@@ -168,7 +170,7 @@ const isActive = (href) => href !== "/" && path.startsWith(href);
             {i.mega.groups.map((g) => (
               <>
                 <p class="grp">{g.title}</p>
-                {g.links.map((c) => <a href={c.href}>{c.label}</a>)}
+                {g.links.map((c) => <a href={c.href} {...extAttrs(c.href)}>{c.label}</a>)}
               </>
             ))}
           </div>
