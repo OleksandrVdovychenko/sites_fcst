@@ -1,0 +1,56 @@
+---
+// /news/<slug>/ — окрема сторінка новини. Один файл обслуговує всю колекцію.
+import Base from "../../layouts/Base.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("news", ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+<Base title={`${post.data.title} · ФКНТ`} description={post.data.summary}>
+  <article class="wrap page">
+    <nav class="crumbs" aria-label="Хлібні крихти">
+      <a href="/">Головна</a> › <a href="/news/">Новини</a> › <span>{post.data.title}</span>
+    </nav>
+
+    <span class="cat">{post.data.category}</span>
+    <h1 class="display">{post.data.title}</h1>
+    <time datetime={post.data.date.toISOString()}>
+      {post.data.date.toLocaleDateString("uk-UA", { day: "numeric", month: "long", year: "numeric" })}
+    </time>
+
+    {post.data.cover && <img class="cover" src={post.data.cover} alt="" />}
+
+    <div class="body">
+      <Content />
+    </div>
+
+    <a class="back" href="/news/">← Усі новини</a>
+  </article>
+</Base>
+
+<style>
+  .page{padding:40px 24px 60px;max-width:74ch;margin:0 auto}
+  .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:20px}
+  .crumbs a:hover{color:var(--primary)}
+  .cat{font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--sky)}
+  h1{color:var(--deep);font-size:clamp(1.8rem,4vw,2.6rem);margin:10px 0 12px}
+  time{display:block;font-size:.88rem;color:var(--muted);font-weight:700;margin-bottom:28px}
+  .cover{width:100%;border-radius:var(--radius);margin-bottom:32px}
+
+  .body{color:#2b3252;font-size:1.02rem;line-height:1.7}
+  .body h2{color:var(--deep);font-size:1.35rem;margin:32px 0 14px}
+  .body p{margin:0 0 18px}
+  .body blockquote{margin:24px 0;padding:16px 20px;border-left:4px solid var(--signal);
+    background:var(--tint);color:#404869;font-style:italic;border-radius:0 8px 8px 0}
+  .body ul,.body ol{margin:0 0 18px;padding-left:22px}
+
+  .back{display:inline-block;margin-top:36px;font-weight:800;color:var(--primary)}
+</style>
