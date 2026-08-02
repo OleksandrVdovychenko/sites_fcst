@@ -1,21 +1,57 @@
 ---
-// Base.astro — СПІЛЬНА ОБОЛОНКА. Пишеться один раз, підставляється в кожну сторінку.
-// Правка меню/футера тут застосовується на всьому сайті (жодного дублювання).
+// Base.astro — СПІЛЬНА ОБОЛОНКА. Меню правиться тут — застосовується на всіх сторінках.
 import "../styles/tokens.css";
 
 const { title = "ФКНТ — Факультет комп'ютерних наук та технологій", description = "Вивчай ІТ, досліджуючи!" } = Astro.props;
 
-// Навігація як дані. У повній версії — окремий src/data/nav.json з мега-меню.
 const nav = [
-  { label: "Факультет",  href: "/faculty/" },
-  { label: "Вступнику",  href: "/admission/" },
-  { label: "Здобувачу",  href: "/students/" },
-  { label: "Викладачу",  href: "/staff/" },
-  { label: "Наука",      href: "/research/" },
-  { label: "Новини",     href: "/news/" },
-  { label: "Контакти",   href: "/contacts/" },
+  { label: "Факультет", href: "/faculty/", children: [
+    { label: "Про факультет", href: "/faculty/" },
+    { label: "Команда факультету", href: "/faculty/team/" },
+    { label: "Кафедри", href: "/faculty/departments/" },
+    { label: "Лабораторії", href: "/faculty/labs/" },
+    { label: "Наші партнери", href: "/faculty/partners/" },
+    { label: "Айдентика", href: "/faculty/identity/" },
+    { label: "Ради факультету", href: "/faculty/councils/" },
+  ]},
+  { label: "Вступнику", href: "/admission/", children: [
+    { label: "Вступ · 1 курс", href: "/admission/bachelor/" },
+    { label: "Магістратура", href: "/admission/master/" },
+    { label: "Аспірантура", href: "/admission/phd/" },
+    { label: "Спеціальності ФКНТ", href: "/admission/specialties/" },
+    { label: "Правила прийому 2026", href: "/admission/rules/" },
+    { label: "Вартість навчання", href: "/admission/cost/" },
+    { label: "Контакти ПК", href: "/admission/contacts/" },
+  ]},
+  { label: "Здобувачу", href: "/students/", children: [
+    { label: "Освітній процес", href: "/students/" },
+    { label: "Розклад занять", href: "/students/schedule/" },
+    { label: "Денна форма", href: "/students/fulltime/" },
+    { label: "Заочна форма", href: "/students/parttime/" },
+    { label: "PhD", href: "/students/phd/" },
+    { label: "Випускнику", href: "/students/graduates/" },
+  ]},
+  { label: "Викладачу", href: "/staff/", children: [
+    { label: "Кабінет викладача", href: "/staff/" },
+    { label: "Підвищення кваліфікації", href: "/staff/development/" },
+    { label: "Академічна доброчесність", href: "/staff/integrity/" },
+    { label: "Військовий облік", href: "/staff/military/" },
+    { label: "Корисні ресурси", href: "/staff/resources/" },
+  ]},
+  { label: "Наука", href: "/research/", children: [
+    { label: "Аспірантура", href: "/research/phd/" },
+    { label: "Докторантура", href: "/research/doctorate/" },
+    { label: "Наукові журнали", href: "/research/journals/" },
+    { label: "Наукові заходи", href: "/research/events/" },
+    { label: "Проєкти", href: "/research/projects/" },
+    { label: "Студентські гуртки", href: "/research/clubs/" },
+  ]},
+  { label: "Міжнародна", href: "/international/" },
+  { label: "Новини", href: "/news/" },
+  { label: "Контакти", href: "/contacts/" },
 ];
 const path = Astro.url.pathname;
+const isActive = (href) => href !== "/" && path.startsWith(href);
 ---
 <!DOCTYPE html>
 <html lang="uk">
@@ -32,14 +68,43 @@ const path = Astro.url.pathname;
   <header class="site">
     <div class="wrap bar">
       <a class="logo" href="/">
-        <img src="/fcst_logo_new-removebg-preview.png" alt="ФКНТ — Факультет комп'ютерних наук та технологій" height="44" />
+        <img src="/fcst_logo_new-removebg-preview.png" alt="ФКНТ" height="44" />
       </a>
-      <nav aria-label="Головне меню">
-        {nav.map((i) => (
-          <a href={i.href} aria-current={path.startsWith(i.href) && i.href !== "/" ? "page" : undefined}>{i.label}</a>
+
+      <nav class="nav" aria-label="Головне меню">
+        {nav.map((i) => i.children ? (
+          <div class="nav-item">
+            <a href={i.href} aria-current={isActive(i.href) ? "page" : undefined}>{i.label}<span class="caret"></span></a>
+            <div class="dropdown">
+              {i.children.map((c) => <a href={c.href}>{c.label}</a>)}
+            </div>
+          </div>
+        ) : (
+          <a class="nav-link" href={i.href} aria-current={isActive(i.href) ? "page" : undefined}>{i.label}</a>
         ))}
       </nav>
-      <a class="btn" href="/admission/">Вступ 2026 →</a>
+
+      <a class="btn cta-desktop" href="/admission/">Вступ 2026 →</a>
+
+      <input type="checkbox" id="nt" class="nav-toggle" />
+      <label for="nt" class="burger" aria-label="Меню"><span></span></label>
+
+      <div class="drawer">
+        <label for="nt" class="scrim" aria-label="Закрити"></label>
+        <div class="sheet">
+          {nav.map((i) => i.children ? (
+            <details>
+              <summary>{i.label}</summary>
+              <div class="sub">
+                {i.children.map((c) => <a href={c.href}>{c.label}</a>)}
+              </div>
+            </details>
+          ) : (
+            <a class="m-link" href={i.href}>{i.label}</a>
+          ))}
+          <a class="btn" href="/admission/">Вступ 2026 →</a>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -53,17 +118,53 @@ const path = Astro.url.pathname;
   </footer>
 
   <style>
-    .site{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);
-      backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-    .bar{display:flex;align-items:center;justify-content:space-between;height:72px;gap:20px}
-    .logo{display:flex;align-items:center;gap:11px}
+    .site{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .bar{display:flex;align-items:center;justify-content:space-between;height:72px;gap:16px}
     .logo img{display:block;height:44px;width:auto}
-    nav{display:flex;gap:4px;flex-wrap:wrap}
-    nav a{padding:9px 14px;border-radius:8px;font-weight:700;font-size:.94rem}
-    nav a:hover,nav a[aria-current="page"]{background:var(--tint);color:var(--primary)}
+
+    /* desktop nav */
+    .nav{display:flex;gap:2px;align-items:center}
+    .nav-item{position:relative}
+    .nav-item>a,.nav-link{display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:8px;font-weight:700;font-size:.93rem;white-space:nowrap}
+    .nav-item>a:hover,.nav-link:hover,.nav a[aria-current="page"]{background:var(--tint);color:var(--primary)}
+    .caret{width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin-top:-3px;opacity:.55}
+    .dropdown{position:absolute;top:100%;left:0;min-width:236px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 24px 44px -22px rgba(14,21,51,.45);padding:8px;margin-top:6px;opacity:0;visibility:hidden;transform:translateY(6px);transition:.15s;z-index:60}
+    .nav-item:hover .dropdown,.nav-item:focus-within .dropdown{opacity:1;visibility:visible;transform:none}
+    .dropdown a{display:block;padding:8px 12px;border-radius:8px;font-size:.9rem;font-weight:600;color:#39406a}
+    .dropdown a:hover{background:var(--tint);color:var(--primary)}
+
+    /* mobile toggle + drawer */
+    .nav-toggle{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+    .burger{display:none;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;align-items:center;justify-content:center}
+    .burger span,.burger span::before,.burger span::after{content:"";display:block;width:20px;height:2px;background:var(--deep);border-radius:2px;position:relative}
+    .burger span::before{position:absolute;top:-6px}
+    .burger span::after{position:absolute;top:6px}
+    .drawer{position:fixed;inset:0;z-index:80;visibility:hidden}
+    .drawer .scrim{position:absolute;inset:0;background:rgba(14,21,51,.5);opacity:0;transition:.25s}
+    .drawer .sheet{position:absolute;top:0;right:0;height:100%;width:min(86vw,360px);background:#fff;transform:translateX(100%);transition:transform .28s;overflow-y:auto;padding:18px}
+    .nav-toggle:checked ~ .drawer{visibility:visible}
+    .nav-toggle:checked ~ .drawer .scrim{opacity:1}
+    .nav-toggle:checked ~ .drawer .sheet{transform:none}
+    .sheet details{border-bottom:1px solid var(--line)}
+    .sheet summary{list-style:none;cursor:pointer;padding:14px 6px;font-weight:800;color:var(--deep);display:flex;justify-content:space-between;align-items:center}
+    .sheet summary::-webkit-details-marker{display:none}
+    .sheet summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--sky);border-bottom:2px solid var(--sky);transform:rotate(45deg);transition:.2s}
+    .sheet details[open] summary::after{transform:rotate(-135deg)}
+    .sheet .sub{padding:0 6px 12px}
+    .sheet .sub a{display:block;padding:9px 10px;border-radius:8px;font-weight:600;font-size:.92rem;color:#39406a}
+    .sheet .m-link{display:block;padding:14px 6px;font-weight:800;color:var(--deep);border-bottom:1px solid var(--line)}
+    .sheet .btn{width:100%;justify-content:center;margin-top:16px}
+
     .foot{background:var(--deep);color:#c4cdf5;padding:48px 0;margin-top:60px}
     .foot .display{color:var(--signal);font-size:1.3rem;margin-bottom:8px}
-    @media(max-width:820px){nav{display:none}}
+
+    @media(max-width:820px){
+      .nav,.cta-desktop{display:none}
+      .burger{display:inline-flex}
+    }
+    @media(min-width:821px){
+      .burger,.drawer{display:none}
+    }
   </style>
 </body>
 </html>
