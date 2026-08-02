@@ -1,0 +1,63 @@
+---
+// /admission/specialties/ — повний перелік спеціальностей та освітніх програм ФКНТ.
+// Контент зі старого сайту (головна сторінка fcst.kai.edu.ua).
+import Base from "../../layouts/Base.astro";
+import specialties from "../../data/specialties.json";
+---
+<Base title="Спеціальності ФКНТ · ФКНТ" description="Спеціальності та освітні програми факультету — бакалавр, магістр, PhD.">
+  <section class="wrap page">
+    <nav class="crumbs" aria-label="Хлібні крихти">
+      <a href="/">Головна</a> › <a href="/admission/">Вступнику</a> › <span>Спеціальності ФКНТ</span>
+    </nav>
+    <h1 class="display">Спеціальності факультету</h1>
+    <p class="lead">Шість спеціальностей на трьох освітніх рівнях — бакалавр, магістр, доктор філософії (PhD).</p>
+
+    <div class="list">
+      {specialties.map((s) => (
+        <article class="spec" id={s.anchor}>
+          <div class="head">
+            <span class="code">{s.code} · {s.num}</span>
+            <h2>{s.name}</h2>
+          </div>
+          <div class="levels">
+            <div class="level">
+              <h3>Бакалавр</h3>
+              <ul>{s.bachelor.map((p) => <li>{p}</li>)}</ul>
+            </div>
+            <div class="level">
+              <h3>Магістр</h3>
+              <ul>{s.master.map((p) => <li>{p}</li>)}</ul>
+            </div>
+            {s.phd.length > 0 && (
+              <div class="level">
+                <h3>PhD</h3>
+                <ul>{s.phd.map((p) => <li>{p}</li>)}</ul>
+              </div>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page{padding:40px 24px 60px}
+  .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:16px}
+  .crumbs a:hover{color:var(--primary)}
+  h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem)}
+  .lead{color:var(--muted);font-size:1.05rem;margin:14px 0 36px;max-width:60ch}
+
+  .list{display:flex;flex-direction:column;gap:18px}
+  .spec{border:1px solid var(--line);border-radius:var(--radius);padding:28px;scroll-margin-top:96px}
+  .head{margin-bottom:18px}
+  .code{font-family:"Dela Gothic One",sans-serif;font-size:.85rem;color:var(--signal);letter-spacing:.02em}
+  .head h2{color:var(--deep);font-size:1.3rem;margin-top:6px}
+  .levels{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .level h3{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--sky);font-weight:800;margin:0 0 10px}
+  .level ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+  .level li{font-size:.9rem;color:#404869;padding-left:16px;position:relative}
+  .level li::before{content:"";position:absolute;left:0;top:.5em;width:5px;height:5px;border-radius:50%;background:var(--primary)}
+
+  @media(max-width:800px){.levels{grid-template-columns:1fr}}
+</style>

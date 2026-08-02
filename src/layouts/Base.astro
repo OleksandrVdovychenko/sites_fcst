@@ -105,8 +105,11 @@ const extAttrs = (href) => isExternal(href) ? { target: "_blank", rel: "noopener
 
 // Сторінки, які вже реально існують у src/pages. Усе інше — поки заглушка,
 // пункт меню рендериться неактивним (без href), доки сторінку не зроблено.
-const builtPages = new Set(["/", "/faculty/", "/faculty/departments/", "/news/"]);
-const isReady = (href) => isExternal(href) || builtPages.has(href);
+const builtPages = new Set([
+  "/", "/faculty/", "/faculty/departments/", "/faculty/partners/",
+  "/admission/specialties/", "/international/", "/contacts/", "/news/",
+]);
+const isReady = (href) => isExternal(href) || builtPages.has(href.split("#")[0]);
 ---
 <!DOCTYPE html>
 <html lang="uk">

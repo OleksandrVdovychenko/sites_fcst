@@ -1,0 +1,55 @@
+---
+// /contacts/ — контакти факультету. Джерело: fcst.kai.edu.ua/contact/.
+// Телефон і e-mail звірені з фактичними tel:/mailto: посиланнями старого сайту —
+// видима адреса скрізь fcst@kai.edu.ua (не застарілий fcst@npp.nau.edu.ua з mailto:),
+// номер 406-78-05 (не 408-78-05 — це одруківка в шапці старого сайту).
+import Base from "../layouts/Base.astro";
+---
+<Base title="Контакти · ФКНТ" description="Контакти деканату Факультету комп'ютерних наук та технологій.">
+  <section class="wrap page">
+    <nav class="crumbs" aria-label="Хлібні крихти">
+      <a href="/">Головна</a> › <span>Контакти</span>
+    </nav>
+    <h1 class="display">Контакти</h1>
+    <p class="lead">Факультет комп'ютерних наук та технологій — «ФКНТ, злітна смуга у твоє цифрове майбутнє!»</p>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Деканат</h2>
+        <p>Декан — к.т.н., доцент Андрій ФЕСЕНКО</p>
+        <p class="muted">Кабінети 1.416 та 1.417</p>
+        <p class="muted">Україна, м. Київ, просп. Любомира Гузара, 1</p>
+        <a class="big" href="tel:+380444067805">+38 (044) 406-78-05</a>
+        <a class="big" href="mailto:fcst@kai.edu.ua">fcst@kai.edu.ua</a>
+      </div>
+
+      <div class="card">
+        <h2>Соцмережі</h2>
+        <div class="social">
+          <a href="https://www.facebook.com/fcstnau" target="_blank" rel="noopener">Facebook</a>
+          <a href="https://t.me/fcst_nau" target="_blank" rel="noopener">Telegram</a>
+          <a href="https://www.youtube.com/channel/UCItBTfVH3z7BlHM-2MYl45A" target="_blank" rel="noopener">YouTube</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page{padding:40px 24px 60px}
+  .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:16px}
+  .crumbs a:hover{color:var(--primary)}
+  h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem)}
+  .lead{color:var(--muted);font-size:1.05rem;margin:14px 0 36px;max-width:60ch}
+
+  .grid{display:grid;grid-template-columns:1.3fr 1fr;gap:20px}
+  .card{border:1px solid var(--line);border-radius:var(--radius);padding:28px}
+  .card h2{color:var(--deep);font-size:1.1rem;margin:0 0 14px}
+  .card p{margin:0 0 6px;color:#404869;font-size:.96rem}
+  .card p.muted{color:var(--muted);font-size:.9rem}
+  .big{display:block;margin-top:14px;font-weight:800;color:var(--primary);font-size:1.05rem}
+  .social{display:flex;flex-direction:column;gap:10px}
+  .social a{font-weight:700;color:var(--primary)}
+
+  @media(max-width:700px){.grid{grid-template-columns:1fr}}
+</style>

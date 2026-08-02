@@ -1,6 +1,7 @@
 ---
 // /faculty/ — «Про факультет». Контент адаптовано зі старого сайту fcst.kai.edu.ua/about-us/.
 import Base from "../../layouts/Base.astro";
+import partners from "../../data/partners.json";
 
 const values = [
   { title: "Відкритість", text: "Ми приділяємо увагу усім учасникам навчального (наукового) процесу та іншим зацікавленим особам, завжди відкриті до комунікації, готові до нового досвіду і нових викликів." },
@@ -21,7 +22,6 @@ const departmentList = [
   "Кафедра вищої математики",
 ];
 
-const partners = ["Microsoft", "Scientific Cyber Security Association", "AUES", "ISCA", "OmegaTelecom"];
 ---
 <Base title="Про факультет · ФКНТ" description="Наш Факультет комп'ютерних наук та технологій — історія, цінності, кафедри та партнери.">
   <section class="wrap page">
@@ -72,8 +72,9 @@ const partners = ["Microsoft", "Scientific Cyber Security Association", "AUES", 
     <p class="eyebrow">Спільно з індустрією</p>
     <h2 class="display">Наші партнери</h2>
     <div class="plogos">
-      {partners.map((p) => <div class="plogo">{p}</div>)}
+      {partners.map((p) => <div class="plogo">{p.name}</div>)}
     </div>
+    <a class="lnk" href="/faculty/partners/">Детальніше про партнерів →</a>
   </section>
 
   <section class="wrap">
