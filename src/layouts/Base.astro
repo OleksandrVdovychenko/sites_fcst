@@ -28,7 +28,7 @@ const nav = [
     groups: [
       { title: "Вступ", links: [
         { label: "Вступ · 1 курс", href: "https://pk.kai.edu.ua/faculties/fakultet-kompyuternyh-nauk-ta-tehnologij/" },
-        { label: "Магістратура", href: "/admission/master/" },
+        { label: "Магістратура", href: "https://pk.kai.edu.ua/#how-to-become-kai-student--master" },
         { label: "Аспірантура", href: "/admission/phd/" },
       ]},
       { title: "Спеціальності ФКНТ", links: [
@@ -42,8 +42,9 @@ const nav = [
       ]},
       { title: "Умови та фінанси", links: [
         { label: "Правила прийому 2026", href: "/admission/rules/" },
-        { label: "Вартість навчання", href: "/admission/cost/" },
-        { label: "Контакти ПК", href: "/admission/contacts/" },
+        { label: "Вартість навчання", href: "https://pk.kai.edu.ua/education-prices/?level=bachelor&education_price_search=%D0%A4%D0%9A%D0%9D%D0%A2&sort=price_asc" },
+        { label: "Реєстрація пільгових документів", href: "https://pk.kai.edu.ua/reyestracziya-pilgovyh-dokumentiv/" },
+        { label: "Контакти ПК", href: "https://pk.kai.edu.ua/" },
       ]},
     ],
   }},
@@ -101,6 +102,11 @@ const path = Astro.url.pathname;
 const isActive = (href) => href !== "/" && path.startsWith(href);
 const isExternal = (href) => href.startsWith("http");
 const extAttrs = (href) => isExternal(href) ? { target: "_blank", rel: "noopener" } : {};
+
+// Сторінки, які вже реально існують у src/pages. Усе інше — поки заглушка,
+// пункт меню рендериться неактивним (без href), доки сторінку не зроблено.
+const builtPages = new Set(["/", "/faculty/", "/faculty/departments/", "/news/"]);
+const isReady = (href) => isExternal(href) || builtPages.has(href);
 ---
 <!DOCTYPE html>
 <html lang="uk">
@@ -123,14 +129,24 @@ const extAttrs = (href) => isExternal(href) ? { target: "_blank", rel: "noopener
       <nav class="nav" aria-label="Головне меню">
         {nav.map((i) => i.mega ? (
           <div class="nav-item">
-            <a href={i.href} aria-current={isActive(i.href) ? "page" : undefined}>{i.label}<span class="caret"></span></a>
+            {isReady(i.href) ? (
+              <a href={i.href} aria-current={isActive(i.href) ? "page" : undefined}>{i.label}<span class="caret"></span></a>
+            ) : (
+              <span class="soon">{i.label}<span class="caret"></span></span>
+            )}
             <div class="dd">
               <div class={`panel panel-grid ${i.mega.cols}`}>
                 {i.mega.groups.map((g) => (
                   <div class="col">
                     <h5>{g.title}</h5>
                     <ul>
-                      {g.links.map((c) => <li><a href={c.href} {...extAttrs(c.href)}>{c.label}</a></li>)}
+                      {g.links.map((c) => (
+                        <li>{isReady(c.href) ? (
+                          <a href={c.href} {...extAttrs(c.href)}>{c.label}</a>
+                        ) : (
+                          <span class="soon">{c.label}</span>
+                        )}</li>
+                      ))}
                     </ul>
                   </div>
                 ))}
@@ -148,12 +164,14 @@ const extAttrs = (href) => isExternal(href) ? { target: "_blank", rel: "noopener
               </div>
             </div>
           </div>
-        ) : (
+        ) : isReady(i.href) ? (
           <a class="nav-link" href={i.href} aria-current={isActive(i.href) ? "page" : undefined}>{i.label}</a>
+        ) : (
+          <span class="nav-link soon">{i.label}</span>
         ))}
       </nav>
 
-      <a class="btn cta-desktop" href="/admission/">Вступ 2026 →</a>
+      <a class="btn cta-desktop" href="https://pk.kai.edu.ua/faculties/fakultet-kompyuternyh-nauk-ta-tehnologij/" target="_blank" rel="noopener">Вступ 2026 →</a>
 
       <label for="nt" class="burger" aria-label="Меню"><span></span></label>
     </div>
@@ -170,15 +188,21 @@ const extAttrs = (href) => isExternal(href) ? { target: "_blank", rel: "noopener
             {i.mega.groups.map((g) => (
               <>
                 <p class="grp">{g.title}</p>
-                {g.links.map((c) => <a href={c.href} {...extAttrs(c.href)}>{c.label}</a>)}
+                {g.links.map((c) => isReady(c.href) ? (
+                  <a href={c.href} {...extAttrs(c.href)}>{c.label}</a>
+                ) : (
+                  <span class="soon">{c.label}</span>
+                ))}
               </>
             ))}
           </div>
         </details>
-      ) : (
+      ) : isReady(i.href) ? (
         <a class="m-link" href={i.href}>{i.label}</a>
+      ) : (
+        <span class="m-link soon">{i.label}</span>
       ))}
-      <a class="btn" href="/admission/">Вступ 2026 →</a>
+      <a class="btn" href="https://pk.kai.edu.ua/faculties/fakultet-kompyuternyh-nauk-ta-tehnologij/" target="_blank" rel="noopener">Вступ 2026 →</a>
     </div>
   </div>
 
@@ -200,9 +224,14 @@ const extAttrs = (href) => isExternal(href) ? { target: "_blank", rel: "noopener
     /* desktop nav */
     .nav{display:flex;gap:2px;align-items:center}
     .nav-item{position:relative}
-    .nav-item>a,.nav-link{display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:8px;font-weight:700;font-size:.93rem;white-space:nowrap}
+    .nav-item>a,.nav-item>.soon,.nav-link{display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:8px;font-weight:700;font-size:.93rem;white-space:nowrap}
     .nav-item>a:hover,.nav-link:hover,.nav a[aria-current="page"]{background:var(--tint);color:var(--primary)}
     .caret{width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin-top:-3px;opacity:.55}
+
+    /* пункти меню без готової сторінки — видно, але не клікабельні */
+    .soon{color:var(--muted);cursor:default;opacity:.65}
+    .soon::after{content:"незабаром";margin-left:7px;font-size:.62rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--sky);background:var(--tint);border-radius:20px;padding:2px 7px;vertical-align:1px}
+    .col li .soon::after,.sheet .soon::after{margin-left:8px}
 
     /* mega dropdown */
     .dd{position:absolute;top:100%;left:0;margin-top:6px;z-index:60;opacity:0;visibility:hidden;transform:translateY(6px);transition:.15s}
@@ -215,8 +244,9 @@ const extAttrs = (href) => isExternal(href) ? { target: "_blank", rel: "noopener
     .col h5{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--sky);margin:0 0 12px;font-weight:800;display:flex;align-items:center;gap:8px}
     .col h5::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--signal)}
     .col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
-    .col li a{display:block;padding:7px 10px;border-radius:7px;font-size:.9rem;font-weight:600;color:#39406a}
+    .col li a,.col li .soon{display:block;padding:7px 10px;border-radius:7px;font-size:.9rem;font-weight:600;color:#39406a}
     .col li a:hover{background:var(--tint);color:var(--primary)}
+    .col li .soon{color:var(--muted)}
     .panel-feature{background:var(--grad-dark);color:#fff;border-radius:14px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;height:100%}
     .panel-feature .display{font-size:1.1rem;margin-bottom:8px}
     .panel-feature p{font-size:.85rem;color:#cdd7ff;margin:0 0 16px}
@@ -242,8 +272,9 @@ const extAttrs = (href) => isExternal(href) ? { target: "_blank", rel: "noopener
     .sheet .sub{padding:0 6px 12px}
     .sheet .sub .grp{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--sky);font-weight:800;margin:12px 4px 4px}
     .sheet .sub .grp:first-child{margin-top:4px}
-    .sheet .sub a{display:block;padding:9px 10px;border-radius:8px;font-weight:600;font-size:.92rem;color:#39406a}
+    .sheet .sub a,.sheet .sub .soon{display:block;padding:9px 10px;border-radius:8px;font-weight:600;font-size:.92rem;color:#39406a}
     .sheet .m-link{display:block;padding:14px 6px;font-weight:800;color:var(--deep);border-bottom:1px solid var(--line)}
+    .sheet .sub .soon,.sheet .m-link.soon{color:var(--muted)}
     .sheet .btn{width:100%;justify-content:center;margin-top:16px}
 
     .foot{background:var(--deep);color:#c4cdf5;padding:48px 0;margin-top:60px}
