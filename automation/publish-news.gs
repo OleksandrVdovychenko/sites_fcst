@@ -1,17 +1,33 @@
 /**
  * ФКНТ — автоматична заливка новин з Google Docs у репозиторій сайту.
  *
- * Без залежностей від claude.ai: усе на Google Apps Script (безкоштовно,
- * частина Google-акаунта) + Anthropic API (окремий платний ключ, не claude.ai)
- * + GitHub REST API (звичайний PAT). Ніяких MCP-конекторів, ніякого
- * GitHub App, ніяких хмарних routine.
+ * Без залежностей від claude.ai і, за замовчуванням, БЕЗ платного API:
+ * автор заповнює просту текстову шапку на початку документа
+ * (Заголовок / Дата / Категорія / Опис), а скрипт читає її сам —
+ * жодної нормалізації через модель. Google Apps Script (безкоштовно) +
+ * GitHub REST API (звичайний PAT). Anthropic API — опційний, вимкнений
+ * за замовчуванням (див. USE_AI_FALLBACK нижче).
+ *
+ * ФОРМАТ ШАПКИ (перші рядки документа, звичайним текстом, без стилів):
+ *   Заголовок: Команда ФКНТ перемогла на хакатоні
+ *   Дата: 2026-08-03
+ *   Категорія: Досягнення
+ *   Опис: Короткий опис у 1–2 речення.
+ *
+ *   Далі, після шапки — порожній рядок, і власне текст новини.
+ *
+ * Кожне поле шапки необов'язкове. Якщо чогось бракує або воно не
+ * розпізнане — скрипт підставляє безпечне значення за замовчуванням
+ * (назву документа як заголовок, сьогоднішню дату, категорію «Новини»,
+ * перші речення тексту як опис) і **ставить draft: true**, щоб новина
+ * НЕ з'явилась на сайті, доки хтось не перевірить і не поправить .md
+ * вручну. Жодних вигаданих фактів — лише те, що реально є в документі.
  *
  * ЩО РОБИТЬ (scanAndPublish, запускається за розкладом)
  *   1) перелічує Google Docs у теці fcst_news на Диску;
  *   2) звіряє з automation/news-processed.json у репозиторії — пропускає вже опубліковані;
- *   3) для кожного нового документа: експортує в Markdown → прогонsь через Claude API
- *      (чистий .md зі схемою новини за AGENTS.md) → комітить
- *      src/content/news/<slug>.md напряму в main;
+ *   3) для кожного нового документа: експортує в Markdown → розбирає шапку →
+ *      комітить src/content/news/<slug>.md напряму в main;
  *   4) оновлює automation/news-processed.json (docId -> slug) окремим комітом.
  *   Публікує напряму в main без PR — свідомий виняток, узгоджений з власником сайту
  *   саме для цього конвеєра (див. NEWS-PIPELINE.md).
@@ -22,8 +38,10 @@
  *      GITHUB_TOKEN     fine-grained PAT: лише цей репозиторій, права contents:write
  *      GITHUB_REPO      напр. "OleksandrVdovychenko/sites_fcst"
  *      BASE_BRANCH      "main"
- *      ANTHROPIC_KEY    ключ з console.anthropic.com
  *      DRIVE_FOLDER_ID  "1nP2R8SgJ5oqNH0SqJ7WoyDUICk_LcS0f"  (тека fcst_news)
+ *      -- опційно, лише якщо захочете увімкнути AI-нормалізацію пізніше --
+ *      USE_AI_FALLBACK  "true"   (за замовчуванням вимкнено — просто не додавайте цей рядок)
+ *      ANTHROPIC_KEY    ключ з console.anthropic.com (потрібен лише якщо USE_AI_FALLBACK=true)
  *   3. У appsscript.json (View → Show manifest file) додати oauthScopes:
  *      ["https://www.googleapis.com/auth/drive.readonly",
  *       "https://www.googleapis.com/auth/script.external_request"]
@@ -36,6 +54,7 @@
  */
 
 const P = PropertiesService.getScriptProperties();
+const VALID_CATEGORIES = ['Новини', 'Досягнення', 'Події', 'Вступ', 'Наука'];
 
 /** Встановити погодинний тригер. Викликати вручну один раз. */
 function installTrigger() {
@@ -83,14 +102,18 @@ function listDocsInFolder_(folderId) {
   return JSON.parse(res.getContentText()).files || [];
 }
 
-/** Обробити один документ: експорт → нормалізація → коміт у main → оновити трекер. */
+/** Обробити один документ: експорт → розбір шапки → коміт у main → оновити трекер. */
 function publishDoc_(doc, processed) {
   const rawMarkdown = exportDocAsMarkdown_(doc.id);
   if (!rawMarkdown || !rawMarkdown.trim()) {
     Logger.log('Порожній документ, пропускаю: ' + doc.name);
     return;
   }
-  const entry = normalizeWithClaude_(rawMarkdown, doc.name);
+
+  const entry = (P.getProperty('USE_AI_FALLBACK') === 'true' && !hasAnyHeaderField_(rawMarkdown))
+    ? normalizeWithClaude_(rawMarkdown, doc.name)
+    : normalizeFromHeader_(rawMarkdown, doc.name);
+
   const slug = uniqueSlug_(entry.date, entry.title, processed);
   const path = 'src/content/news/' + slug + '.md';
 
@@ -98,6 +121,93 @@ function publishDoc_(doc, processed) {
 
   processed[doc.id] = slug;
   saveProcessedMap_(processed);
+}
+
+/** Чи є в тексті хоч одне розпізнане поле шапки (Заголовок/Дата/Категорія/Опис). */
+function hasAnyHeaderField_(rawMarkdown) {
+  return /^(Заголовок|Дата|Категорія|Опис)\s*:/im.test(rawMarkdown);
+}
+
+/**
+ * Детерміністичний, без AI, розбір шапки документа.
+ * Шапка — перші рядки виду "Мітка: значення". Усе після шапки — тіло новини.
+ * Будь-яке відсутнє/невалідне поле → безпечне значення за замовчуванням
+ * + draft: true (новина не публікується в стрічці, доки її не перевірять).
+ */
+function normalizeFromHeader_(rawMarkdown, docName) {
+  const lines = rawMarkdown.replace(/\r\n/g, '\n').split('\n');
+  const keyMap = { 'заголовок': 'title', 'дата': 'date', 'категорія': 'category', 'опис': 'summary' };
+  const fields = {};
+  let bodyStart = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) { if (Object.keys(fields).length) { bodyStart = i + 1; break; } else { continue; } }
+    const m = line.match(/^\**\s*(Заголовок|Дата|Категорія|Опис)\s*\**\s*:\s*(.+)$/i);
+    if (m) {
+      fields[keyMap[m[1].toLowerCase()]] = m[2].trim().replace(/\*+$/, '').trim();
+      bodyStart = i + 1;
+    } else {
+      break;
+    }
+  }
+
+  const body = lines.slice(bodyStart).join('\n').trim();
+  let needsReview = false;
+
+  const today = Utilities.formatDate(new Date(), 'Europe/Kyiv', 'yyyy-MM-dd');
+
+  let title = fields.title;
+  if (!title) { title = docName; needsReview = true; }
+
+  let date = fields.date;
+  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) { date = today; needsReview = true; }
+
+  let category = 'Новини';
+  if (fields.category) {
+    const found = VALID_CATEGORIES.find(c => c.toLowerCase() === fields.category.toLowerCase());
+    if (found) category = found; else needsReview = true; // вказана, але не з переліку
+  }
+
+  let summary = fields.summary;
+  if (!summary) {
+    summary = excerpt_(body, 220);
+    needsReview = true;
+  } else if (summary.length > 240) {
+    summary = summary.slice(0, 237).trim() + '...';
+    needsReview = true;
+  }
+
+  if (!body) needsReview = true; // порожнє тіло — точно варто перевірити вручну
+
+  const md = buildFrontmatter_(title, date, category, summary, needsReview) + '\n' + body + '\n';
+  return { md: md, title: title, date: date };
+}
+
+/** Перші ~n символів тексту до межі слова, як чесна витяжка (не вигадка). */
+function excerpt_(text, n) {
+  const flat = text.replace(/\s+/g, ' ').trim();
+  if (flat.length <= n) return flat;
+  const cut = flat.slice(0, n);
+  const lastSpace = cut.lastIndexOf(' ');
+  return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim() + '...';
+}
+
+function buildFrontmatter_(title, date, category, summary, draft) {
+  return [
+    '---',
+    'title: ' + yamlString_(title),
+    'date: ' + date,
+    'category: ' + category,
+    'summary: ' + yamlString_(summary),
+    'draft: ' + (draft ? 'true' : 'false'),
+    '---',
+    '',
+  ].join('\n');
+}
+
+function yamlString_(s) {
+  return '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, ' ') + '"';
 }
 
 /** Слаг з датою + короткою транслітерацією заголовка, унікальний серед уже опублікованих. */
@@ -124,7 +234,11 @@ function exportDocAsMarkdown_(docId) {
   return res.getContentText();
 }
 
-/** Нормалізація через Claude: сирий Markdown → .md зі схемою новини */
+/**
+ * ОПЦІЙНИЙ шлях через Anthropic API — використовується лише якщо
+ * USE_AI_FALLBACK=true і в документі взагалі не знайдено жодного поля
+ * шапки (тобто автор не скористався форматом вище).
+ */
 function normalizeWithClaude_(rawMarkdown, docName) {
   const today = Utilities.formatDate(new Date(), 'Europe/Kyiv', 'yyyy-MM-dd');
   const system =
@@ -152,7 +266,10 @@ function normalizeWithClaude_(rawMarkdown, docName) {
       messages: [{ role: 'user', content: 'Назва документа: ' + docName + '\n\nЧернетка:\n' + rawMarkdown }],
     }),
   });
-  if (res.getResponseCode() >= 300) throw new Error('Claude API: ' + res.getContentText());
+  if (res.getResponseCode() >= 300) {
+    Logger.log('Claude API недоступний (' + res.getResponseCode() + '), переходжу на розбір шапки без AI.');
+    return normalizeFromHeader_(rawMarkdown, docName);
+  }
   const md = JSON.parse(res.getContentText()).content[0].text.trim();
   return { md: md, title: frontmatterValue_(md, 'title') || docName, date: frontmatterValue_(md, 'date') || today };
 }
