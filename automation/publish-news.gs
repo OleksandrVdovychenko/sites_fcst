@@ -1,47 +1,116 @@
 /**
  * ФКНТ — автоматична заливка новин з Google Docs у репозиторій сайту.
  *
- * ЩО РОБИТЬ
- *   1) експортує активний Google Doc у Markdown (нативний експорт Docs);
- *   2) прогоняє текст через Claude API → чистий .md зі схемою новини (за AGENTS.md);
- *   3) відкриває PR у GitHub з файлом src/content/news/<slug>.md.
- *   Публікує людина, зливаючи PR. Автопублікації немає.
+ * Без залежностей від claude.ai: усе на Google Apps Script (безкоштовно,
+ * частина Google-акаунта) + Anthropic API (окремий платний ключ, не claude.ai)
+ * + GitHub REST API (звичайний PAT). Ніяких MCP-конекторів, ніякого
+ * GitHub App, ніяких хмарних routine.
  *
- * НАЛАШТУВАННЯ (File → Project settings → Script properties):
- *   GITHUB_TOKEN   fine-grained PAT: лише репо fcst-web, contents:write + pull_requests:write
- *   GITHUB_REPO    напр. "fcst-kai/fcst-web"
- *   BASE_BRANCH    напр. "main"
- *   ANTHROPIC_KEY  ключ Claude API
+ * ЩО РОБИТЬ (scanAndPublish, запускається за розкладом)
+ *   1) перелічує Google Docs у теці fcst_news на Диску;
+ *   2) звіряє з automation/news-processed.json у репозиторії — пропускає вже опубліковані;
+ *   3) для кожного нового документа: експортує в Markdown → прогонsь через Claude API
+ *      (чистий .md зі схемою новини за AGENTS.md) → комітить
+ *      src/content/news/<slug>.md напряму в main;
+ *   4) оновлює automation/news-processed.json (docId -> slug) окремим комітом.
+ *   Публікує напряму в main без PR — свідомий виняток, узгоджений з власником сайту
+ *   саме для цього конвеєра (див. NEWS-PIPELINE.md).
  *
- * ДОДАТКОВО у appsscript.json потрібен Drive scope:
- *   "oauthScopes": ["https://www.googleapis.com/auth/documents",
- *                   "https://www.googleapis.com/auth/drive.readonly",
- *                   "https://www.googleapis.com/auth/script.external_request"]
+ * РАЗОВЕ НАЛАШТУВАННЯ
+ *   1. script.google.com → New project. Вставити цей файл як Code.gs.
+ *   2. Project Settings → Script properties, додати:
+ *      GITHUB_TOKEN     fine-grained PAT: лише цей репозиторій, права contents:write
+ *      GITHUB_REPO      напр. "OleksandrVdovychenko/sites_fcst"
+ *      BASE_BRANCH      "main"
+ *      ANTHROPIC_KEY    ключ з console.anthropic.com
+ *      DRIVE_FOLDER_ID  "1nP2R8SgJ5oqNH0SqJ7WoyDUICk_LcS0f"  (тека fcst_news)
+ *   3. У appsscript.json (View → Show manifest file) додати oauthScopes:
+ *      ["https://www.googleapis.com/auth/drive.readonly",
+ *       "https://www.googleapis.com/auth/script.external_request"]
+ *   4. Запустити функцію installTrigger() ОДИН РАЗ вручну (авторизує доступ
+ *      і ставить погодинний тригер). Перевірити в Triggers (годинник зліва),
+ *      що scanAndPublish там з'явився.
+ *   5. Для ручного тесту — запустити scanAndPublish() і подивитись Executions.
+ *
+ * ЧЕСНІ ЗАСТЕРЕЖЕННЯ — див. NEWS-PIPELINE.md.
  */
 
 const P = PropertiesService.getScriptProperties();
 
-/** Меню в документі */
-function onOpen() {
-  DocumentApp.getUi()
-    .createMenu('ФКНТ')
-    .addItem('Надіслати новину на сайт', 'publishCurrentDoc')
-    .addToUi();
+/** Встановити погодинний тригер. Викликати вручну один раз. */
+function installTrigger() {
+  removeTriggers();
+  ScriptApp.newTrigger('scanAndPublish').timeBased().everyHours(1).create();
+  Logger.log('Тригер встановлено: scanAndPublish кожну годину.');
 }
 
-function publishCurrentDoc() {
-  const ui = DocumentApp.getUi();
-  try {
-    const doc = DocumentApp.getActiveDocument();
-    const rawMarkdown = exportDocAsMarkdown_(doc.getId());
-    const entry = normalizeWithClaude_(rawMarkdown, doc.getName()); // {frontmatter+body, title, date}
-    const slug = `${entry.date}-${transliterate_(entry.title)}`.slice(0, 60).replace(/-+$/,'');
-    const path = `src/content/news/${slug}.md`;
-    const prUrl = openPullRequest_(path, entry.md, `Новина: ${entry.title}`, doc.getUrl());
-    ui.alert('Готово', 'Новину надіслано на розгляд.\nPR: ' + prUrl, ui.ButtonSet.OK);
-  } catch (e) {
-    ui.alert('Помилка', String(e), ui.ButtonSet.OK);
+function removeTriggers() {
+  ScriptApp.getProjectTriggers().forEach(t => {
+    if (t.getHandlerFunction() === 'scanAndPublish') ScriptApp.deleteTrigger(t);
+  });
+}
+
+/** Головна функція — перевіряє теку й публікує нові документи. */
+function scanAndPublish() {
+  const folderId = P.getProperty('DRIVE_FOLDER_ID');
+  const docs = listDocsInFolder_(folderId);
+  const processed = getProcessedMap_();
+
+  let publishedCount = 0;
+  docs.forEach(doc => {
+    if (processed[doc.id]) return; // вже опубліковано
+    try {
+      publishDoc_(doc, processed);
+      publishedCount++;
+    } catch (e) {
+      Logger.log('Помилка при публікації "' + doc.name + '" (' + doc.id + '): ' + e);
+    }
+  });
+  Logger.log('Перевірено документів: ' + docs.length + '. Опубліковано нових: ' + publishedCount + '.');
+}
+
+/** Список Google Docs у теці (без підпапок). */
+function listDocsInFolder_(folderId) {
+  const q = encodeURIComponent(
+    "'" + folderId + "' in parents and mimeType='application/vnd.google-apps.document' and trashed=false"
+  );
+  const url = 'https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id,name)';
+  const res = UrlFetchApp.fetch(url, {
+    headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+    muteHttpExceptions: true,
+  });
+  if (res.getResponseCode() >= 300) throw new Error('Drive files.list: ' + res.getContentText());
+  return JSON.parse(res.getContentText()).files || [];
+}
+
+/** Обробити один документ: експорт → нормалізація → коміт у main → оновити трекер. */
+function publishDoc_(doc, processed) {
+  const rawMarkdown = exportDocAsMarkdown_(doc.id);
+  if (!rawMarkdown || !rawMarkdown.trim()) {
+    Logger.log('Порожній документ, пропускаю: ' + doc.name);
+    return;
   }
+  const entry = normalizeWithClaude_(rawMarkdown, doc.name);
+  const slug = uniqueSlug_(entry.date, entry.title, processed);
+  const path = 'src/content/news/' + slug + '.md';
+
+  putFileToRepo_(path, entry.md, 'Новина: ' + entry.title);
+
+  processed[doc.id] = slug;
+  saveProcessedMap_(processed);
+}
+
+/** Слаг з датою + короткою транслітерацією заголовка, унікальний серед уже опублікованих. */
+function uniqueSlug_(date, title, processed) {
+  const base = (date.slice(0, 7) + '-' + transliterate_(title)).slice(0, 60).replace(/-+$/, '');
+  const used = new Set(Object.values(processed));
+  let slug = base;
+  let i = 2;
+  while (used.has(slug)) {
+    slug = base + '-' + i;
+    i++;
+  }
+  return slug;
 }
 
 /** Нативний експорт Google Doc → Markdown через Drive API */
@@ -69,7 +138,8 @@ function normalizeWithClaude_(rawMarkdown, docName) {
     'draft: false\n' +
     'Далі — тіло новини у Markdown, заголовки від ##. ' +
     'Мова українська, діловий доброзичливий тон, активний стан. ' +
-    'НЕ вигадуй фактів, імен, цифр, дат — лише те, що є в чернетці.';
+    'НЕ вигадуй фактів, імен, цифр, дат — лише те, що є в чернетці. ' +
+    'Якщо факти неоднозначні або чогось бракує — постав draft: true замість вигадування.';
   const res = UrlFetchApp.fetch('https://api.anthropic.com/v1/messages', {
     method: 'post',
     contentType: 'application/json',
@@ -92,42 +162,62 @@ function frontmatterValue_(md, key) {
   return m ? m[1].trim().replace(/^["']|["']$/g, '') : '';
 }
 
-/** Створити гілку + файл + PR через GitHub REST API */
-function openPullRequest_(path, content, title, sourceUrl) {
-  const repo = P.getProperty('GITHUB_REPO');
-  const base = P.getProperty('BASE_BRANCH') || 'main';
+/** GitHub REST helper */
+function gh_(url, method, payload) {
   const token = P.getProperty('GITHUB_TOKEN');
-  const api = 'https://api.github.com/repos/' + repo;
-  const gh = (url, method, payload) => {
-    const res = UrlFetchApp.fetch(url, {
-      method: method || 'get',
-      contentType: 'application/json',
-      muteHttpExceptions: true,
-      headers: { Authorization: 'token ' + token, Accept: 'application/vnd.github+json' },
-      payload: payload ? JSON.stringify(payload) : null,
-    });
-    if (res.getResponseCode() >= 300) throw new Error('GitHub ' + url + ': ' + res.getContentText());
-    return JSON.parse(res.getContentText());
-  };
+  const res = UrlFetchApp.fetch(url, {
+    method: method || 'get',
+    contentType: 'application/json',
+    muteHttpExceptions: true,
+    headers: { Authorization: 'token ' + token, Accept: 'application/vnd.github+json' },
+    payload: payload ? JSON.stringify(payload) : null,
+  });
+  if (res.getResponseCode() >= 300 && res.getResponseCode() !== 404) {
+    throw new Error('GitHub ' + url + ': ' + res.getContentText());
+  }
+  return { code: res.getResponseCode(), body: res.getContentText() ? JSON.parse(res.getContentText()) : null };
+}
 
-  const baseSha = gh(api + '/git/ref/heads/' + base).object.sha;
-  const branch = 'news/' + path.split('/').pop().replace(/\.md$/, '');
-  // створити гілку (ігнорувати, якщо вже існує)
-  try { gh(api + '/git/refs', 'post', { ref: 'refs/heads/' + branch, sha: baseSha }); } catch (e) {}
-  // додати/оновити файл
-  gh(api + '/contents/' + path, 'put', {
-    message: title,
+function repoApi_() {
+  return 'https://api.github.com/repos/' + P.getProperty('GITHUB_REPO');
+}
+
+/** Прочитати automation/news-processed.json з репозиторію (гілка main). */
+function getProcessedMap_() {
+  const branch = P.getProperty('BASE_BRANCH') || 'main';
+  const r = gh_(repoApi_() + '/contents/automation/news-processed.json?ref=' + branch);
+  if (r.code === 404) return {};
+  const content = Utilities.newBlob(Utilities.base64Decode(r.body.content)).getDataAsString();
+  return (JSON.parse(content).processed) || {};
+}
+
+/** Записати оновлений automation/news-processed.json напряму в main. */
+function saveProcessedMap_(processed) {
+  const path = 'automation/news-processed.json';
+  const branch = P.getProperty('BASE_BRANCH') || 'main';
+  const existing = gh_(repoApi_() + '/contents/' + path + '?ref=' + branch);
+  const body = JSON.stringify({
+    _comment: 'docId (Google Drive) -> опублікований slug. Оновлюється automation/publish-news.gs.',
+    processed: processed,
+  }, null, 2);
+  putFileToRepo_(path, body, 'Оновити news-processed.json', existing.code !== 404 ? existing.body.sha : undefined);
+}
+
+/** Створити/оновити файл напряму в main через Contents API. */
+function putFileToRepo_(path, content, message, knownSha) {
+  const branch = P.getProperty('BASE_BRANCH') || 'main';
+  let sha = knownSha;
+  if (sha === undefined) {
+    const existing = gh_(repoApi_() + '/contents/' + path + '?ref=' + branch);
+    sha = existing.code !== 404 ? existing.body.sha : undefined;
+  }
+  const payload = {
+    message: message,
     branch: branch,
     content: Utilities.base64Encode(content, Utilities.Charset.UTF_8),
-  });
-  // відкрити PR
-  const pr = gh(api + '/pulls', 'post', {
-    title: title,
-    head: branch,
-    base: base,
-    body: 'Автоматично з Google Docs.\nДжерело: ' + sourceUrl + '\n\n**Перед злиттям перевірити:** факти, імена, дату, тон.',
-  });
-  return pr.html_url;
+  };
+  if (sha) payload.sha = sha;
+  gh_(repoApi_() + '/contents/' + path, 'put', payload);
 }
 
 /** Проста транслітерація укр → латиниця для slug */
