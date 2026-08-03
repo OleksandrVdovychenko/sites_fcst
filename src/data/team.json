@@ -3,18 +3,21 @@
     "name": "Андрій Фесенко",
     "role": "Декан ФКНТ",
     "desc": "Декан факультету, кандидат технічних наук, доцент.",
-    "photo": "https://fcst.kai.edu.ua/stage/wp-content/uploads/2025/04/IMG_1787-Photoroom.jpg"
+    "photo": "https://fcst.kai.edu.ua/stage/wp-content/uploads/2025/04/IMG_1787-Photoroom.jpg",
+    "featured": true
   },
   {
     "name": "Наталія Журавель",
     "role": "Заступник декана",
     "desc": "Заступник декана з навчальної роботи.",
-    "photo": "https://fcst.kai.edu.ua/stage/wp-content/uploads/2024/07/zhuravelNV1-e1721295853597.png"
+    "photo": "https://fcst.kai.edu.ua/stage/wp-content/uploads/2024/07/zhuravelNV1-e1721295853597.png",
+    "featured": true
   },
   {
     "name": "Андрій Молчанов",
     "role": "Заступник декана",
     "desc": "Заступник декана з навчально-виховної роботи, кандидат технічних наук.",
-    "photo": "https://fcst.kai.edu.ua/stage/wp-content/uploads/2024/10/san_andreas-e1727867719788.jpg"
+    "photo": "https://fcst.kai.edu.ua/stage/wp-content/uploads/2024/10/san_andreas-e1727867719788.jpg",
+    "featured": true
   }
 ]
