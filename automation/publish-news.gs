@@ -48,7 +48,8 @@
  *      ANTHROPIC_KEY    ключ з console.anthropic.com (потрібен лише якщо USE_AI_FALLBACK=true)
  *   3. У appsscript.json (View → Show manifest file) додати oauthScopes:
  *      ["https://www.googleapis.com/auth/drive.readonly",
- *       "https://www.googleapis.com/auth/script.external_request"]
+ *       "https://www.googleapis.com/auth/script.external_request",
+ *       "https://www.googleapis.com/auth/script.scriptapp"]
  *   4. Запустити функцію installTrigger() ОДИН РАЗ вручну (авторизує доступ
  *      і ставить погодинний тригер). Перевірити в Triggers (годинник зліва),
  *      що scanAndPublish там з'явився.
