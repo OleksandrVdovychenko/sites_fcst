@@ -43,12 +43,15 @@ const news = (await getCollection("news", ({ data }) => !data.draft))
       <div class="news-grid">
         {news.map((p) => (
           <a class="card" href={`/news/${p.slug}/`}>
-            <time datetime={p.data.date.toISOString()}>
-              {p.data.date.toLocaleDateString("uk-UA", { day: "numeric", month: "long", year: "numeric" })}
-            </time>
-            <span class="cat">{p.data.category}</span>
-            <h3>{p.data.title}</h3>
-            <p>{p.data.summary}</p>
+            {p.data.cover && <img class="thumb" src={p.data.cover} alt="" loading="lazy" />}
+            <div class="card-body">
+              <time datetime={p.data.date.toISOString()}>
+                {p.data.date.toLocaleDateString("uk-UA", { day: "numeric", month: "long", year: "numeric" })}
+              </time>
+              <span class="cat">{p.data.category}</span>
+              <h3>{p.data.title}</h3>
+              <p>{p.data.summary}</p>
+            </div>
           </a>
         ))}
       </div>
@@ -93,8 +96,10 @@ const news = (await getCollection("news", ({ data }) => !data.draft))
   .news-head .lnk{font-weight:800;color:var(--primary,#023FC1);white-space:nowrap}
   .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
   .news-grid .card{display:block;border:1px solid var(--line,#E3E9F5);border-left:4px solid var(--sky,#2D8CDF);
-    border-radius:12px;padding:22px;background:#fff;transition:transform .2s,border-color .2s}
+    border-radius:12px;overflow:hidden;background:#fff;transition:transform .2s,border-color .2s}
   .news-grid .card:hover{transform:translateY(-3px);border-left-color:var(--signal,#FEAB24)}
+  .news-grid .thumb{width:100%;height:150px;object-fit:cover;display:block}
+  .news-grid .card-body{padding:22px}
   .news-grid time{font-size:.78rem;color:var(--muted,#5B6485);font-weight:700}
   .news-grid .cat{font-size:.64rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--sky,#2D8CDF);margin-left:8px}
   .news-grid h3{color:var(--deep,#1E2A7C);font-size:1.05rem;margin:10px 0 6px}

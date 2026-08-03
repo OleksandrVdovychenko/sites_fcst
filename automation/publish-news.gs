@@ -13,11 +13,15 @@
  *   Дата: 2026-08-03
  *   Категорія: Досягнення
  *   Опис: Короткий опис у 1–2 речення.
+ *   Зображення: https://.../фото-для-обкладинки.jpg   (необов'язково)
  *
- *   Далі, після шапки — порожній рядок, і власне текст новини.
+ *   Далі, після шапки — порожній рядок, і власне текст новини. Якщо десь
+ *   у тексті новини потрібна картинка — вставте посилання на вже
+ *   розміщене фото ОКРЕМИМ рядком у тому місці, де вона має з'явитись;
+ *   скрипт сам перетворить такий рядок на зображення в тілі новини.
  *
- * Кожне поле шапки необов'язкове. Якщо чогось бракує або воно не
- * розпізнане — скрипт підставляє безпечне значення за замовчуванням
+ * Кожне поле шапки (і «Зображення») необов'язкове. Якщо чогось бракує або
+ * воно не розпізнане — скрипт підставляє безпечне значення за замовчуванням
  * (назву документа як заголовок, сьогоднішню дату, категорію «Новини»,
  * перші речення тексту як опис) і **ставить draft: true**, щоб новина
  * НЕ з'явилась на сайті, доки хтось не перевірить і не поправить .md
@@ -136,14 +140,14 @@ function hasAnyHeaderField_(rawMarkdown) {
  */
 function normalizeFromHeader_(rawMarkdown, docName) {
   const lines = rawMarkdown.replace(/\r\n/g, '\n').split('\n');
-  const keyMap = { 'заголовок': 'title', 'дата': 'date', 'категорія': 'category', 'опис': 'summary' };
+  const keyMap = { 'заголовок': 'title', 'дата': 'date', 'категорія': 'category', 'опис': 'summary', 'зображення': 'cover' };
   const fields = {};
   let bodyStart = 0;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
     if (!line) { if (Object.keys(fields).length) { bodyStart = i + 1; break; } else { continue; } }
-    const m = line.match(/^\**\s*(Заголовок|Дата|Категорія|Опис)\s*\**\s*:\s*(.+)$/i);
+    const m = line.match(/^\**\s*(Заголовок|Дата|Категорія|Опис|Зображення)\s*\**\s*:\s*(.+)$/i);
     if (m) {
       fields[keyMap[m[1].toLowerCase()]] = m[2].trim().replace(/\*+$/, '').trim();
       bodyStart = i + 1;
@@ -152,8 +156,11 @@ function normalizeFromHeader_(rawMarkdown, docName) {
     }
   }
 
-  const body = lines.slice(bodyStart).join('\n').trim();
+  let body = linkifyImageUrls_(lines.slice(bodyStart).join('\n').trim());
   let needsReview = false;
+
+  let cover = fields.cover;
+  if (cover && !/^https?:\/\/\S+$/i.test(cover)) { cover = undefined; needsReview = true; } // вказано, але не URL
 
   const today = Utilities.formatDate(new Date(), 'Europe/Kyiv', 'yyyy-MM-dd');
 
@@ -180,7 +187,7 @@ function normalizeFromHeader_(rawMarkdown, docName) {
 
   if (!body) needsReview = true; // порожнє тіло — точно варто перевірити вручну
 
-  const md = buildFrontmatter_(title, date, category, summary, needsReview) + '\n' + body + '\n';
+  const md = buildFrontmatter_(title, date, category, summary, cover, needsReview) + '\n' + body + '\n';
   return { md: md, title: title, date: date };
 }
 
@@ -193,17 +200,33 @@ function excerpt_(text, n) {
   return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim() + '...';
 }
 
-function buildFrontmatter_(title, date, category, summary, draft) {
-  return [
+/**
+ * Рядок, що містить ЛИШЕ посилання на зображення (.jpg/.jpeg/.png/.webp/.gif,
+ * можливо з ?query), перетворюємо на markdown-картинку, щоб вона реально
+ * відобразилась у тілі новини. Автор просто вставляє готове посилання на
+ * фото окремим рядком там, де хоче бачити картинку — жодного markdown
+ * синтаксису знати не треба.
+ */
+function linkifyImageUrls_(body) {
+  return body.split('\n').map(line => {
+    const t = line.trim();
+    if (/^https?:\/\/\S+\.(jpe?g|png|webp|gif)(\?\S*)?$/i.test(t)) return '![](' + t + ')';
+    return line;
+  }).join('\n');
+}
+
+function buildFrontmatter_(title, date, category, summary, cover, draft) {
+  const lines = [
     '---',
     'title: ' + yamlString_(title),
     'date: ' + date,
     'category: ' + category,
-    'summary: ' + yamlString_(summary),
-    'draft: ' + (draft ? 'true' : 'false'),
-    '---',
-    '',
-  ].join('\n');
+  ];
+  if (cover) lines.push('cover: ' + yamlString_(cover));
+  lines.push('summary: ' + yamlString_(summary));
+  lines.push('draft: ' + (draft ? 'true' : 'false'));
+  lines.push('---', '');
+  return lines.join('\n');
 }
 
 function yamlString_(s) {
