@@ -1,9 +1,9 @@
 ---
 // DepartmentCard.astro — один шаблон картки. Множиться по даних, не копіюється руками.
-const { kind, name, desc, tags = [], url = "#", badge } = Astro.props;
+const { kind, name, desc, tags = [], url = "#", badge, type = "dept" } = Astro.props;
 const hasLink = url && url !== "#";
 ---
-<article class="card">
+<article class={`card is-${type}`} data-type={type}>
   {badge && <span class="badge">{badge}</span>}
   <div class="kind">{kind}</div>
   <h3>{name}</h3>
@@ -22,6 +22,10 @@ const hasLink = url && url !== "#";
   .badge{position:absolute;top:18px;right:18px;font-size:.64rem;font-weight:800;letter-spacing:.08em;
     text-transform:uppercase;color:var(--ink);background:var(--signal);padding:5px 10px;border-radius:20px}
   .kind{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--sky);padding-right:110px}
+  .card.is-center{border-left:4px solid var(--primary)}
+  .card.is-center .kind{color:var(--primary)}
+  .card.is-lab{border-left:4px solid var(--deep)}
+  .card.is-lab .kind{color:var(--deep)}
   h3{color:var(--deep);font-size:1.08rem;margin:6px 0 10px}
   p{color:var(--muted);font-size:.9rem;margin:0 0 14px}
   .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
