@@ -43,6 +43,8 @@ table.admin-table{width:100%;border-collapse:collapse;font-size:.92rem}
 .admin-form .counter{font-size:.75rem;color:var(--muted);text-align:right;margin-top:4px}
 .admin-form .cover-preview{max-width:220px;border-radius:var(--radius-sm);margin-top:10px;display:block}
 .admin-form .actions{display:flex;gap:12px;align-items:center;margin-top:8px}
+.admin-form .body-toolbar{margin-bottom:8px}
+.admin-form .body-toolbar .admin-btn{padding:8px 14px;font-size:.85rem}
 
 .admin-alert{padding:12px 16px;border-radius:var(--radius-sm);font-size:.88rem;margin-bottom:16px}
 .admin-alert.error{background:#fdeceb;color:#b3261e}

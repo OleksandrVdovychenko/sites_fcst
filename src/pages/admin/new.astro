@@ -58,6 +58,10 @@ const today = new Date().toISOString().slice(0, 10);
 
       <div>
         <label for="body">Текст новини <span class="hint">markdown</span></label>
+        <div class="body-toolbar">
+          <button type="button" class="admin-btn secondary" id="insertImageBtn">🖼 Вставити зображення</button>
+        </div>
+        <input type="file" id="inlineImageInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none" />
         <textarea id="body" name="body" class="body" required></textarea>
       </div>
 
@@ -81,6 +85,9 @@ const today = new Date().toISOString().slice(0, 10);
     const summaryCount = document.getElementById("summaryCount")!;
     const coverInput = document.getElementById("cover") as HTMLInputElement;
     const coverPreview = document.getElementById("coverPreview") as HTMLImageElement;
+    const bodyTextarea = document.getElementById("body") as HTMLTextAreaElement;
+    const insertImageBtn = document.getElementById("insertImageBtn") as HTMLButtonElement;
+    const inlineImageInput = document.getElementById("inlineImageInput") as HTMLInputElement;
 
     summary.addEventListener("input", () => {
       summaryCount.textContent = String(summary.value.length);
@@ -112,6 +119,49 @@ const today = new Date().toISOString().slice(0, 10);
     function showError(message: string) {
       alertEl.innerHTML = `<div class="admin-alert error">${message}</div>`;
     }
+
+    function insertAtCursor(textarea: HTMLTextAreaElement, text: string) {
+      const start = textarea.selectionStart ?? textarea.value.length;
+      const end = textarea.selectionEnd ?? textarea.value.length;
+      const before = textarea.value.slice(0, start);
+      const after = textarea.value.slice(end);
+      const insertion = (before.length > 0 && !before.endsWith("\n") ? "\n" : "") + text + "\n";
+      textarea.value = before + insertion + after;
+      const cursor = (before + insertion).length;
+      textarea.focus();
+      textarea.setSelectionRange(cursor, cursor);
+    }
+
+    insertImageBtn.addEventListener("click", () => inlineImageInput.click());
+
+    inlineImageInput.addEventListener("change", async () => {
+      const file = inlineImageInput.files?.[0];
+      if (!file) return;
+      alertEl.innerHTML = "";
+      insertImageBtn.disabled = true;
+      insertImageBtn.textContent = "Заливаю…";
+      try {
+        const dataUrl = await readFileAsDataUrl(file);
+        const res = await fetch("/api/news/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ dataUrl, filename: file.name }),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+          showError(err.error || "Не вдалося залити зображення.");
+          return;
+        }
+        const { path } = await res.json();
+        insertAtCursor(bodyTextarea, `![](${path})`);
+      } catch {
+        showError("Мережева помилка під час завантаження зображення.");
+      } finally {
+        insertImageBtn.disabled = false;
+        insertImageBtn.textContent = "🖼 Вставити зображення";
+        inlineImageInput.value = "";
+      }
+    });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();

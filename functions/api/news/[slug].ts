@@ -2,17 +2,11 @@ import type { PagesContext } from "../_lib/types";
 import type { Env } from "../_lib/github";
 import { getFile, putFile, deleteFile, utf8ToBase64 } from "../_lib/github";
 import { parseNews, stringifyNews, type NewsFrontmatter } from "../_lib/frontmatter";
+import { uploadImage } from "../_lib/image";
 import { json, errorResponse } from "../_lib/http";
 
 const NEWS_DIR = "src/content/news";
 const CATEGORIES = ["Новини", "Досягнення", "Події", "Вступ", "Наука"];
-const MAX_COVER_BYTES = 5 * 1024 * 1024;
-const MIME_EXT: Record<string, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-  "image/gif": "gif",
-};
 
 interface UpdateBody {
   title?: string;
@@ -23,12 +17,6 @@ interface UpdateBody {
   body?: string;
   removeCover?: boolean;
   coverImage?: { dataUrl: string } | null;
-}
-
-function decodeDataUrl(dataUrl: string): { mime: string; base64: string } | null {
-  const m = dataUrl.match(/^data:([^;]+);base64,(.+)$/s);
-  if (!m) return null;
-  return { mime: m[1], base64: m[2] };
 }
 
 export const onRequestGet = async (context: PagesContext<Env>): Promise<Response> => {
@@ -70,23 +58,15 @@ export const onRequestPut = async (context: PagesContext<Env>): Promise<Response
   if (update.removeCover) {
     cover = undefined;
   } else if (update.coverImage?.dataUrl) {
-    const decoded = decodeDataUrl(update.coverImage.dataUrl);
-    if (!decoded) return errorResponse(400, "Некоректний формат зображення обкладинки.");
-    const ext = MIME_EXT[decoded.mime];
-    if (!ext) return errorResponse(400, "Обкладинка має бути jpeg, png, webp або gif.");
-    const approxBytes = (decoded.base64.length * 3) / 4;
-    if (approxBytes > MAX_COVER_BYTES) return errorResponse(413, "Обкладинка завелика (максимум 5 МБ).");
-    const imagePath = `public/news/${slug}.${ext}`;
-    const existingImage = await getFile(context.env, imagePath);
     const email = String(context.data.userEmail ?? "адмінка");
-    await putFile(
+    const result = await uploadImage(
       context.env,
-      imagePath,
-      decoded.base64,
-      `новини: оновити обкладинку «${title}» (${email})`,
-      existingImage?.sha
+      update.coverImage.dataUrl,
+      `public/news/${slug}`,
+      `новини: оновити обкладинку «${title}» (${email})`
     );
-    cover = `/news/${slug}.${ext}`;
+    if (!result.ok) return errorResponse(result.status, result.message);
+    cover = result.path;
   }
 
   const frontmatter: NewsFrontmatter = { title, date, category, cover, summary, draft: Boolean(update.draft) };
