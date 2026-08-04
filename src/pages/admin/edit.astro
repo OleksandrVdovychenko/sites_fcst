@@ -1,0 +1,220 @@
+---
+// /admin/edit/?slug=... — редагування новини. Слаг (імʼя файлу) незмінний
+// після створення, щоб не ламати посилання /news/<slug>/.
+import "../../styles/tokens.css";
+import "../../styles/admin.css";
+---
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Редагування новини · Адмінка ФКНТ</title>
+</head>
+<body>
+  <div class="admin-wrap">
+    <header class="admin-header">
+      <h1>Редагування новини</h1>
+      <span class="who"><a href="/admin/">← До списку</a></span>
+    </header>
+
+    <div id="alert"></div>
+
+    <form class="admin-form" id="form" style="display:none">
+      <div>
+        <label for="title">Заголовок</label>
+        <input type="text" id="title" name="title" required maxlength="90" />
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="date">Дата</label>
+          <input type="date" id="date" name="date" required />
+        </div>
+        <div>
+          <label for="category">Категорія</label>
+          <select id="category" name="category" required>
+            <option>Новини</option>
+            <option>Досягнення</option>
+            <option>Події</option>
+            <option>Вступ</option>
+            <option>Наука</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="summary">Короткий опис <span class="hint">до 240 символів</span></label>
+        <textarea id="summary" name="summary" rows="2" maxlength="240" required></textarea>
+        <div class="counter"><span id="summaryCount">0</span>/240</div>
+      </div>
+
+      <div>
+        <label>Обкладинка</label>
+        <img id="currentCover" class="cover-preview" style="display:none" alt="" />
+        <div class="check" style="margin-top:8px">
+          <input type="checkbox" id="removeCover" />
+          <label for="removeCover">Прибрати обкладинку</label>
+        </div>
+        <input type="file" id="cover" name="cover" accept="image/jpeg,image/png,image/webp,image/gif" style="margin-top:10px" />
+        <img id="coverPreview" class="cover-preview" style="display:none" alt="" />
+      </div>
+
+      <div>
+        <label for="body">Текст новини <span class="hint">markdown</span></label>
+        <textarea id="body" name="body" class="body" required></textarea>
+      </div>
+
+      <div class="check">
+        <input type="checkbox" id="draft" name="draft" />
+        <label for="draft">Чернетка (не показувати на сайті)</label>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="admin-btn" id="submitBtn">Зберегти</button>
+        <button type="button" class="admin-btn danger" id="deleteBtn">Видалити новину</button>
+        <span class="hint">Сайт перебілдовується за секунди-хвилину після збереження</span>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get("slug");
+
+    const alertEl = document.getElementById("alert")!;
+    const form = document.getElementById("form") as HTMLFormElement;
+    const submitBtn = document.getElementById("submitBtn") as HTMLButtonElement;
+    const deleteBtn = document.getElementById("deleteBtn") as HTMLButtonElement;
+    const summary = document.getElementById("summary") as HTMLTextAreaElement;
+    const summaryCount = document.getElementById("summaryCount")!;
+    const coverInput = document.getElementById("cover") as HTMLInputElement;
+    const coverPreview = document.getElementById("coverPreview") as HTMLImageElement;
+    const currentCover = document.getElementById("currentCover") as HTMLImageElement;
+    const removeCoverBox = document.getElementById("removeCover") as HTMLInputElement;
+
+    function showError(message: string) {
+      alertEl.innerHTML = `<div class="admin-alert error">${message}</div>`;
+    }
+
+    if (!slug) {
+      showError("Не вказано слаг новини.");
+    } else {
+      load();
+    }
+
+    async function load() {
+      try {
+        const res = await fetch(`/api/news/${encodeURIComponent(slug!)}`);
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+          showError(err.error || "Не вдалося завантажити новину.");
+          return;
+        }
+        const item = await res.json();
+        (document.getElementById("title") as HTMLInputElement).value = item.title ?? "";
+        (document.getElementById("date") as HTMLInputElement).value = item.date ?? "";
+        (document.getElementById("category") as HTMLSelectElement).value = item.category ?? "Новини";
+        summary.value = item.summary ?? "";
+        summaryCount.textContent = String(summary.value.length);
+        (document.getElementById("body") as HTMLTextAreaElement).value = item.body ?? "";
+        (document.getElementById("draft") as HTMLInputElement).checked = Boolean(item.draft);
+        if (item.cover) {
+          currentCover.src = item.cover;
+          currentCover.style.display = "block";
+        }
+        form.style.display = "grid";
+      } catch {
+        showError("Мережева помилка під час завантаження новини.");
+      }
+    }
+
+    summary.addEventListener("input", () => {
+      summaryCount.textContent = String(summary.value.length);
+    });
+
+    coverInput.addEventListener("change", () => {
+      const file = coverInput.files?.[0];
+      if (!file) {
+        coverPreview.style.display = "none";
+        return;
+      }
+      removeCoverBox.checked = false;
+      const reader = new FileReader();
+      reader.onload = () => {
+        coverPreview.src = String(reader.result);
+        coverPreview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function readFileAsDataUrl(file: File): Promise<string> {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      alertEl.innerHTML = "";
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Зберігаю…";
+      try {
+        const data = new FormData(form);
+        const payload: Record<string, unknown> = {
+          title: data.get("title"),
+          date: data.get("date"),
+          category: data.get("category"),
+          summary: data.get("summary"),
+          body: data.get("body"),
+          draft: (document.getElementById("draft") as HTMLInputElement).checked,
+        };
+        const file = coverInput.files?.[0];
+        if (file) {
+          payload.coverImage = { dataUrl: await readFileAsDataUrl(file) };
+        } else if (removeCoverBox.checked) {
+          payload.removeCover = true;
+        }
+        const res = await fetch(`/api/news/${encodeURIComponent(slug!)}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+          showError(err.error || "Не вдалося зберегти зміни.");
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Зберегти";
+          return;
+        }
+        window.location.href = "/admin/";
+      } catch {
+        showError("Мережева помилка під час збереження.");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Зберегти";
+      }
+    });
+
+    deleteBtn.addEventListener("click", async () => {
+      if (!confirm(`Видалити новину «${slug}»? Дію не можна скасувати.`)) return;
+      deleteBtn.disabled = true;
+      try {
+        const res = await fetch(`/api/news/${encodeURIComponent(slug!)}`, { method: "DELETE" });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+          showError(err.error || "Не вдалося видалити новину.");
+          deleteBtn.disabled = false;
+          return;
+        }
+        window.location.href = "/admin/";
+      } catch {
+        showError("Мережева помилка під час видалення.");
+        deleteBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

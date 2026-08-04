@@ -1,0 +1,117 @@
+---
+// /admin/ — список новин. Доступ лише через Cloudflare Access (див. ADMIN-SETUP.md).
+// Дані живі: тягнуться клієнтським JS з /api/news, не з колекції на білді.
+import "../../styles/tokens.css";
+import "../../styles/admin.css";
+---
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Адмінка новин · ФКНТ</title>
+</head>
+<body>
+  <div class="admin-wrap">
+    <header class="admin-header">
+      <h1>Адмінка новин ФКНТ</h1>
+      <span class="who" id="who">
+        <a href="/cdn-cgi/access/logout">Вийти</a>
+      </span>
+    </header>
+
+    <div id="alert"></div>
+
+    <div class="admin-toolbar">
+      <span class="who">Зміни публікуються напряму — сайт перебілдовується за секунди-хвилину.</span>
+      <a class="admin-btn" href="/admin/new/">+ Нова новина</a>
+    </div>
+
+    <div id="content">Завантаження…</div>
+  </div>
+
+  <script>
+    const alertEl = document.getElementById("alert")!;
+    const contentEl = document.getElementById("content")!;
+
+    function showError(message: string) {
+      alertEl.innerHTML = `<div class="admin-alert error">${message}</div>`;
+    }
+
+    function fmtDate(d: string) {
+      if (!d) return "—";
+      const dt = new Date(d);
+      if (Number.isNaN(dt.valueOf())) return d;
+      return dt.toLocaleDateString("uk-UA", { day: "numeric", month: "short", year: "numeric" });
+    }
+
+    async function load() {
+      try {
+        const res = await fetch("/api/news");
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+          showError(err.error || `Не вдалося завантажити список (HTTP ${res.status}).`);
+          contentEl.innerHTML = "";
+          return;
+        }
+        const { items } = await res.json();
+        if (!items.length) {
+          contentEl.innerHTML = `<div class="admin-empty">Новин ще немає. Натисни «+ Нова новина».</div>`;
+          return;
+        }
+        const rows = items
+          .map(
+            (it: any) => `
+          <tr data-slug="${it.slug}">
+            <td>${fmtDate(it.date)}</td>
+            <td>${it.category}</td>
+            <td><a class="edit-link" href="/admin/edit/?slug=${encodeURIComponent(it.slug)}">${escapeHtml(it.title)}</a></td>
+            <td>${it.draft ? '<span class="badge draft">Чернетка</span>' : '<span class="badge published">Опубліковано</span>'}</td>
+            <td class="actions">
+              <a class="admin-btn secondary" href="/admin/edit/?slug=${encodeURIComponent(it.slug)}">Редагувати</a>
+              <button class="admin-btn danger" data-del="${it.slug}">Видалити</button>
+            </td>
+          </tr>`
+          )
+          .join("");
+        contentEl.innerHTML = `
+          <table class="admin-table">
+            <thead><tr><th>Дата</th><th>Категорія</th><th>Заголовок</th><th>Статус</th><th></th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>`;
+        contentEl.querySelectorAll<HTMLButtonElement>("[data-del]").forEach((btn) => {
+          btn.addEventListener("click", () => onDelete(btn.dataset.del!, btn));
+        });
+      } catch (e) {
+        showError("Мережева помилка під час завантаження списку.");
+      }
+    }
+
+    function escapeHtml(s: string) {
+      const div = document.createElement("div");
+      div.textContent = s;
+      return div.innerHTML;
+    }
+
+    async function onDelete(slug: string, btn: HTMLButtonElement) {
+      if (!confirm(`Видалити новину «${slug}»? Дію не можна скасувати.`)) return;
+      btn.disabled = true;
+      try {
+        const res = await fetch(`/api/news/${encodeURIComponent(slug)}`, { method: "DELETE" });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+          showError(err.error || "Не вдалося видалити новину.");
+          btn.disabled = false;
+          return;
+        }
+        await load();
+      } catch {
+        showError("Мережева помилка під час видалення.");
+        btn.disabled = false;
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>

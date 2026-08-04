@@ -46,9 +46,15 @@ npm run build    # збірка в ./dist — готові статичні фа
 
 Автопублікація без рев'ю для офіційного сайту факультету свідомо **не** робиться.
 
+## Мікроадмінка новин
+`/admin/` — власна легка адмінка (`src/pages/admin/` + `functions/api/news/`,
+Cloudflare Pages Functions) для нетехнічних редакторів: логін через Cloudflare
+Access (`@kai.edu.ua`), список/створення/редагування/видалення новин, коміт
+напряму в `main` через GitHub API. Разове налаштування — `ADMIN-SETUP.md`.
+Є ще один незалежний канал публікації — Google Docs-конвеєр, `NEWS-PIPELINE.md`.
+
 ## Наступні кроки (для агента чи розробника)
 - `src/data/nav.json` + компонент `<Nav>` з повним мега-меню (замість спрощеного в Base).
-- Сторінка статті `src/pages/news/[...slug].astro` + пагінація стрічки.
+- Пагінація стрічки новин.
 - RSS через `@astrojs/rss`, `sitemap` через `@astrojs/sitemap`.
 - Редиректи зі старих кирилічних URL (`_redirects` для Cloudflare) — щоб зберегти SEO.
-- Headless-адмінка (Sanity/Directus) або Google Docs-конвеєр — якщо редактори не хочуть навіть PR.
