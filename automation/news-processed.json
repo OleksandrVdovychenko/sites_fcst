@@ -1,4 +1,6 @@
 {
-  "_comment": "docId (Google Drive) -> опублікований slug. Читається/оновлюється автоматизацією новин, щоб не публікувати той самий документ двічі.",
-  "processed": {}
+  "_comment": "docId (Google Drive) -> опублікований slug. Оновлюється automation/publish-news.gs.",
+  "processed": {
+    "1C1WS28u9zIQTDZhU-mAlgMk1JcMIdkJ6nUiVNDk1Pko": "2026-08-novyi-sait-fakultetu-stvoreno-na-100-bez-ruchnykh-pr"
+  }
 }
