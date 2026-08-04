@@ -1,5 +1,5 @@
 ---
-title: "Картинки прямо в тексті новини — без WYSIWYG-редактора My ChANGE"
+title: "Картинки прямо в тексті новини — без WYSIWYG-редактора"
 date: 2026-08-04
 category: "Новини"
 cover: "/news/inline-mservsp6-aboutfcstnew.png"
