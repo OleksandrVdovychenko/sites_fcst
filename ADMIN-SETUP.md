@@ -5,10 +5,14 @@ Google-акаунтом `@kai.edu.ua` через Cloudflare Access, бачить
 форми «Нова новина» / «Редагувати». Жодного Git, GitHub-акаунта чи коду з
 боку редактора.
 
-**Доступ — лише вибрані люди, не весь домен.** І політика Access у дашборді
-(крок 3), і серверна перевірка (`functions/api/_middleware.ts`) звіряють
-конкретний список email, а не весь `@kai.edu.ua`. Додати/прибрати редактора =
-оновити список у двох місцях (Access policy + `ALLOWED_EMAILS`).
+**Доступ — лише вибрані люди, не весь домен, і керується з одного місця.**
+Cloudflare Access-політика в дашборді лише вимагає «увійти через Google» —
+вона навмисно **не** містить списку email і її більше не треба чіпати.
+Хто саме після цього має доступ, вирішує `ALLOWED_EMAILS` — змінна
+середовища в Cloudflare Pages, звіряється кодом (`functions/_lib/access.ts`)
+і для сторінок (`functions/admin/_middleware.ts`), і для API
+(`functions/api/_middleware.ts`). Додати/прибрати редактора = змінити один
+рядок в `ALLOWED_EMAILS` і задеплоїти — жодних правок у Zero Trust дашборді.
 
 Це заміна раніше запланованого Sveltia CMS (`public/admin/`) — власна легка
 адмінка без окремого OAuth Worker, бо авторизацію повністю бере на себе
@@ -19,8 +23,12 @@ Cloudflare Access.
 - `src/pages/admin/new.astro`, `src/pages/admin/edit.astro` — форми створення/редагування.
 - `functions/api/news/index.ts` — `GET` список, `POST` створення.
 - `functions/api/news/[slug].ts` — `GET`/`PUT`/`DELETE` однієї новини.
-- `functions/api/_middleware.ts` — захист `/api/*` на рівні коду (додатково до Access).
-- `functions/api/_lib/` — GitHub Contents API, фронтматтер, слаги.
+- `functions/api/news/upload.ts` — заливка картинки для вставки в тіло новини.
+- `functions/_lib/access.ts` — єдина перевірка доступу (`ALLOWED_EMAILS` +
+  заголовок від Cloudflare Access), викликається з обох middleware нижче.
+- `functions/admin/_middleware.ts` — захист сторінок `/admin/*`.
+- `functions/api/_middleware.ts` — захист `/api/*`.
+- `functions/api/_lib/` — GitHub Contents API, фронтматтер, слаги, заливка зображень.
 
 ## Як це працює
 Функції комітять `.md`-файл (і, якщо є, обкладинку в `public/news/`) **напряму
@@ -44,7 +52,7 @@ GitHub-коміту з його email у повідомленні. Після к
      створити її в GitHub від `main`) — щоб тестові коміти не потрапляли
      у прод-контент.
    - Додатково додати `SKIP_ACCESS_CHECK` = `true` — вимикає перевірку
-     заголовка Cloudflare Access у `functions/api/_middleware.ts`, `/admin/`
+     заголовка Cloudflare Access у `functions/_lib/access.ts`, `/admin/`
      і `/api/news` стають відкритими без логіну.
 2. **Не** налаштовувати Cloudflare Access на цьому кроці — саме це і
    пропускаємо для першого прогону.
@@ -72,39 +80,50 @@ GitHub-коміту з його email у повідомленні. Після к
 Проєкт Pages → **Settings → Environment variables** (Production, і за бажанням Preview):
 - `GITHUB_TOKEN` — токен із кроку 1, **зашифрувати** (Encrypt).
 - `GITHUB_REPO` — `власник/репозиторій` (напр. `OleksandrVdovychenko/sites_fcst`).
-- `BASE_BRANCH` — `main`.
-- `ALLOWED_EMAILS` — через кому, точний список редакторів, напр.
-  `dekan@kai.edu.ua, red1@kai.edu.ua, red2@kai.edu.ua` — має **збігатися**
-  зі списком email у Access policy (крок 3.5). Це друга лінія захисту:
-  навіть якщо політику в дашборді хтось випадково послабить до всього
-  домену, Function усе одно відхилить чужий email.
+- `BASE_BRANCH` — `main` (після тестового прогону перевести назад із тестової гілки).
+- `ALLOWED_EMAILS` — через кому, точний список редакторів, **єдине місце**,
+  де він живе. **Поточний стан:** лише `oleksandr.vdovychenko@kai.edu.ua` —
+  особистий gmail-акаунт власника (`alexandr.vdovichenko1986@gmail.com`)
+  **навмисно не в списку**, доступу до адмінки не має. Cloudflare Access
+  policy (крок 3) при цьому лишається generic і не містить email — не
+  синхронізуй її з цим списком, вона просто вимагає вхід через Google.
+- Прибрати `SKIP_ACCESS_CHECK`, якщо лишався від тестового прогону.
 
 Після додавання змінних — новий деплой (Retry deployment), щоб Functions їх підхопили.
 
-### 3. Cloudflare Access — хто може заходити на /admin/
+### 3. Cloudflare Access — вимога увійти через Google (generic, без списку email)
 Потрібен план Cloudflare із **Zero Trust / Access** (є в безкоштовному тарифі
-до 50 користувачів).
+до 50 користувачів). Ця політика навмисно **не** вирішує, хто саме має
+доступ — лише змушує пройти Google-логін. Список редакторів — виключно в
+`ALLOWED_EMAILS` (крок 2), і саме його треба міняти, коли додаєш/прибираєш
+людину, а не цю політику.
 1. **Zero Trust dashboard** → **Access → Applications** → **Add an application** → **Self-hosted**.
-2. Domain: `fcst.kai.edu.ua`, Path: `/admin*`.
+2. Domain: **поточно `sites-fcst.pages.dev`** (кастомний домен `fcst.kai.edu.ua`
+   ще не переключений на новий сайт, там і досі старий WordPress — коли
+   переключите, додайте його в цю ж політику як другий домен). Path: `/admin*`.
 3. Додати другий Application тим самим способом для Path `/api/*` (або один
    Application із двома шляхами — залежно від версії дашборду), інакше
    `/api/news` лишиться доступним без логіну в обхід форми.
 4. **Identity providers** → підключити **Google** (якщо ще не підключено:
    Zero Trust → Settings → Authentication → Add → Google, OAuth-клієнт із
-   Google Cloud Console з дозволеним доменом `kai.edu.ua`).
-5. **Policies**: Allow, Include → **Emails** (конкретний список, **не**
-   «Emails ending in» домену) — уписати точні адреси редакторів, ті самі,
-   що в `ALLOWED_EMAILS` вище. Домен `@kai.edu.ua` лише підказує, з якого
-   Google Workspace ці акаунти, доступ дає не сам домен, а явний список.
+   Google Cloud Console, App published в Production — верифікація для
+   базових scope не потрібна).
+5. **Policies**: Allow, Include → **Login Methods** → **Google** — без
+   правила на `Emails`. Будь-хто, хто зможе увійти через Google, пройде цю
+   політику; фактичний фільтр — `ALLOWED_EMAILS` у Function.
 6. Зберегти. Перевірити: відкрити `/admin/` у приватному вікні — має
-   зʼявитись сторінка логіну Cloudflare з кнопкою Google, і вхід під
-   акаунтом поза списком має бути відхилений.
+   зʼявитись сторінка логіну Cloudflare з кнопкою Google.
 
 ### 4. Перевірка
-1. Залогінитись на `/admin/` під `@kai.edu.ua`.
-2. Створити тестову новину з чернеткою (`draft: true`) — переконатись, що
-   з'явився коміт у GitHub і деплой у Cloudflare Pages.
-3. Видалити тестову новину через адмінку.
+1. Залогінитись на `/admin/` під `oleksandr.vdovychenko@kai.edu.ua` — має пустити.
+2. Спробувати залогінитись під особистим gmail-акаунтом — Access пропустить
+   логін (політика generic), але `functions/admin/_middleware.ts` має
+   відповісти 401 і не показати саму сторінку — це і є фактичний фільтр.
+3. Створити тестову новину з чернеткою (`draft: true`) на `main` — переконатись,
+   що з'явився коміт у GitHub і деплой у Cloudflare Pages.
+4. Видалити тестову новину через адмінку.
+5. Видалити тестову гілку (`admin-pipeline-test` чи як вона названа), якщо
+   лишилась від прогону в попередньому розділі.
 
 ## Чесні застереження
 - **Без рецензії перед публікацією** (як і в Docs-конвеєрі) — свідомий вибір
@@ -124,7 +143,8 @@ GitHub-коміту з його email у повідомленні. Після к
 ## Безпека — коротко
 - `GITHUB_TOKEN` — лише в Cloudflare Pages env vars (encrypted), ніколи в репо.
 - Токен — fine-grained, лише цей репозиторій, лише `contents:write`.
-- Реальна брама — Cloudflare Access policy на `/admin/*` і `/api/*` зі
-  списком конкретних email (не весь домен); `functions/api/_middleware.ts` +
-  `ALLOWED_EMAILS` — друга лінія захисту на рівні коду з тим самим списком.
+- Cloudflare Access — вимагає автентифікацію (хтось увійшов через Google) на
+  `/admin/*` і `/api/*`, без списку email. **Авторизація** (хто саме) —
+  повністю в `ALLOWED_EMAILS`, звіряється кодом на обох шляхах
+  (`functions/_lib/access.ts`). Один список, одне місце для змін.
 - 2FA на GitHub-акаунті власника токена.

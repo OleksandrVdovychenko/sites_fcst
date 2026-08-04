@@ -1,4 +1,4 @@
-import type { PagesContext } from "../_lib/types";
+import type { PagesContext } from "../../_lib/types";
 import type { Env } from "../_lib/github";
 import { getFile, listDir, putFile, utf8ToBase64 } from "../_lib/github";
 import { parseNews, stringifyNews, type NewsFrontmatter } from "../_lib/frontmatter";

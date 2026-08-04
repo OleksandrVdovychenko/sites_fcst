@@ -1,7 +1,7 @@
 // POST /api/news/upload — заливає одне зображення в public/news/ і повертає
 // публічний шлях, щоб редактор міг вставити ![](шлях) будь-де в тексті
 // новини, не покидаючи звичайне markdown-поле (без rich-text редактора).
-import type { PagesContext } from "../_lib/types";
+import type { PagesContext } from "../../_lib/types";
 import type { Env } from "../_lib/github";
 import { uploadImage } from "../_lib/image";
 import { slugify } from "../_lib/slug";

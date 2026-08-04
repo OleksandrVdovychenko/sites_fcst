@@ -6,7 +6,7 @@ export interface Env {
   GITHUB_TOKEN: string;
   GITHUB_REPO: string; // "власник/репозиторій"
   BASE_BRANCH: string; // напр. "main"
-  ALLOWED_EMAILS?: string; // список через кому — див. functions/api/_middleware.ts
+  ALLOWED_EMAILS?: string; // список через кому — див. functions/_lib/access.ts
   SKIP_ACCESS_CHECK?: string; // "true" лише для тестового прогону, див. ADMIN-SETUP.md
 }
 
