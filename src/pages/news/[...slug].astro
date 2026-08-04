@@ -46,12 +46,39 @@ const { Content } = await post.render();
   .cover{width:100%;border-radius:var(--radius);margin-bottom:32px}
 
   .body{color:#2b3252;font-size:1.02rem;line-height:1.7}
+
+  .back{display:inline-block;margin-top:36px;font-weight:800;color:var(--primary)}
+</style>
+
+{/* Markdown з <Content /> рендериться поза scope цієї сторінки — Astro не
+    проставляє data-astro-cid дітям колекції, тому правила для вмісту статті
+    мають бути глобальними (звужені префіксом .body, щоб не протікати далі). */}
+<style is:global>
   .body h2{color:var(--deep);font-size:1.35rem;margin:32px 0 14px}
+  .body h3{color:var(--deep);font-size:1.1rem;margin:26px 0 10px}
   .body p{margin:0 0 18px}
+  .body a{color:var(--primary);text-decoration:underline;text-underline-offset:2px}
+  .body a:hover{color:var(--sky)}
+  .body strong{color:var(--deep)}
   .body blockquote{margin:24px 0;padding:16px 20px;border-left:4px solid var(--signal);
     background:var(--tint);color:#404869;font-style:italic;border-radius:0 8px 8px 0}
   .body ul,.body ol{margin:0 0 18px;padding-left:22px}
+  .body li{margin:4px 0}
+  .body li > ul,.body li > ol{margin:6px 0 0}
   .body img{max-width:100%;border-radius:var(--radius);margin:8px 0 18px;display:block}
+  .body hr{border:none;border-top:1px solid var(--line);margin:32px 0}
 
-  .back{display:inline-block;margin-top:36px;font-weight:800;color:var(--primary)}
+  .body :not(pre) > code{background:var(--tint);color:var(--primary);padding:.15em .4em;
+    border-radius:5px;font-size:.88em;font-family:ui-monospace,Consolas,monospace}
+  .body pre{margin:0 0 20px;padding:18px 20px;border-radius:var(--radius-sm);overflow-x:auto;
+    font-size:.85rem;line-height:1.6}
+  .body pre code{font-family:ui-monospace,Consolas,monospace}
+
+  .body table{width:100%;border-collapse:collapse;margin:0 0 22px;font-size:.92rem;display:block;overflow-x:auto}
+  .body th,.body td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line)}
+  .body th{color:var(--deep);background:var(--tint);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+
+  .body ul.contains-task-list{list-style:none;padding-left:0}
+  .body li.task-list-item{display:flex;align-items:baseline;gap:8px}
+  .body li.task-list-item input{margin:0;accent-color:var(--signal)}
 </style>
