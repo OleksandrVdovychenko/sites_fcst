@@ -4,6 +4,11 @@
 import Base from "../../layouts/Base.astro";
 import DepartmentCard from "../../components/DepartmentCard.astro";
 import departments from "../../data/departments.json";
+
+const deptCount = departments.filter((d) => d.type === "dept").length;
+const labCenterCount =
+  departments.filter((d) => d.type === "lab" || d.type === "center").length +
+  departments.reduce((sum, d) => sum + (d.labs?.length ?? 0), 0);
 ---
 <Base title="Кафедри та лабораторії · ФКНТ">
   <section class="wrap page">
@@ -12,6 +17,15 @@ import departments from "../../data/departments.json";
     </nav>
     <h1 class="display">Кафедри та лабораторії</h1>
     <p class="lead">Дев'ять профільних кафедр, навчальний центр і науково-дослідна лабораторія.</p>
+
+    <div class="structure">
+      <span class="node">Деканат</span>
+      <span class="arrow">→</span>
+      <span class="node">{deptCount} кафедр</span>
+      <span class="arrow">→</span>
+      <span class="node">{labCenterCount} лабораторій і центрів</span>
+      <a class="lnk" href="/faculty/team/">Команда деканату →</a>
+    </div>
 
     <div class="filters" role="tablist" aria-label="Тип підрозділу">
       <button type="button" role="tab" aria-selected="true" data-filter="all">Усі підрозділи</button>
@@ -32,6 +46,13 @@ import departments from "../../data/departments.json";
   .crumbs a:hover{color:var(--primary)}
   h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem)}
   .lead{color:var(--muted);font-size:1.05rem;margin:14px 0 28px;max-width:52ch}
+
+  .structure{display:flex;align-items:center;flex-wrap:wrap;gap:10px;background:var(--tint);
+    border-radius:var(--radius-sm);padding:16px 20px;margin-bottom:24px}
+  .structure .node{font-weight:800;color:var(--deep);font-size:.94rem}
+  .structure .arrow{color:var(--muted)}
+  .structure .lnk{margin-left:auto;font-weight:800;font-size:.88rem;color:var(--primary);white-space:nowrap}
+  @media(max-width:560px){.structure .lnk{margin-left:0}}
 
   .filters{display:inline-flex;gap:6px;background:var(--tint);padding:6px;border-radius:12px;margin-bottom:28px;flex-wrap:wrap}
   .filters button{font:inherit;font-weight:800;font-size:.88rem;padding:9px 18px;border:0;background:none;

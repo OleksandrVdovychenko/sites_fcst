@@ -1,16 +1,23 @@
 ---
 // DepartmentCard.astro — один шаблон картки. Множиться по даних, не копіюється руками.
-const { kind, name, desc, tags = [], url = "#", badge, type = "dept" } = Astro.props;
+const { kind, name, desc, tags = [], url = "#", badge, type = "dept", labs = [] } = Astro.props;
 const hasLink = url && url !== "#";
 ---
 <article class={`card is-${type}`} data-type={type}>
   {badge && <span class="badge">{badge}</span>}
   <div class="kind">{kind}</div>
   <h3>{name}</h3>
-  <p>{desc}</p>
-  <div class="tags">
-    {tags.map((t) => <span>{t}</span>)}
-  </div>
+  {desc && <p>{desc}</p>}
+  {tags.length > 0 && (
+    <div class="tags">
+      {tags.map((t) => <span>{t}</span>)}
+    </div>
+  )}
+  {labs.length > 0 && (
+    <ul class="labs">
+      {labs.map((lab) => <li>{lab.name}</li>)}
+    </ul>
+  )}
   {hasLink && <a class="lnk" href={url} target="_blank" rel="noopener">Детальніше →</a>}
 </article>
 
@@ -31,5 +38,9 @@ const hasLink = url && url !== "#";
   .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
   .tags span{font-size:.7rem;font-weight:700;color:#39406a;background:var(--tint);
     border:1px solid var(--line);padding:4px 9px;border-radius:20px}
+  .labs{list-style:none;margin:0 0 16px;padding:10px 0 0;border-top:1px dashed var(--line);
+    display:flex;flex-direction:column;gap:6px}
+  .labs li{font-size:.82rem;color:#39406a;padding-left:16px;position:relative}
+  .labs li::before{content:"";position:absolute;left:0;top:.5em;width:5px;height:5px;border-radius:50%;background:var(--sky)}
   .lnk{margin-top:auto;font-weight:800;font-size:.86rem;color:var(--primary)}
 </style>
