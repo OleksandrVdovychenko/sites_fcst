@@ -37,6 +37,11 @@ const hasLink = (url) => url && url !== "#";
     <div class="row">
       <button type="button" class="row-head toggle">
         <span class="chev" aria-hidden="true"></span>
+        {d.logo && (
+          <span class="logo-box">
+            <img src={d.logo} alt="" loading="lazy" />
+          </span>
+        )}
         <span class="row-title">
           <span class="kind">Кафедра</span>
           <h3>{d.name}</h3>
@@ -83,6 +88,10 @@ const hasLink = (url) => url && url !== "#";
   .chev{flex:none;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);
     transform:rotate(-45deg);transition:transform .2s}
   .row-head.is-open .chev{transform:rotate(45deg)}
+
+  .logo-box{flex:none;width:40px;height:40px;border-radius:var(--radius-sm);border:1px solid var(--line);
+    background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .logo-box img{max-width:100%;max-height:100%;object-fit:contain}
 
   .row-title{flex:1;min-width:0}
   .kind{display:block;font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--sky)}
