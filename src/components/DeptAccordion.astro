@@ -1,0 +1,124 @@
+---
+// DeptAccordion.astro — структура факультету як розгортний список:
+// Деканат (+ прямо підпорядковані лабораторії/центри) зверху, далі кожна
+// кафедра розкривається й показує власні лабораторії. Заміна фільтрованої
+// сітки карток — та губила ієрархію (лабораторія кафедри виглядала так
+// само, як самостійна).
+const { departments } = Astro.props;
+
+const decanateUnits = departments.filter((d) => d.type === "lab" || d.type === "center");
+const depts = departments.filter((d) => d.type === "dept");
+
+const hasLink = (url) => url && url !== "#";
+---
+<div class="accordion">
+  <div class="row">
+    <div class="row-head is-static">
+      <span class="row-title">
+        <span class="kind">Деканат</span>
+        <h3>Декан, заступники декана, фахівці деканату</h3>
+      </span>
+      <a class="lnk" href="/faculty/team/">Команда →</a>
+    </div>
+    <ul class="units">
+      {decanateUnits.map((u) => (
+        <li>
+          {hasLink(u.url) ? (
+            <a href={u.url} target="_blank" rel="noopener">{u.kind} {u.name}</a>
+          ) : (
+            <span>{u.kind} {u.name}</span>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  {depts.map((d) => (
+    <div class="row">
+      <button type="button" class="row-head toggle">
+        <span class="chev" aria-hidden="true"></span>
+        <span class="row-title">
+          <span class="kind">Кафедра</span>
+          <h3>{d.name}</h3>
+        </span>
+        {d.badge && <span class="badge">{d.badge}</span>}
+        {d.labs?.length > 0 && <span class="count">{d.labs.length} лаб.</span>}
+      </button>
+      <div class="acc-panel">
+        <div class="acc-panel-inner">
+          {d.desc && <p class="desc">{d.desc}</p>}
+          {d.tags?.length > 0 && (
+            <div class="tags">{d.tags.map((t) => <span>{t}</span>)}</div>
+          )}
+          {d.labs?.length > 0 && (
+            <ul class="labs">
+              {d.labs.map((lab) => (
+                <li>
+                  {hasLink(lab.url) ? (
+                    <a href={lab.url} target="_blank" rel="noopener">{lab.name}</a>
+                  ) : (
+                    <span>{lab.name}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+          {hasLink(d.url) && <a class="lnk" href={d.url} target="_blank" rel="noopener">Сайт кафедри →</a>}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .accordion{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
+  .row{border-top:1px solid var(--line)}
+  .row:first-child{border-top:none}
+
+  .row-head{width:100%;display:flex;align-items:center;gap:14px;padding:18px 22px;
+    background:none;border:0;font:inherit;text-align:left;cursor:pointer}
+  .row-head.is-static{cursor:default;background:var(--tint)}
+  .row-head:not(.is-static):hover{background:var(--tint)}
+
+  .chev{flex:none;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);
+    transform:rotate(-45deg);transition:transform .2s}
+  .row-head.is-open .chev{transform:rotate(45deg)}
+
+  .row-title{flex:1;min-width:0}
+  .kind{display:block;font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--sky)}
+  .row-title h3{color:var(--deep);font-size:1rem;font-weight:800;margin:4px 0 0}
+  .row-head.is-static .row-title h3{font-size:.94rem;font-weight:700}
+
+  .badge{font-size:.64rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);
+    background:var(--signal);padding:5px 10px;border-radius:20px;white-space:nowrap}
+  .count{font-size:.78rem;font-weight:700;color:var(--muted);white-space:nowrap}
+  .lnk{font-weight:800;font-size:.86rem;color:var(--primary);white-space:nowrap}
+
+  .units{list-style:none;margin:0;padding:14px 22px 20px 22px;display:flex;flex-direction:column;gap:8px;background:var(--tint)}
+  .units li{font-size:.86rem;color:#39406a;padding-left:16px;position:relative}
+  .units li::before{content:"";position:absolute;left:0;top:.55em;width:5px;height:5px;border-radius:50%;background:var(--sky)}
+  .units a{color:var(--primary)}
+
+  .acc-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}
+  .acc-panel.is-open{grid-template-rows:1fr}
+  .acc-panel-inner{overflow:hidden}
+  .acc-panel .desc{color:var(--muted);font-size:.92rem;margin:0 22px 14px;max-width:70ch}
+  .acc-panel .tags{display:flex;flex-wrap:wrap;gap:6px;margin:0 22px 14px}
+  .acc-panel .tags span{font-size:.7rem;font-weight:700;color:#39406a;background:var(--tint);
+    border:1px solid var(--line);padding:4px 9px;border-radius:20px}
+  .acc-panel .labs{list-style:none;margin:0 22px 14px;padding:0;display:flex;flex-direction:column;gap:7px}
+  .acc-panel .labs li{font-size:.88rem;color:#39406a;padding-left:16px;position:relative}
+  .acc-panel .labs li::before{content:"";position:absolute;left:0;top:.6em;width:5px;height:5px;border-radius:50%;background:var(--deep)}
+  .acc-panel .labs a{color:var(--primary)}
+  .acc-panel .lnk{margin:0 22px 20px;display:inline-block}
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.row-head.toggle').forEach((btn) => {
+    const panel = btn.nextElementSibling as HTMLElement | null;
+    btn.addEventListener('click', () => {
+      const open = btn.classList.toggle('is-open');
+      panel?.classList.toggle('is-open', open);
+    });
+  });
+</script>

@@ -1,31 +1,24 @@
 ---
 // /faculty/departments/ — уся сторінка = layout + дані + компонент.
-// Порівняйте з рукописним HTML: тут немає повторюваної розмітки карток.
+// Структура факультету як розгортний список (DeptAccordion), а не
+// фільтрована сітка карток — та губила ієрархію: лабораторія кафедри
+// виглядала на сторінці так само, як самостійна.
 import Base from "../../layouts/Base.astro";
-import DepartmentCard from "../../components/DepartmentCard.astro";
+import DeptAccordion from "../../components/DeptAccordion.astro";
 import departments from "../../data/departments.json";
 
 const deptCount = departments.filter((d) => d.type === "dept").length;
-
-// Лабораторії/центри, вкладені в кафедру (data.labs / data.centers), також
-// рендеряться як власні картки — інакше фільтри «Лабораторії»/«Навчальні
-// центри» не покажуть їх. nested:true — картка ховається у виді «Усі
-// підрозділи», щоб не дублювати список, який і так є в картці кафедри.
-const nestedSubunits = departments.flatMap((d) => [
-  ...(d.labs ?? []).map((lab) => ({ ...lab, type: "lab", kind: `Кафедра «${d.name}»`, nested: true })),
-  ...(d.centers ?? []).map((c) => ({ ...c, type: "center", kind: `Кафедра «${d.name}»`, nested: true })),
-]);
-
 const labCenterCount =
-  departments.filter((d) => d.type === "lab" || d.type === "center").length + nestedSubunits.length;
+  departments.filter((d) => d.type === "lab" || d.type === "center").length +
+  departments.reduce((sum, d) => sum + (d.labs?.length ?? 0), 0);
 ---
-<Base title="Кафедри та лабораторії · ФКНТ">
+<Base title="Структура факультету · ФКНТ">
   <section class="wrap page">
     <nav class="crumbs" aria-label="Хлібні крихти">
       <a href="/">Головна</a> › <a href="/faculty/">Факультет</a> › <span>Кафедри</span>
     </nav>
-    <h1 class="display">Кафедри та лабораторії</h1>
-    <p class="lead">Дев'ять профільних кафедр, навчальний центр і науково-дослідна лабораторія.</p>
+    <h1 class="display">Структура факультету</h1>
+    <p class="lead">Дев'ять профільних кафедр, навчальні лабораторії й центри. Натисни на кафедру, щоб розгорнути.</p>
 
     <div class="structure">
       <span class="node">Деканат</span>
@@ -33,58 +26,21 @@ const labCenterCount =
       <span class="node">{deptCount} кафедр</span>
       <span class="arrow">→</span>
       <span class="node">{labCenterCount} лабораторій і центрів</span>
-      <a class="lnk" href="/faculty/team/">Команда деканату →</a>
     </div>
 
-    <div class="filters" role="tablist" aria-label="Тип підрозділу">
-      <button type="button" role="tab" aria-selected="true" data-filter="all">Усі підрозділи</button>
-      <button type="button" role="tab" aria-selected="false" data-filter="dept">Кафедри</button>
-      <button type="button" role="tab" aria-selected="false" data-filter="lab">Лабораторії</button>
-      <button type="button" role="tab" aria-selected="false" data-filter="center">Навчальні центри</button>
-    </div>
-
-    <div class="grid">
-      {departments.map((d) => <DepartmentCard {...d} />)}
-      {nestedSubunits.map((s) => <DepartmentCard {...s} />)}
-    </div>
+    <DeptAccordion departments={departments} />
   </section>
 </Base>
 
 <style>
-  .page{padding:40px 24px 20px}
+  .page{padding:40px 24px 60px}
   .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:16px}
   .crumbs a:hover{color:var(--primary)}
   h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem)}
-  .lead{color:var(--muted);font-size:1.05rem;margin:14px 0 28px;max-width:52ch}
+  .lead{color:var(--muted);font-size:1.05rem;margin:14px 0 28px;max-width:56ch}
 
   .structure{display:flex;align-items:center;flex-wrap:wrap;gap:10px;background:var(--tint);
     border-radius:var(--radius-sm);padding:16px 20px;margin-bottom:24px}
   .structure .node{font-weight:800;color:var(--deep);font-size:.94rem}
   .structure .arrow{color:var(--muted)}
-  .structure .lnk{margin-left:auto;font-weight:800;font-size:.88rem;color:var(--primary);white-space:nowrap}
-  @media(max-width:560px){.structure .lnk{margin-left:0}}
-
-  .filters{display:inline-flex;gap:6px;background:var(--tint);padding:6px;border-radius:12px;margin-bottom:28px;flex-wrap:wrap}
-  .filters button{font:inherit;font-weight:800;font-size:.88rem;padding:9px 18px;border:0;background:none;
-    border-radius:8px;cursor:pointer;color:var(--muted)}
-  .filters button[aria-selected="true"]{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm,0 4px 14px -6px rgba(14,21,51,.25))}
-
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  .grid :global(.card.is-hidden){display:none}
-  @media(max-width:900px){.grid{grid-template-columns:1fr 1fr}}
-  @media(max-width:600px){.grid{grid-template-columns:1fr}}
 </style>
-
-<script>
-  const buttons = document.querySelectorAll('.filters button');
-  const cards = document.querySelectorAll('.grid [data-type]');
-  buttons.forEach((btn) => btn.addEventListener('click', () => {
-    buttons.forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
-    const filter = btn.getAttribute('data-filter');
-    cards.forEach((card) => {
-      const isNested = card.hasAttribute('data-nested');
-      const hidden = filter === 'all' ? isNested : card.getAttribute('data-type') !== filter;
-      card.classList.toggle('is-hidden', hidden);
-    });
-  }));
-</script>
