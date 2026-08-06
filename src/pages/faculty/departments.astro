@@ -6,9 +6,18 @@ import DepartmentCard from "../../components/DepartmentCard.astro";
 import departments from "../../data/departments.json";
 
 const deptCount = departments.filter((d) => d.type === "dept").length;
+
+// Лабораторії/центри, вкладені в кафедру (data.labs / data.centers), також
+// рендеряться як власні картки — інакше фільтри «Лабораторії»/«Навчальні
+// центри» не покажуть їх. nested:true — картка ховається у виді «Усі
+// підрозділи», щоб не дублювати список, який і так є в картці кафедри.
+const nestedSubunits = departments.flatMap((d) => [
+  ...(d.labs ?? []).map((lab) => ({ ...lab, type: "lab", kind: `Кафедра «${d.name}»`, nested: true })),
+  ...(d.centers ?? []).map((c) => ({ ...c, type: "center", kind: `Кафедра «${d.name}»`, nested: true })),
+]);
+
 const labCenterCount =
-  departments.filter((d) => d.type === "lab" || d.type === "center").length +
-  departments.reduce((sum, d) => sum + (d.labs?.length ?? 0), 0);
+  departments.filter((d) => d.type === "lab" || d.type === "center").length + nestedSubunits.length;
 ---
 <Base title="Кафедри та лабораторії · ФКНТ">
   <section class="wrap page">
@@ -36,6 +45,7 @@ const labCenterCount =
 
     <div class="grid">
       {departments.map((d) => <DepartmentCard {...d} />)}
+      {nestedSubunits.map((s) => <DepartmentCard {...s} />)}
     </div>
   </section>
 </Base>
@@ -72,7 +82,9 @@ const labCenterCount =
     buttons.forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
     const filter = btn.getAttribute('data-filter');
     cards.forEach((card) => {
-      card.classList.toggle('is-hidden', filter !== 'all' && card.getAttribute('data-type') !== filter);
+      const isNested = card.hasAttribute('data-nested');
+      const hidden = filter === 'all' ? isNested : card.getAttribute('data-type') !== filter;
+      card.classList.toggle('is-hidden', hidden);
     });
   }));
 </script>

@@ -1,9 +1,9 @@
 ---
 // DepartmentCard.astro — один шаблон картки. Множиться по даних, не копіюється руками.
-const { kind, name, desc, tags = [], url = "#", badge, type = "dept", labs = [] } = Astro.props;
+const { kind, name, desc, tags = [], url = "#", badge, type = "dept", labs = [], nested = false } = Astro.props;
 const hasLink = url && url !== "#";
 ---
-<article class={`card is-${type}`} data-type={type}>
+<article class={`card is-${type}`} data-type={type} data-nested={nested ? "true" : undefined}>
   {badge && <span class="badge">{badge}</span>}
   <div class="kind">{kind}</div>
   <h3>{name}</h3>
