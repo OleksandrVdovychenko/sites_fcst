@@ -1,0 +1,230 @@
+---
+// /research/phd/ — Аспірантура. Контент взято з fcst.kai.edu.ua/аспірантура-докторантура/.
+import Base from "../../layouts/Base.astro";
+
+const specialties = [
+  { code: "113", name: "Прикладна математика" },
+  { code: "121", name: "Інженерія програмного забезпечення" },
+  { code: "122", name: "Комп'ютерні науки" },
+  { code: "123", name: "Комп'ютерна інженерія" },
+  { code: "125", name: "Кібербезпека" },
+  { code: "126", name: "Інформаційні системи та технології" },
+];
+
+const steps = [
+  { n: "01", title: "Подача документів", text: "Заява, копії документів про освіту (диплом магістра або спеціаліста), список наукових праць або реферат з обраної наукової проблеми." },
+  { n: "02", title: "Вступні випробування", text: "Іспити зі спеціальності, іноземної мови та філософії (для вступників без наукових статей). Співбесіда з потенційним науковим керівником." },
+  { n: "03", title: "Навчання (4 роки)", text: "Виконання індивідуального навчального плану, складання кандидатських іспитів, проходження стажувань, підготовка та захист дисертації." },
+  { n: "04", title: "Захист дисертації", text: "Прилюдний захист дисертаційної роботи на здобуття ступеня доктора філософії (PhD) перед спеціалізованою вченою радою." },
+];
+---
+<Base
+  title="Аспірантура · ФКНТ"
+  description="Підготовка докторів філософії (PhD) на факультеті комп'ютерних наук та технологій НАКУ «ХАІ»."
+>
+  <section class="wrap page">
+    <nav class="crumbs" aria-label="Хлібні крихти">
+      <a href="/">Головна</a> › <a href="/research/">Наука</a> › <span>Аспірантура</span>
+    </nav>
+    <p class="eyebrow">Підготовка кадрів вищої кваліфікації</p>
+    <h1 class="display">Аспірантура</h1>
+    <p class="lead">
+      Аспірантура — це третій (освітньо-науковий) рівень вищої освіти, що забезпечує здобуття
+      ступеня <strong>доктора філософії (PhD)</strong>. На ФКНТ аспіранти проводять наукові
+      дослідження під керівництвом провідних учених факультету і захищають дисертаційні роботи
+      у спеціалізованих вчених радах.
+    </p>
+  </section>
+
+  <!-- Abstract illustration -->
+  <section class="wrap hero-art" aria-hidden="true">
+    <svg viewBox="0 0 900 260" xmlns="http://www.w3.org/2000/svg" class="art-svg">
+      <defs>
+        <linearGradient id="phd-g1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#0d47a1" stop-opacity=".15"/>
+          <stop offset="100%" stop-color="#1565c0" stop-opacity=".05"/>
+        </linearGradient>
+        <linearGradient id="phd-g2" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#0288d1" stop-opacity=".2"/>
+          <stop offset="100%" stop-color="#01579b" stop-opacity=".08"/>
+        </linearGradient>
+      </defs>
+      <!-- background blobs -->
+      <ellipse cx="120" cy="130" rx="140" ry="100" fill="url(#phd-g1)"/>
+      <ellipse cx="780" cy="110" rx="180" ry="130" fill="url(#phd-g2)"/>
+      <!-- grid dots -->
+      {Array.from({length: 12}).map((_, i) =>
+        Array.from({length: 5}).map((_, j) => (
+          <circle cx={60 + i * 68} cy={40 + j * 50} r="2.5" fill="#0d47a1" opacity={0.07 + (i+j)*0.01}/>
+        ))
+      )}
+      <!-- concentric rings — PhD symbol -->
+      <circle cx="450" cy="130" r="90" fill="none" stroke="#0d47a1" stroke-width="1.5" opacity=".12"/>
+      <circle cx="450" cy="130" r="65" fill="none" stroke="#0d47a1" stroke-width="1.5" opacity=".15"/>
+      <circle cx="450" cy="130" r="40" fill="none" stroke="#0288d1" stroke-width="1.5" opacity=".2"/>
+      <circle cx="450" cy="130" r="16" fill="#0d47a1" opacity=".1"/>
+      <!-- connecting lines -->
+      <line x1="180" y1="80"  x2="360" y2="115" stroke="#0d47a1" stroke-width="1" opacity=".1"/>
+      <line x1="540" y1="145" x2="720" y2="100" stroke="#0d47a1" stroke-width="1" opacity=".1"/>
+      <line x1="200" y1="170" x2="360" y2="145" stroke="#0288d1" stroke-width="1" opacity=".1"/>
+      <line x1="540" y1="115" x2="700" y2="160" stroke="#0288d1" stroke-width="1" opacity=".1"/>
+      <!-- nodes -->
+      <circle cx="180"  cy="80"  r="6" fill="#0d47a1" opacity=".18"/>
+      <circle cx="720"  cy="100" r="6" fill="#0d47a1" opacity=".18"/>
+      <circle cx="200"  cy="170" r="5" fill="#0288d1" opacity=".18"/>
+      <circle cx="700"  cy="160" r="5" fill="#0288d1" opacity=".18"/>
+      <!-- floating squares -->
+      <rect x="70"  y="60"  width="18" height="18" rx="3" fill="#0d47a1" opacity=".06" transform="rotate(20 79 69)"/>
+      <rect x="800" y="50"  width="22" height="22" rx="3" fill="#0288d1" opacity=".06" transform="rotate(-15 811 61)"/>
+      <rect x="820" y="170" width="14" height="14" rx="2" fill="#01579b" opacity=".07" transform="rotate(35 827 177)"/>
+    </svg>
+  </section>
+
+  <section class="wrap section">
+    <h2 class="display">Спеціальності підготовки</h2>
+    <p>Аспірантура ФКНТ здійснює підготовку за науковими спеціальностями в галузі знань <strong>12 «Інформаційні технології»</strong> та <strong>11 «Математика та статистика»</strong>:</p>
+    <div class="spec-grid">
+      {specialties.map((s) => (
+        <div class="spec-card">
+          <span class="spec-code">{s.code}</span>
+          <span class="spec-name">{s.name}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <h2 class="display">Умови вступу</h2>
+    <div class="info-cols">
+      <div class="info-block">
+        <h3>Хто може вступити</h3>
+        <ul>
+          <li>Особи, які здобули ступінь магістра (спеціаліста) та виявили здатність до наукової роботи.</li>
+          <li>Громадяни України, іноземці та особи без громадянства (на умовах, визначених законодавством).</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>Форма навчання</h3>
+        <ul>
+          <li>Денна (очна) — 4 роки.</li>
+          <li>Заочна — 5 років (для тих, хто поєднує навчання з роботою).</li>
+          <li>Можливість фінансування: бюджет (державне замовлення) та контракт.</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3>Необхідні документи</h3>
+        <ul>
+          <li>Заява на ім'я ректора університету.</li>
+          <li>Копія диплома магістра (спеціаліста) з додатком.</li>
+          <li>Список опублікованих наукових праць або реферат.</li>
+          <li>Особовий листок з обліку кадрів, автобіографія.</li>
+          <li>Дві рекомендації від учених.</li>
+          <li>Медична довідка за формою 086-У.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <h2 class="display">Шлях від вступу до захисту</h2>
+    <div class="steps">
+      {steps.map((s) => (
+        <div class="step">
+          <span class="step-n">{s.n}</span>
+          <div>
+            <b>{s.title}</b>
+            <p>{s.text}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <h2 class="display">Наукові керівники</h2>
+    <p>
+      Науковий керівник аспіранта — доктор наук або кандидат наук (доктор філософії), який має
+      наукові публікації за тематикою дисертаційного дослідження та досвід педагогічної роботи
+      у закладі вищої освіти. На кафедрах ФКНТ є понад 20 штатних докторів і кандидатів наук,
+      готових виступити науковими керівниками.
+    </p>
+    <p>
+      Для вибору наукового керівника та теми дослідження рекомендуємо ознайомитися з
+      <a href="/faculty/departments/">кафедрами та лабораторіями факультету</a> та зв'язатися
+      з кафедрою, що відповідає вашим науковим інтересам.
+    </p>
+  </section>
+
+  <section class="wrap section cta-section">
+    <h2 class="display">Розпочати шлях у науку</h2>
+    <p>Маєте питання про вступ до аспірантури? Зв'яжіться з нами — ми допоможемо обрати спеціальність і наукового керівника.</p>
+    <a class="btn" href="/contacts/">Контакти факультету →</a>
+  </section>
+</Base>
+
+<style>
+.hero-art { padding-block: 0; }
+.art-svg  { width: 100%; max-height: 260px; display: block; }
+
+.lead { font-size: 1.15rem; max-width: 72ch; margin-block: 1.2rem; line-height: 1.65; }
+
+/* Specialty cards */
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.spec-card {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .9rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  border-radius: var(--radius-sm, 8px);
+  background: color-mix(in srgb, var(--bg, #fff) 95%, var(--ink) 5%);
+}
+.spec-code {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent, #0d47a1);
+  min-width: 2.5rem;
+}
+.spec-name { font-size: .95rem; line-height: 1.35; }
+
+/* Info columns */
+.info-cols { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+.info-block h3 { margin-bottom: .5rem; font-size: 1rem; font-weight: 700; }
+.info-block ul { padding-left: 1.2rem; }
+.info-block li { margin-bottom: .4rem; font-size: .95rem; }
+
+/* Steps */
+.steps { display: flex; flex-direction: column; gap: 1.25rem; margin-top: 1.5rem; }
+.step  { display: flex; gap: 1.25rem; align-items: flex-start; }
+.step-n {
+  flex-shrink: 0;
+  width: 2.4rem; height: 2.4rem;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--accent, #0d47a1);
+  color: #fff;
+  font-weight: 700;
+  font-size: .85rem;
+}
+.step b  { display: block; margin-bottom: .25rem; }
+.step p  { margin: 0; font-size: .95rem; }
+
+/* CTA */
+.cta-section { text-align: center; }
+.cta-section p { max-width: 60ch; margin-inline: auto; margin-bottom: 1.5rem; }
+.btn {
+  display: inline-block;
+  padding: .75rem 2rem;
+  background: var(--accent, #0d47a1);
+  color: #fff;
+  border-radius: var(--radius-sm, 8px);
+  font-weight: 600;
+  transition: opacity .18s;
+}
+.btn:hover { opacity: .85; }
+</style>
