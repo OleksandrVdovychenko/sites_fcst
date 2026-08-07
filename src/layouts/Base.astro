@@ -108,6 +108,7 @@ const extAttrs = (href) => isExternal(href) ? { target: "_blank", rel: "noopener
 const builtPages = new Set([
   "/", "/faculty/", "/faculty/departments/", "/faculty/partners/", "/faculty/team/",
   "/admission/specialties/", "/international/", "/contacts/", "/news/",
+  "/research/phd/", "/research/doctorate/",
 ]);
 const isReady = (href) => isExternal(href) || builtPages.has(href.split("#")[0]);
 ---
