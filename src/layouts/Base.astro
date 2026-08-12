@@ -69,9 +69,9 @@ const nav = [
         { label: "Поновлення", href: "/students/fulltime/#ponovlennya" },
       ]},
       { title: "Заочна форма навчання", links: [
-        { label: "Графік освітнього процесу", href: "/students/parttime/#grafik" },
+        { label: "Графік освітнього процесу", href: "/students/parttime/grafik/" },
         { label: "Списки груп", href: "/students/parttime/#spysky-hrup" },
-        { label: "Розклад занять", href: "/students/schedule/" },
+        { label: "Розклад занять", href: "/students/parttime/#rozklad-zanyat" },
         { label: "Накази, положення, інструкції", href: "/students/parttime/#dokumenty" },
       ]},
       { title: "PhD", links: [
@@ -133,7 +133,7 @@ const builtPages = new Set([
   "/", "/faculty/", "/faculty/departments/", "/faculty/partners/", "/faculty/team/",
   "/admission/specialties/", "/international/", "/contacts/", "/news/",
   "/research/phd/", "/research/doctorate/",
-  "/students/schedule/",
+  "/students/parttime/grafik/",
 ]);
 const isReady = (href) => isExternal(href) || builtPages.has(href.split("#")[0]);
 ---
