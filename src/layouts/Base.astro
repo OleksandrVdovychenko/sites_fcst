@@ -13,6 +13,7 @@ const nav = [
         { label: "Про факультет", href: "/faculty/" },
         { label: "Команда факультету", href: "/faculty/team/" },
         { label: "Кафедри та інші підрозділи", href: "/faculty/departments/" },
+        { label: "Навчальні лабораторії", href: "/faculty/labs/" },
       ]},
       { title: "Партнерство та ідентика", links: [
         { label: "Наші партнери", href: "/faculty/partners/" },
@@ -130,7 +131,7 @@ const extAttrs = (href) => isExternal(href) ? { target: "_blank", rel: "noopener
 // Сторінки, які вже реально існують у src/pages. Усе інше — поки заглушка,
 // пункт меню рендериться неактивним (без href), доки сторінку не зроблено.
 const builtPages = new Set([
-  "/", "/faculty/", "/faculty/departments/", "/faculty/partners/", "/faculty/team/",
+  "/", "/faculty/", "/faculty/departments/", "/faculty/partners/", "/faculty/team/", "/faculty/labs/",
   "/admission/specialties/", "/international/", "/contacts/", "/news/",
   "/research/phd/", "/research/doctorate/",
   "/students/parttime/grafik/",
