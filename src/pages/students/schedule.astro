@@ -42,7 +42,7 @@ const flatGroups = schedule.programs.flatMap((program) =>
   </section>
 
   <section class="wrap section finder">
-    <div class="panel">
+    <div class="card">
       <div class="pillrow" id="degree-pills" role="group" aria-label="Ступінь"></div>
       <div class="pillrow" id="course-pills" role="group" aria-label="Курс"></div>
       <div class="search-row">
@@ -52,7 +52,7 @@ const flatGroups = schedule.programs.flatMap((program) =>
       <div class="chipgrid" id="chipgrid"></div>
     </div>
 
-    <div class="panel detail" id="detail"></div>
+    <div class="card" id="detail"></div>
   </section>
 
   <section class="wrap section cta-section downloads">
@@ -82,7 +82,7 @@ h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); }
 .section { padding: 20px 24px 40px; }
 
 .finder { display: grid; gap: 1.25rem; }
-.panel {
+.card {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: #fff;
@@ -90,19 +90,6 @@ h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); }
 }
 
 .pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: .85rem; }
-.pill {
-  font: inherit;
-  font-size: .86rem;
-  font-weight: 700;
-  color: #39406a;
-  background: var(--tint);
-  border: 1px solid var(--line);
-  padding: 7px 14px;
-  border-radius: 20px;
-  cursor: pointer;
-}
-.pill:hover { border-color: var(--sky); }
-.pill[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: #fff; }
 
 .search-row { margin-bottom: .75rem; }
 .search-row input {
@@ -121,44 +108,6 @@ h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); }
 .count { font-size: .8rem; color: var(--muted); margin: 0 0 .6rem; }
 
 .chipgrid { display: flex; flex-wrap: wrap; gap: 6px; max-height: 220px; overflow-y: auto; padding-right: 2px; }
-.chip {
-  font: inherit;
-  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
-  font-size: .78rem;
-  color: var(--ink);
-  background: var(--tint);
-  border: 1px solid var(--line);
-  padding: 7px 11px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  text-align: left;
-}
-.chip:hover { border-color: var(--sky); }
-.chip[aria-pressed="true"] { background: var(--deep); border-color: var(--deep); color: #fff; }
-
-.empty-msg { color: var(--muted); font-size: .9rem; padding: 1.75rem .5rem; text-align: center; }
-
-.detail-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 2px; }
-.group-code { font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; font-size: 1.25rem; font-weight: 700; color: var(--deep); }
-.detail-meta { font-size: .88rem; color: var(--muted); margin: 0 0 .85rem; }
-
-.note-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
-.note-badge { font-size: .74rem; font-weight: 700; color: #39406a; background: var(--tint); border: 1px solid var(--line); padding: 4px 10px; border-radius: 20px; }
-
-.period-list { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
-.period { display: flex; align-items: flex-start; gap: 12px; padding: .7rem 0; border-bottom: 1px solid var(--line); }
-.dot { flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: .5em; background: var(--muted); }
-.dot.session { background: var(--primary); }
-.dot.practice { background: var(--sky); }
-.dot.thesis { background: var(--deep); }
-.dot.exam { background: var(--signal); }
-.period-body { flex: 1; min-width: 0; }
-.period-label { font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-.period-date { font-size: .98rem; font-variant-numeric: tabular-nums; margin-top: 2px; }
-.period-flag { font-size: .78rem; color: var(--sky); background: var(--tint); border-radius: var(--radius-sm); padding: 5px 9px; margin-top: 6px; }
-
-.detail-foot { margin-top: 1.1rem; padding-top: .9rem; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
-.footnote { font-size: .78rem; color: var(--muted); line-height: 1.5; }
 
 .btn-outline {
   display: inline-flex; align-items: center; gap: 9px; font-weight: 800;
@@ -175,6 +124,75 @@ h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); }
 @media (min-width: 860px) {
   .finder { grid-template-columns: 1fr 1fr; align-items: start; }
 }
+</style>
+
+<style is:global>
+/*
+  Ці класи розставляються клієнтським JS (document.createElement / innerHTML),
+  тому елементи не існують у серверному рендері й не отримують Astro-scoping
+  атрибут data-astro-cid-* — звичайний scoped <style> їх не бачить.
+  Звідси префікс sch- і is:global, аби нічого не перетнулось з рештою сайту.
+*/
+.sch-pill {
+  font: inherit;
+  font-size: .86rem;
+  font-weight: 700;
+  color: #39406a;
+  background: var(--tint);
+  border: 1px solid var(--line);
+  padding: 7px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.sch-pill:hover { border-color: var(--sky); }
+.sch-pill[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+.sch-chip {
+  font: inherit;
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: .78rem;
+  color: var(--ink);
+  background: var(--tint);
+  border: 1px solid var(--line);
+  padding: 7px 11px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+}
+.sch-chip:hover { border-color: var(--sky); }
+.sch-chip[aria-pressed="true"] { background: var(--deep); border-color: var(--deep); color: #fff; }
+
+.sch-empty { color: var(--muted); font-size: .9rem; padding: 1.75rem .5rem; text-align: center; }
+
+.sch-detail-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 2px; }
+.sch-group-code { font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; font-size: 1.25rem; font-weight: 700; color: var(--deep); }
+.sch-detail-meta { font-size: .88rem; color: var(--muted); margin: 0 0 .85rem; }
+
+.sch-note-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
+.sch-note-badge { font-size: .74rem; font-weight: 700; color: #39406a; background: var(--tint); border: 1px solid var(--line); padding: 4px 10px; border-radius: 20px; }
+
+.sch-period-list { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.sch-period { display: flex; align-items: flex-start; gap: 12px; padding: .7rem 0; border-bottom: 1px solid var(--line); }
+.sch-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: .5em; background: var(--muted); }
+.sch-dot.is-session { background: var(--primary); }
+.sch-dot.is-practice { background: var(--sky); }
+.sch-dot.is-thesis { background: var(--deep); }
+.sch-dot.is-exam { background: var(--signal); }
+.sch-period-body { flex: 1; min-width: 0; }
+.sch-period-label { font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.sch-period-date { font-size: .98rem; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.sch-period-flag { font-size: .78rem; color: var(--sky); background: var(--tint); border-radius: var(--radius-sm); padding: 5px 9px; margin-top: 6px; }
+
+.sch-detail-foot { margin-top: 1.1rem; padding-top: .9rem; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.sch-footnote { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+
+.sch-btn-outline {
+  display: inline-flex; align-items: center; gap: 9px; font-weight: 800;
+  padding: 13px 24px; border-radius: var(--radius-sm);
+  background: transparent; border: 2px solid var(--primary); color: var(--primary);
+  transition: background .18s;
+}
+.sch-btn-outline:hover { background: color-mix(in srgb, var(--primary) 10%, transparent); }
 </style>
 
 <script>
@@ -224,10 +242,10 @@ function fmtRange(start: string | null, end: string | null) {
 function categorize(label: string | null) {
   if (!label) return { cls: "", text: "без позначки в документі" };
   const l = label.toLowerCase();
-  if (l.includes("сесі")) return { cls: "session", text: label };
-  if (l.includes("практ")) return { cls: "practice", text: label };
-  if (l.includes("кваліфікаційна")) return { cls: "thesis", text: label };
-  if (l.includes("єдкі") || l.includes("ае") || l.includes("аі") || l.includes("ке")) return { cls: "exam", text: label };
+  if (l.includes("сесі")) return { cls: "is-session", text: label };
+  if (l.includes("практ")) return { cls: "is-practice", text: label };
+  if (l.includes("кваліфікаційна")) return { cls: "is-thesis", text: label };
+  if (l.includes("єдкі") || l.includes("ае") || l.includes("аі") || l.includes("ке")) return { cls: "is-exam", text: label };
   return { cls: "", text: label };
 }
 
@@ -256,7 +274,7 @@ function renderDegreePills() {
   items.forEach((d) => {
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "pill";
+    b.className = "sch-pill";
     b.textContent = degreeLabel(d);
     b.setAttribute("aria-pressed", String(state.degree === d));
     b.addEventListener("click", () => { state.degree = d; state.course = "all"; render(); });
@@ -269,7 +287,7 @@ function renderCoursePills() {
   items.forEach((c) => {
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "pill";
+    b.className = "sch-pill";
     b.textContent = c === "all" ? "Усі курси" : `${c} курс`;
     b.setAttribute("aria-pressed", String(state.course === c));
     b.addEventListener("click", () => { state.course = c; render(); });
@@ -291,7 +309,7 @@ function renderChips() {
   chipgrid.innerHTML = "";
   if (rows.length === 0) {
     const p = document.createElement("p");
-    p.className = "empty-msg";
+    p.className = "sch-empty";
     p.textContent = "Групу не знайдено. Перевірте шифр або скиньте фільтри.";
     chipgrid.appendChild(p);
     return;
@@ -299,7 +317,7 @@ function renderChips() {
   rows.forEach((r) => {
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "chip";
+    b.className = "sch-chip";
     b.textContent = r.group;
     b.setAttribute("aria-pressed", String(state.selected === r.group));
     b.addEventListener("click", () => { state.selected = r.group; renderChips(); renderDetail(); });
@@ -308,38 +326,38 @@ function renderChips() {
 }
 function renderDetail() {
   if (!state.selected) {
-    detailEl.innerHTML = `<p class="empty-msg">Оберіть групу зі списку ліворуч, щоб побачити розклад.</p>`;
+    detailEl.innerHTML = `<p class="sch-empty">Оберіть групу зі списку ліворуч, щоб побачити розклад.</p>`;
     return;
   }
   const r = DATA.find((x) => x.group === state.selected);
-  if (!r) { detailEl.innerHTML = `<p class="empty-msg">Групу не знайдено.</p>`; return; }
+  if (!r) { detailEl.innerHTML = `<p class="sch-empty">Групу не знайдено.</p>`; return; }
 
   let html = "";
-  html += `<div class="detail-head"><span class="group-code">${r.group}</span></div>`;
-  html += `<p class="detail-meta">${r.degreeLabel} · ${r.course} курс</p>`;
+  html += `<div class="sch-detail-head"><span class="sch-group-code">${r.group}</span></div>`;
+  html += `<p class="sch-detail-meta">${r.degreeLabel} · ${r.course} курс</p>`;
   if (r.groupNote) {
-    html += `<div class="note-badges">${r.groupNote.split(",").map((t) => `<span class="note-badge">${t.trim()}</span>`).join("")}</div>`;
+    html += `<div class="sch-note-badges">${r.groupNote.split(",").map((t) => `<span class="sch-note-badge">${t.trim()}</span>`).join("")}</div>`;
   }
-  html += `<div class="period-list">`;
+  html += `<div class="sch-period-list">`;
   (r.periods || []).forEach((p) => {
     if (p.ranges) {
       p.ranges.forEach((rg) => {
         const [a, b] = rg.split("-");
         const cat = categorize(p.label);
         const rangeText = fmtRange(a, b) || rg;
-        html += `<div class="period"><span class="dot ${cat.cls}"></span><div class="period-body"><div class="period-label">${cat.text}</div><div class="period-date">${rangeText}</div></div></div>`;
+        html += `<div class="sch-period"><span class="sch-dot ${cat.cls}"></span><div class="sch-period-body"><div class="sch-period-label">${cat.text}</div><div class="sch-period-date">${rangeText}</div></div></div>`;
       });
       return;
     }
     const cat = categorize(p.label);
     const rangeText = fmtRange(p.start, p.end) || p.raw;
-    html += `<div class="period"><span class="dot ${cat.cls}"></span><div class="period-body"><div class="period-label">${cat.text}</div><div class="period-date">${rangeText}</div>${p.note ? `<div class="period-flag">${p.note}</div>` : ""}</div></div>`;
+    html += `<div class="sch-period"><span class="sch-dot ${cat.cls}"></span><div class="sch-period-body"><div class="sch-period-label">${cat.text}</div><div class="sch-period-date">${rangeText}</div>${p.note ? `<div class="sch-period-flag">${p.note}</div>` : ""}</div></div>`;
   });
   html += `</div>`;
   if (r.footnoteRefs && r.footnoteRefs.length) {
-    html += `<p class="footnote" style="margin-top:.85rem;">* Фактичні терміни підготовки до ЄДКІ визначаються термінами його проведення, встановленими відповідними державними органами відповідно до постанови КМУ від 19.05.2021 № 497 (із змінами).</p>`;
+    html += `<p class="sch-footnote" style="margin-top:.85rem;">* Фактичні терміни підготовки до ЄДКІ визначаються термінами його проведення, встановленими відповідними державними органами відповідно до постанови КМУ від 19.05.2021 № 497 (із змінами).</p>`;
   }
-  html += `<div class="detail-foot"><a class="btn-outline" href="${encodeURI(r.sourceFile)}" target="_blank" rel="noopener">Завантажити PDF →</a><span class="footnote">Джерело: ${r.sourceFile.split("/").pop()}</span></div>`;
+  html += `<div class="sch-detail-foot"><a class="sch-btn-outline" href="${encodeURI(r.sourceFile)}" target="_blank" rel="noopener">Завантажити PDF →</a><span class="sch-footnote">Джерело: ${r.sourceFile.split("/").pop()}</span></div>`;
   detailEl.innerHTML = html;
 }
 function render() {
