@@ -8,7 +8,7 @@
     "url": "https://kit.nau.edu.ua",
     "logo": "/departments/kit.png",
     "labs": [
-      { "name": "Навчальна лабораторія експлуатації автоматизованих систем контролю польотів" }
+      { "name": "Навчальна лабораторія експлуатації автоматизованих систем контролю польотів", "url": "/faculty/labs/aviation-recorders/" }
     ]
   },
   {
@@ -47,7 +47,7 @@
     "logo": "/departments/ksm.png",
     "labs": [
       { "name": "Навчальна лабораторія комп'ютерних систем", "url": "/faculty/labs/computer-systems/" },
-      { "name": "Навчальна лабораторія «Cisco»" }
+      { "name": "Навчальна лабораторія «Cisco»", "url": "/faculty/labs/cisco/" }
     ]
   },
   {

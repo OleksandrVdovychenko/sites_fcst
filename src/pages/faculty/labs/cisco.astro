@@ -1,0 +1,124 @@
+---
+// /faculty/labs/cisco/ — Навчальна лабораторія «Cisco» (кафедра КСМ).
+import Base from "../../../layouts/Base.astro";
+
+const gallery = [
+  { src: "/labs/cisco/1800-series-catalyst.jpg", caption: "Маршрутизатори Cisco 1800 Series та комутатори Catalyst 2960 PoE" },
+  { src: "/labs/cisco/as5300-series.jpg", caption: "Сервери віддаленого доступу Cisco AS5300 Series" },
+  { src: "/labs/cisco/2800-series.jpg", caption: "Маршрутизатори Cisco 2800 Series" },
+  { src: "/labs/cisco/1921-1841-rear.jpg", caption: "Задні панелі маршрутизаторів Cisco 1921 та 1841" },
+  { src: "/labs/cisco/wall-rack-workstations.jpg", caption: "Настінна стійка з обладнанням і два робочих місця для практики" },
+  { src: "/labs/cisco/desk-and-rack.jpg", caption: "Робоче місце студента поруч зі стійкою комутаторів" },
+];
+
+const equipment = ["Cisco IOS", "Маршрутизація", "Комутація", "VPN", "Бездротові мережі", "SDN"];
+---
+<Base
+  title="Навчальна лабораторія Cisco · Кафедра КСМ · ФКНТ"
+  description="Лабораторія кафедри комп'ютерних систем і мереж на реальному обладнанні Cisco — маршрутизація, комутація, мережева безпека, віртуалізація та програмно-визначені мережі."
+>
+  <section class="wrap page">
+    <nav class="crumbs" aria-label="Хлібні крихти">
+      <a href="/">Головна</a> › <a href="/faculty/">Факультет</a> › <a href="/faculty/departments/">Кафедри</a> ›
+      Кафедра комп'ютерних систем і мереж › <span>Лабораторія «Cisco»</span>
+    </nav>
+    <p class="eyebrow">Кафедра комп'ютерних систем і мереж</p>
+    <h1 class="display">Навчальна лабораторія Cisco</h1>
+    <p class="lead">
+      Лабораторія спеціалізується на практичному дослідженні, проєктуванні, тестуванні та
+      впровадженні комп'ютерних мереж і мережевих сервісів. Основними напрямами є маршрутизація
+      та комутація, мережева безпека, бездротові технології, мережеві сервіси, віртуалізація та
+      програмно-визначені мережі. Лабораторія оснащена реальним обладнанням Cisco — комутаторами,
+      маршрутизаторами та міжмережевими екранами, а також точками бездротового доступу й
+      серверним обладнанням, що дає змогу моделювати складні корпоративні та операторські мережі.
+    </p>
+  </section>
+
+  <section class="wrap hero-photo">
+    <div class="hero-frame">
+      <img src="/labs/cisco/rack-room-overview.jpg" alt="Стійка мережевого обладнання Cisco в аудиторії лабораторії" />
+      <div class="hero-caption">
+        <p>Стійка з обладнанням Cisco 1800 Series та комутаторами Catalyst 2960</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section split">
+    <div>
+      <h2 class="display">Чим займаються студенти</h2>
+      <p>
+        Особливістю лабораторії є можливість проводити практичні експерименти на фізичному
+        обладнанні — від проєктування та налаштування мереж до тестування їх продуктивності,
+        відмовостійкості й безпеки. Лабораторія функціонує як тестовий полігон для апробації
+        мережевих рішень та проведення навчальних і науково-практичних досліджень, моделювання
+        мережевих сценаріїв, тестування протоколів і конфігурацій, а також тренінгів з мережевих
+        технологій.
+      </p>
+    </div>
+    <div class="equip-card">
+      <h3>Напрями роботи</h3>
+      <div class="tags">
+        {equipment.map((t) => <span>{t}</span>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <h2 class="display">Лабораторія у фото</h2>
+    <div class="gallery">
+      {gallery.map((g) => (
+        <figure>
+          <img src={g.src} alt={g.caption} loading="lazy" />
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap section cta-section">
+    <h2 class="display">Хочете дізнатися більше?</h2>
+    <p>Зв'яжіться з кафедрою комп'ютерних систем і мереж — розкажемо про навчальні курси на базі лабораторії.</p>
+    <a class="btn" href="https://ksm.nau.edu.ua" target="_blank" rel="noopener">Кафедра КСМ →</a>
+  </section>
+</Base>
+
+<style>
+.page { padding: 40px 24px 20px; }
+.crumbs { font-size: .85rem; color: var(--muted); margin-bottom: 16px; }
+.crumbs a:hover { color: var(--primary); }
+.eyebrow { font-weight: 800; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--sky); }
+h1 { color: var(--deep); font-size: clamp(2rem, 4vw, 2.8rem); margin: 12px 0 0; }
+h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); }
+.lead { color: var(--muted); font-size: 1.05rem; max-width: 70ch; margin: 14px 0 0; line-height: 1.65; }
+
+.section { padding: 40px 24px; }
+
+.hero-photo { margin-top: 12px; }
+.hero-frame { position: relative; border-radius: var(--radius); overflow: hidden; }
+.hero-frame img { width: 100%; height: 460px; object-fit: cover; }
+.hero-caption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(0deg, rgba(14,21,51,.75), transparent 65%);
+  padding: 28px 28px 20px;
+}
+.hero-caption p { margin: 0; color: #fff; font-size: .85rem; opacity: .9; }
+
+.split { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: start; }
+.split p { max-width: 70ch; margin-top: 14px; }
+.equip-card { background: var(--tint); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+.equip-card h3 { color: var(--deep); font-size: .95rem; margin-bottom: 12px; }
+.tags { display: flex; flex-wrap: wrap; gap: 7px; }
+.tags span { font-size: .78rem; font-weight: 600; color: #39406a; background: #fff; border: 1px solid var(--line); padding: 5px 11px; border-radius: 20px; }
+
+.gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+.gallery figure { margin: 0; border-radius: var(--radius-sm); overflow: hidden; background: var(--tint); }
+.gallery img { width: 100%; height: 200px; object-fit: cover; }
+
+.cta-section { text-align: center; background: var(--tint); border-radius: var(--radius); margin: 8px 24px 40px; }
+.cta-section p { color: var(--muted); max-width: 60ch; margin: 10px auto 20px; }
+
+@media (max-width: 820px) {
+  .split { grid-template-columns: 1fr; }
+  .gallery { grid-template-columns: repeat(2, 1fr); }
+  .hero-frame img { height: 280px; }
+}
+</style>
