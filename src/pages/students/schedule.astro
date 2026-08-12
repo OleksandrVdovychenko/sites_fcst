@@ -1,0 +1,353 @@
+---
+// /students/schedule/ — Графік навчального процесу для заочної форми здобуття освіти.
+// Дані розпізнано вручну з растрових сканів PDF (текстового шару в оригіналах немає) —
+// джерело: src/data/schedule.json, оригінали лежать у public/schedule/*.pdf.
+import Base from "../../layouts/Base.astro";
+import schedule from "../../data/schedule.json";
+
+const degreeLabel = (id: string) => (id === "bachelor" ? "Бакалавр" : "Магістр");
+
+const flatGroups = schedule.programs.flatMap((program) =>
+  program.courses.flatMap((course) =>
+    course.rows.flatMap((row) =>
+      row.groups.map((group) => ({
+        group,
+        degree: program.id,
+        degreeLabel: degreeLabel(program.id),
+        course: course.course,
+        groupNote: row.groupNote,
+        periods: row.periods,
+        footnoteRefs: row.footnoteRefs,
+        sourceFile: program.sourceFile,
+      })),
+    ),
+  ),
+);
+---
+<Base
+  title="Графік навчального процесу · заочна форма · ФКНТ"
+  description="Графік сесій, практик та атестацій для студентів заочної форми здобуття освіти ФКНТ на 2026-2027 навчальний рік — пошук за групою."
+>
+  <section class="wrap page">
+    <nav class="crumbs" aria-label="Хлібні крихти">
+      <a href="/">Головна</a> › Здобувачу › <span>Розклад занять</span>
+    </nav>
+    <p class="eyebrow">Заочна форма здобуття освіти · 2026–2027 н.р.</p>
+    <h1 class="display">Графік навчального процесу</h1>
+    <p class="lead">
+      Оберіть свою групу — нижче з'явиться розклад настановних сесій, практик,
+      кваліфікаційних робіт та атестацій. Дані розпізнано з офіційних графіків
+      навчального відділу; оригінальні PDF доступні для завантаження.
+    </p>
+  </section>
+
+  <section class="wrap section finder">
+    <div class="panel">
+      <div class="pillrow" id="degree-pills" role="group" aria-label="Ступінь"></div>
+      <div class="pillrow" id="course-pills" role="group" aria-label="Курс"></div>
+      <div class="search-row">
+        <input type="text" id="group-search" placeholder="Наприклад, Бз-D3-26-1-ЛГ" autocomplete="off" aria-label="Пошук за шифром групи" />
+      </div>
+      <p class="count" id="group-count"></p>
+      <div class="chipgrid" id="chipgrid"></div>
+    </div>
+
+    <div class="panel detail" id="detail"></div>
+  </section>
+
+  <section class="wrap section cta-section downloads">
+    <h2 class="display">Офіційні документи</h2>
+    <p>Повні графіки, затверджені навчальним відділом, — у форматі PDF.</p>
+    <div class="cta-btns">
+      {schedule.programs.map((p) => (
+        <a class="btn-outline" href={encodeURI(p.sourceFile)} target="_blank" rel="noopener">
+          Графік · {degreeLabel(p.id)} (PDF) →
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <script type="application/json" id="schedule-data" set:html={JSON.stringify(flatGroups)} />
+</Base>
+
+<style>
+.page { padding: 40px 24px 20px; }
+.crumbs { font-size: .85rem; color: var(--muted); margin-bottom: 16px; }
+.crumbs a:hover { color: var(--primary); }
+.eyebrow { font-weight: 800; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--sky); }
+h1 { color: var(--deep); font-size: clamp(2rem, 4vw, 2.8rem); margin: 12px 0 0; }
+h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); }
+.lead { color: var(--muted); font-size: 1.05rem; max-width: 70ch; margin: 14px 0 0; line-height: 1.65; }
+
+.section { padding: 20px 24px 40px; }
+
+.finder { display: grid; gap: 1.25rem; }
+.panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  padding: 1.25rem 1.5rem;
+}
+
+.pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: .85rem; }
+.pill {
+  font: inherit;
+  font-size: .86rem;
+  font-weight: 700;
+  color: #39406a;
+  background: var(--tint);
+  border: 1px solid var(--line);
+  padding: 7px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.pill:hover { border-color: var(--sky); }
+.pill[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+.search-row { margin-bottom: .75rem; }
+.search-row input {
+  width: 100%;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--tint);
+  color: var(--ink);
+  padding: 0 14px;
+  font-size: .95rem;
+  font-family: inherit;
+}
+.search-row input:focus-visible { outline: 3px solid var(--signal); outline-offset: 1px; }
+
+.count { font-size: .8rem; color: var(--muted); margin: 0 0 .6rem; }
+
+.chipgrid { display: flex; flex-wrap: wrap; gap: 6px; max-height: 220px; overflow-y: auto; padding-right: 2px; }
+.chip {
+  font: inherit;
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: .78rem;
+  color: var(--ink);
+  background: var(--tint);
+  border: 1px solid var(--line);
+  padding: 7px 11px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+}
+.chip:hover { border-color: var(--sky); }
+.chip[aria-pressed="true"] { background: var(--deep); border-color: var(--deep); color: #fff; }
+
+.empty-msg { color: var(--muted); font-size: .9rem; padding: 1.75rem .5rem; text-align: center; }
+
+.detail-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 2px; }
+.group-code { font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; font-size: 1.25rem; font-weight: 700; color: var(--deep); }
+.detail-meta { font-size: .88rem; color: var(--muted); margin: 0 0 .85rem; }
+
+.note-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
+.note-badge { font-size: .74rem; font-weight: 700; color: #39406a; background: var(--tint); border: 1px solid var(--line); padding: 4px 10px; border-radius: 20px; }
+
+.period-list { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.period { display: flex; align-items: flex-start; gap: 12px; padding: .7rem 0; border-bottom: 1px solid var(--line); }
+.dot { flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: .5em; background: var(--muted); }
+.dot.session { background: var(--primary); }
+.dot.practice { background: var(--sky); }
+.dot.thesis { background: var(--deep); }
+.dot.exam { background: var(--signal); }
+.period-body { flex: 1; min-width: 0; }
+.period-label { font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.period-date { font-size: .98rem; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.period-flag { font-size: .78rem; color: var(--sky); background: var(--tint); border-radius: var(--radius-sm); padding: 5px 9px; margin-top: 6px; }
+
+.detail-foot { margin-top: 1.1rem; padding-top: .9rem; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.footnote { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 9px; font-weight: 800;
+  padding: 13px 24px; border-radius: var(--radius-sm);
+  background: transparent; border: 2px solid var(--primary); color: var(--primary);
+  transition: background .18s;
+}
+.btn-outline:hover { background: color-mix(in srgb, var(--primary) 10%, transparent); }
+
+.downloads.cta-section { text-align: center; }
+.downloads.cta-section p { color: var(--muted); max-width: 60ch; margin-inline: auto; margin-bottom: 1.5rem; }
+.cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+@media (min-width: 860px) {
+  .finder { grid-template-columns: 1fr 1fr; align-items: start; }
+}
+</style>
+
+<script>
+type Period = {
+  raw: string;
+  start: string | null;
+  end: string | null;
+  label: string | null;
+  note?: string;
+  ranges?: string[];
+};
+type FlatGroup = {
+  group: string;
+  degree: string;
+  degreeLabel: string;
+  course: number;
+  groupNote: string | null;
+  periods: Period[];
+  footnoteRefs: string[];
+  sourceFile: string;
+};
+
+const dataEl = document.getElementById("schedule-data");
+const DATA: FlatGroup[] = JSON.parse(dataEl?.textContent || "[]");
+
+const MONTHS: Record<string, [string, number]> = {
+  "09": ["вересня", 2026], "10": ["жовтня", 2026], "11": ["листопада", 2026], "12": ["грудня", 2026],
+  "01": ["січня", 2027], "02": ["лютого", 2027], "03": ["березня", 2027], "04": ["квітня", 2027],
+  "05": ["травня", 2027], "06": ["червня", 2027],
+};
+
+function parseDM(dm: string | null) {
+  if (!dm) return null;
+  const [d, m] = dm.split(".");
+  const info = MONTHS[m];
+  if (!info) return null;
+  return { day: +d, month: info[0], year: info[1] };
+}
+function fmtRange(start: string | null, end: string | null) {
+  const s = parseDM(start), e = parseDM(end);
+  if (!s) return null;
+  if (!e) return `${s.day} ${s.month} ${s.year}`;
+  if (s.month === e.month && s.year === e.year) return `${s.day}–${e.day} ${s.month} ${s.year}`;
+  if (s.year === e.year) return `${s.day} ${s.month} – ${e.day} ${e.month} ${s.year}`;
+  return `${s.day} ${s.month} ${s.year} – ${e.day} ${e.month} ${e.year}`;
+}
+function categorize(label: string | null) {
+  if (!label) return { cls: "", text: "без позначки в документі" };
+  const l = label.toLowerCase();
+  if (l.includes("сесі")) return { cls: "session", text: label };
+  if (l.includes("практ")) return { cls: "practice", text: label };
+  if (l.includes("кваліфікаційна")) return { cls: "thesis", text: label };
+  if (l.includes("єдкі") || l.includes("ае") || l.includes("аі") || l.includes("ке")) return { cls: "exam", text: label };
+  return { cls: "", text: label };
+}
+
+const degreePills = document.getElementById("degree-pills")!;
+const coursePills = document.getElementById("course-pills")!;
+const searchInput = document.getElementById("group-search") as HTMLInputElement;
+const chipgrid = document.getElementById("chipgrid")!;
+const countEl = document.getElementById("group-count")!;
+const detailEl = document.getElementById("detail")!;
+
+const degreeLabel = (d: string) => (d === "bachelor" ? "Бакалавр" : d === "master" ? "Магістр" : "Усі ступені");
+
+const state: { degree: string; course: number | "all"; q: string; selected: string | null } = {
+  degree: "all", course: "all", q: "", selected: null,
+};
+
+function coursesFor(degree: string) {
+  const set = new Set<number>();
+  DATA.forEach((r) => { if (degree === "all" || r.degree === degree) set.add(r.course); });
+  return Array.from(set).sort((a, b) => a - b);
+}
+
+function renderDegreePills() {
+  const items = ["all", "bachelor", "master"];
+  degreePills.innerHTML = "";
+  items.forEach((d) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "pill";
+    b.textContent = degreeLabel(d);
+    b.setAttribute("aria-pressed", String(state.degree === d));
+    b.addEventListener("click", () => { state.degree = d; state.course = "all"; render(); });
+    degreePills.appendChild(b);
+  });
+}
+function renderCoursePills() {
+  const items: (number | "all")[] = ["all", ...coursesFor(state.degree)];
+  coursePills.innerHTML = "";
+  items.forEach((c) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "pill";
+    b.textContent = c === "all" ? "Усі курси" : `${c} курс`;
+    b.setAttribute("aria-pressed", String(state.course === c));
+    b.addEventListener("click", () => { state.course = c; render(); });
+    coursePills.appendChild(b);
+  });
+}
+function filteredRows() {
+  const q = state.q.trim().toUpperCase();
+  return DATA.filter((r) => {
+    if (state.degree !== "all" && r.degree !== state.degree) return false;
+    if (state.course !== "all" && r.course !== state.course) return false;
+    if (q && !r.group.toUpperCase().includes(q)) return false;
+    return true;
+  });
+}
+function renderChips() {
+  const rows = filteredRows();
+  countEl.textContent = rows.length === DATA.length ? `Усього груп: ${rows.length}` : `Знайдено: ${rows.length}`;
+  chipgrid.innerHTML = "";
+  if (rows.length === 0) {
+    const p = document.createElement("p");
+    p.className = "empty-msg";
+    p.textContent = "Групу не знайдено. Перевірте шифр або скиньте фільтри.";
+    chipgrid.appendChild(p);
+    return;
+  }
+  rows.forEach((r) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip";
+    b.textContent = r.group;
+    b.setAttribute("aria-pressed", String(state.selected === r.group));
+    b.addEventListener("click", () => { state.selected = r.group; renderChips(); renderDetail(); });
+    chipgrid.appendChild(b);
+  });
+}
+function renderDetail() {
+  if (!state.selected) {
+    detailEl.innerHTML = `<p class="empty-msg">Оберіть групу зі списку ліворуч, щоб побачити розклад.</p>`;
+    return;
+  }
+  const r = DATA.find((x) => x.group === state.selected);
+  if (!r) { detailEl.innerHTML = `<p class="empty-msg">Групу не знайдено.</p>`; return; }
+
+  let html = "";
+  html += `<div class="detail-head"><span class="group-code">${r.group}</span></div>`;
+  html += `<p class="detail-meta">${r.degreeLabel} · ${r.course} курс</p>`;
+  if (r.groupNote) {
+    html += `<div class="note-badges">${r.groupNote.split(",").map((t) => `<span class="note-badge">${t.trim()}</span>`).join("")}</div>`;
+  }
+  html += `<div class="period-list">`;
+  (r.periods || []).forEach((p) => {
+    if (p.ranges) {
+      p.ranges.forEach((rg) => {
+        const [a, b] = rg.split("-");
+        const cat = categorize(p.label);
+        const rangeText = fmtRange(a, b) || rg;
+        html += `<div class="period"><span class="dot ${cat.cls}"></span><div class="period-body"><div class="period-label">${cat.text}</div><div class="period-date">${rangeText}</div></div></div>`;
+      });
+      return;
+    }
+    const cat = categorize(p.label);
+    const rangeText = fmtRange(p.start, p.end) || p.raw;
+    html += `<div class="period"><span class="dot ${cat.cls}"></span><div class="period-body"><div class="period-label">${cat.text}</div><div class="period-date">${rangeText}</div>${p.note ? `<div class="period-flag">${p.note}</div>` : ""}</div></div>`;
+  });
+  html += `</div>`;
+  if (r.footnoteRefs && r.footnoteRefs.length) {
+    html += `<p class="footnote" style="margin-top:.85rem;">* Фактичні терміни підготовки до ЄДКІ визначаються термінами його проведення, встановленими відповідними державними органами відповідно до постанови КМУ від 19.05.2021 № 497 (із змінами).</p>`;
+  }
+  html += `<div class="detail-foot"><a class="btn-outline" href="${encodeURI(r.sourceFile)}" target="_blank" rel="noopener">Завантажити PDF →</a><span class="footnote">Джерело: ${r.sourceFile.split("/").pop()}</span></div>`;
+  detailEl.innerHTML = html;
+}
+function render() {
+  renderDegreePills();
+  renderCoursePills();
+  renderChips();
+  renderDetail();
+}
+searchInput.addEventListener("input", () => { state.q = searchInput.value; renderChips(); });
+render();
+</script>
