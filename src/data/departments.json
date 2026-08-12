@@ -46,7 +46,7 @@
     "url": "https://ksm.nau.edu.ua",
     "logo": "/departments/ksm.png",
     "labs": [
-      { "name": "Навчальна лабораторія комп'ютерних систем" },
+      { "name": "Навчальна лабораторія комп'ютерних систем", "url": "/faculty/labs/computer-systems/" },
       { "name": "Навчальна лабораторія «Cisco»" }
     ]
   },
