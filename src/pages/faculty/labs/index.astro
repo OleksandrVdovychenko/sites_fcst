@@ -9,20 +9,24 @@ const thumbs: Record<string, string> = {
   "/faculty/labs/computer-systems/": "/labs/computer-systems/cisco-rack.jpg",
   "/faculty/labs/cisco/": "/labs/cisco/rack-room-overview.jpg",
   "/faculty/labs/aviation-recorders/": "/labs/aviation-recorders/classroom-overview.jpg",
+  "/faculty/labs/axxonsoft/": "/labs/axxonsoft/classroom-overview.jpg",
+  "/faculty/labs/intelligent-systems/": "/labs/intelligent-systems/classroom-overview.jpg",
 };
 
 type LabCard = { name: string; parent: string; url?: string; external?: boolean };
+
+const isRealUrl = (u?: string) => !!u && u !== "#";
+const isExternalUrl = (u?: string) => isRealUrl(u) && /^https?:\/\//.test(u!);
 
 const cards: LabCard[] = [];
 for (const d of departments as any[]) {
   if (d.type === "dept" && d.labs) {
     for (const lab of d.labs) {
-      cards.push({ name: lab.name, parent: d.name, url: lab.url });
+      cards.push({ name: lab.name, parent: d.name, url: lab.url, external: isExternalUrl(lab.url) });
     }
   }
   if (d.type === "lab" || d.type === "center") {
-    const hasRealUrl = d.url && d.url !== "#";
-    cards.push({ name: d.name, parent: d.kind, url: hasRealUrl ? d.url : undefined, external: hasRealUrl });
+    cards.push({ name: d.name, parent: d.kind, url: isRealUrl(d.url) ? d.url : undefined, external: isExternalUrl(d.url) });
   }
 }
 const hasThumb = (c: LabCard) => !!(c.url && !c.external && thumbs[c.url]);
@@ -63,6 +67,14 @@ cards.sort((a, b) => Number(hasThumb(b)) - Number(hasThumb(a)));
               <p class="parent">{c.parent}</p>
               <h3>{c.name}</h3>
               <span class="cta">Сайт лабораторії →</span>
+            </div>
+          </a>
+        ) : c.url ? (
+          <a class="card ready no-thumb" href={c.url}>
+            <div class="body">
+              <p class="parent">{c.parent}</p>
+              <h3>{c.name}</h3>
+              <span class="cta">Переглянути →</span>
             </div>
           </a>
         ) : (

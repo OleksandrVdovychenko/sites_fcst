@@ -1,0 +1,77 @@
+---
+// /faculty/labs/cyber-range/ — Лабораторія Cyber Range UA («Кіберполігон»),
+// поза структурою кафедр. Фото поки немає — сторінка текстова.
+import Base from "../../../layouts/Base.astro";
+
+const equipment = ["Емуляція ІТ-інфраструктур", "Моделювання кіберзагроз", "Тренінги", "CERT/CSIRT", "Кіберзахист"];
+---
+<Base
+  title="Лабораторія Cyber Range UA · «Кіберполігон» · ФКНТ"
+  description="Cyber Range UA — віртуальне середовище для емуляції ІТ-інфраструктур, моделювання кіберзагроз та відпрацювання практичних навичок кіберзахисту."
+>
+  <section class="wrap page">
+    <nav class="crumbs" aria-label="Хлібні крихти">
+      <a href="/">Головна</a> › <a href="/faculty/">Факультет</a> › <a href="/faculty/labs/">Лабораторії</a> ›
+      <span>«Кіберполігон»</span>
+    </nav>
+    <p class="eyebrow">Навчально-наукова лабораторія</p>
+    <h1 class="display">Лабораторія Cyber Range UA</h1>
+    <p class="lead">
+      Cyber Range UA — сучасне віртуальне середовище для емуляції ІТ-інфраструктур, моделювання
+      кіберзагроз та відпрацювання практичних навичок кіберзахисту. Платформа дає змогу безпечно
+      моделювати реалістичні сценарії кібератак, досліджувати заходи захисту та реагування на
+      кіберінциденти, а також створювати й адаптувати навчальні та дослідницькі сценарії.
+    </p>
+  </section>
+
+  <section class="wrap section split">
+    <div>
+      <h2 class="display">Чим займаються студенти</h2>
+      <p>
+        На базі Cyber Range UA проводяться практичні навчання, тренінги та дослідження — від базової
+        кібергігієни до поглибленої підготовки фахівців із кіберзахисту. Лабораторія також розробляє
+        прототипи та програмні рішення, індивідуальні сценарії кібератак і навчальні програми, а
+        також виконує навчальні, дослідницькі й прикладні завдання для українських і міжнародних
+        організацій.
+      </p>
+    </div>
+    <div class="equip-card">
+      <h3>Напрями роботи</h3>
+      <div class="tags">
+        {equipment.map((t) => <span>{t}</span>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section cta-section">
+    <h2 class="display">Хочете дізнатися більше?</h2>
+    <p>Напишіть нам, щоб дізнатися більше про Cyber Range UA та практичні заняття на його базі.</p>
+    <a class="btn" href="/contacts/">Контакти факультету →</a>
+  </section>
+</Base>
+
+<style>
+.page { padding: 40px 24px 20px; }
+.crumbs { font-size: .85rem; color: var(--muted); margin-bottom: 16px; }
+.crumbs a:hover { color: var(--primary); }
+.eyebrow { font-weight: 800; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--sky); }
+h1 { color: var(--deep); font-size: clamp(1.8rem, 3.6vw, 2.6rem); margin: 12px 0 0; }
+h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); }
+.lead { color: var(--muted); font-size: 1.05rem; max-width: 70ch; margin: 14px 0 0; line-height: 1.65; }
+
+.section { padding: 40px 24px; }
+
+.split { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: start; }
+.split p { max-width: 70ch; margin-top: 14px; }
+.equip-card { background: var(--tint); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+.equip-card h3 { color: var(--deep); font-size: .95rem; margin-bottom: 12px; }
+.tags { display: flex; flex-wrap: wrap; gap: 7px; }
+.tags span { font-size: .78rem; font-weight: 600; color: #39406a; background: #fff; border: 1px solid var(--line); padding: 5px 11px; border-radius: 20px; }
+
+.cta-section { text-align: center; background: var(--tint); border-radius: var(--radius); margin: 8px 24px 40px; }
+.cta-section p { color: var(--muted); max-width: 60ch; margin: 10px auto 20px; }
+
+@media (max-width: 820px) {
+  .split { grid-template-columns: 1fr; }
+}
+</style>
