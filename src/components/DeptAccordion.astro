@@ -10,6 +10,7 @@ const decanateUnits = departments.filter((d) => d.type === "lab" || d.type === "
 const depts = departments.filter((d) => d.type === "dept");
 
 const hasLink = (url) => url && url !== "#";
+const isExternal = (url) => url && (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("//"));
 ---
 <div class="accordion">
   <div class="row">
@@ -24,7 +25,7 @@ const hasLink = (url) => url && url !== "#";
       {decanateUnits.map((u) => (
         <li>
           {hasLink(u.url) ? (
-            <a href={u.url} target="_blank" rel="noopener">{u.kind} {u.name}</a>
+            <a href={u.url} {...(isExternal(u.url) ? { target: "_blank", rel: "noopener" } : {})}>{u.kind} {u.name}</a>
           ) : (
             <span>{u.kind} {u.name}</span>
           )}
@@ -60,7 +61,7 @@ const hasLink = (url) => url && url !== "#";
               {d.labs.map((lab) => (
                 <li>
                   {hasLink(lab.url) ? (
-                    <a href={lab.url} target="_blank" rel="noopener">{lab.name}</a>
+                    <a href={lab.url} {...(isExternal(lab.url) ? { target: "_blank", rel: "noopener" } : {})}>{lab.name}</a>
                   ) : (
                     <span>{lab.name}</span>
                   )}
@@ -68,7 +69,7 @@ const hasLink = (url) => url && url !== "#";
               ))}
             </ul>
           )}
-          {hasLink(d.url) && <a class="lnk" href={d.url} target="_blank" rel="noopener">Сайт кафедри →</a>}
+          {hasLink(d.url) && <a class="lnk" href={d.url} {...(isExternal(d.url) ? { target: "_blank", rel: "noopener" } : {})}>Сайт кафедри →</a>}
         </div>
       </div>
     </div>
