@@ -32,7 +32,7 @@
     "url": "http://ccs.nau.edu.ua",
     "logo": "/departments/ccs.png",
     "labs": [
-      { "name": "Навчальна лабораторія системного програмування" },
+      { "name": "Навчальна лабораторія системного програмування", "url": "/faculty/labs/system-programming/" },
       { "name": "Навчально-наукова лабораторія інтелектуальних систем", "url": "/faculty/labs/intelligent-systems/" },
       { "name": "Навчальна лабораторія симуляцій, тестування та ігрової розробки SimTest Game Lab", "url": "/faculty/labs/simtest-game-lab/" }
     ]
