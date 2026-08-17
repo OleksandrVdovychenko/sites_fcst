@@ -5,9 +5,11 @@
 ---
 <dialog id="lightbox" class="lightbox" aria-label="Перегляд фото">
   <button type="button" class="lb-close" aria-label="Закрити">✕</button>
-  <button type="button" class="lb-prev" aria-label="Попереднє фото">‹</button>
-  <button type="button" class="lb-next" aria-label="Наступне фото">›</button>
-  <img id="lightbox-img" alt="" />
+  <div class="lb-stage">
+    <button type="button" class="lb-prev" aria-label="Попереднє фото">‹</button>
+    <img id="lightbox-img" alt="" />
+    <button type="button" class="lb-next" aria-label="Наступне фото">›</button>
+  </div>
   <div class="lb-meta">
     <p id="lightbox-caption"></p>
     <span id="lightbox-counter"></span>
@@ -37,6 +39,10 @@
   }
   .lightbox::backdrop { background: rgba(14, 21, 51, .92); }
 
+  .lb-stage {
+    position: relative; display: flex; align-items: center; justify-content: center;
+    max-width: 92vw; max-height: 78vh; touch-action: none;
+  }
   #lightbox-img {
     max-width: 92vw; max-height: 78vh; object-fit: contain;
     border-radius: var(--radius-sm); display: block;
@@ -45,20 +51,39 @@
   #lightbox-caption { margin: 0; color: #fff; font-size: .9rem; opacity: .9; }
   #lightbox-counter { display: block; margin-top: 4px; color: #9aa6d6; font-size: .78rem; font-weight: 700; }
 
-  .lightbox button { all: unset; cursor: pointer; color: #fff; }
+  /* all:unset живе в тому самому селекторі, що й розмір/позиція — інакше
+     Astro дописує data-astro-cid до кожного правила окремо, і винесений
+     в окреме правило `all:unset` (нижчої специфічності) все одно переміг би
+     через додану ним же специфічність — саме так кнопки стискались у смужку. */
   .lb-close, .lb-prev, .lb-next {
-    position: fixed; display: flex; align-items: center; justify-content: center;
-    width: 44px; height: 44px; border-radius: 50%; background: rgba(14, 21, 51, .55);
+    all: unset; cursor: pointer; color: #fff; box-sizing: border-box;
+    display: flex; align-items: center; justify-content: center; border-radius: 50%;
+  }
+  .lb-close {
+    position: fixed; top: 20px; right: 20px;
+    width: 44px; height: 44px; background: rgba(14, 21, 51, .55);
     font-size: 1.4rem; line-height: 1; transition: background .15s;
   }
-  .lb-close:hover, .lb-prev:hover, .lb-next:hover { background: rgba(14, 21, 51, .85); }
-  .lb-close { top: 20px; right: 20px; }
-  .lb-prev { left: 20px; top: 50%; transform: translateY(-50%); }
-  .lb-next { right: 20px; top: 50%; transform: translateY(-50%); }
+  .lb-close:hover { background: rgba(14, 21, 51, .85); }
+
+  /* prev/next сидять на самій сцені (не на viewport) — так вони завжди точно
+     впритул до фото, навіть коли мобільний браузер змінює висоту viewport
+     через рядок адреси (через що position:fixed;top:50% "їде" не туди). */
+  .lb-prev, .lb-next {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 1;
+    width: 52px; height: 52px; background: rgba(14, 21, 51, .65);
+    box-shadow: 0 4px 16px rgba(0,0,0,.35);
+    font-size: 1.6rem; line-height: 1; transition: background .15s, transform .15s;
+  }
+  .lb-prev:hover, .lb-next:hover { background: rgba(14, 21, 51, .9); }
+  .lb-prev:active, .lb-next:active { transform: translateY(-50%) scale(.92); }
+  .lb-prev { left: -8px; }
+  .lb-next { right: -8px; }
 
   @media (max-width: 600px) {
-    .lb-prev { left: 8px; }
-    .lb-next { right: 8px; }
+    .lb-prev, .lb-next { width: 48px; height: 48px; font-size: 1.5rem; background: rgba(14, 21, 51, .75); }
+    .lb-prev { left: 4px; }
+    .lb-next { right: 4px; }
     .lb-close { top: 10px; right: 10px; }
   }
 </style>
@@ -70,6 +95,7 @@
     const imgEl = document.getElementById("lightbox-img") as HTMLImageElement;
     const captionEl = document.getElementById("lightbox-caption")!;
     const counterEl = document.getElementById("lightbox-counter")!;
+    const stage = dialog.querySelector(".lb-stage") as HTMLDivElement;
     const prevBtn = dialog.querySelector(".lb-prev") as HTMLButtonElement;
     const nextBtn = dialog.querySelector(".lb-next") as HTMLButtonElement;
     const closeBtn = dialog.querySelector(".lb-close") as HTMLButtonElement;
@@ -128,6 +154,20 @@
       if (e.key === "ArrowRight") show(index + 1);
       if (e.key === "ArrowLeft") show(index - 1);
     });
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    stage.addEventListener("touchstart", (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    stage.addEventListener("touchend", (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        show(index + (dx < 0 ? 1 : -1));
+      }
+    }, { passive: true });
 
     // MutationObserver замість події "close" — деякі рушії ненадійно її диспетчерять,
     // а атрибут open дialog оновлюється синхронно завжди, незалежно від того, як діалог закрили.
