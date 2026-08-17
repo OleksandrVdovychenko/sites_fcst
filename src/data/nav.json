@@ -1,0 +1,188 @@
+[
+  {
+    "label": "Факультет",
+    "href": "/faculty/",
+    "mega": {
+      "cols": "pg-4",
+      "groups": [
+        {
+          "title": "Про нас",
+          "links": [
+            { "label": "Про факультет", "href": "/faculty/" },
+            { "label": "Команда факультету", "href": "/faculty/team/" },
+            { "label": "Кафедри та інші підрозділи", "href": "/faculty/departments/" },
+            { "label": "Навчальні лабораторії", "href": "/faculty/labs/" }
+          ]
+        },
+        {
+          "title": "Партнерство та ідентика",
+          "links": [
+            { "label": "Наші партнери", "href": "/faculty/partners/" },
+            { "label": "Айдентика", "href": "/faculty/identity/" },
+            { "label": "Ради факультету", "href": "/faculty/councils/" }
+          ]
+        }
+      ],
+      "feature": {
+        "display": "Вивчай ІТ, досліджуючи!",
+        "text": "Факультет комп'ютерних наук та технологій — злітна смуга у твоє цифрове майбутнє. 9 кафедр, власні лабораторії, партнери з ІТ-індустрії.",
+        "href": "/faculty/",
+        "cta": "Дізнатися більше"
+      }
+    }
+  },
+  {
+    "label": "Вступнику",
+    "href": "/admission/",
+    "mega": {
+      "cols": "pg-3",
+      "groups": [
+        {
+          "title": "Вступ",
+          "links": [
+            { "label": "Вступ · 1 курс", "href": "https://pk.kai.edu.ua/faculties/fakultet-kompyuternyh-nauk-ta-tehnologij/" },
+            { "label": "Магістратура", "href": "https://pk.kai.edu.ua/#how-to-become-kai-student--master" },
+            { "label": "Аспірантура", "href": "/admission/phd/" }
+          ]
+        },
+        {
+          "title": "Спеціальності ФКНТ",
+          "links": [
+            { "label": "Усі спеціальності", "href": "/admission/specialties/" },
+            { "label": "F1 · Прикладна математика", "href": "/admission/specialties/#f1" },
+            { "label": "F2 · Інженерія ПЗ", "href": "/admission/specialties/#f2" },
+            { "label": "F3 · Комп'ютерні науки", "href": "/admission/specialties/#f3" },
+            { "label": "F5 · Кібербезпека", "href": "/admission/specialties/#f5" },
+            { "label": "F6 · Інформаційні системи", "href": "/admission/specialties/#f6" },
+            { "label": "F7 · Комп'ютерна інженерія", "href": "/admission/specialties/#f7" },
+            { "label": "G7 · Робототехніка", "href": "/admission/specialties/#g7" }
+          ]
+        },
+        {
+          "title": "Умови та фінанси",
+          "links": [
+            { "label": "Правила прийому 2026", "href": "/admission/rules/" },
+            { "label": "Вартість навчання", "href": "https://pk.kai.edu.ua/education-prices/?level=bachelor&education_price_search=%D0%A4%D0%9A%D0%9D%D0%A2&sort=price_asc" },
+            { "label": "Реєстрація пільгових документів", "href": "https://pk.kai.edu.ua/reyestracziya-pilgovyh-dokumentiv/" },
+            { "label": "Контакти ПК", "href": "https://pk.kai.edu.ua/" }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "label": "Здобувачу",
+    "href": "/students/",
+    "mega": {
+      "cols": "pg-3",
+      "groups": [
+        {
+          "title": "Освітній процес",
+          "links": [
+            { "label": "Освітні програми", "href": "/students/#osvitni-prohramy" },
+            { "label": "Кабінет студента Digital University", "href": "/students/#digital-university" },
+            { "label": "Замовлення довідок, дублікатів", "href": "/students/#dovidky" },
+            { "label": "Підсумкова атестація", "href": "/students/#pidsumkova-atestatsiya" },
+            { "label": "Індивідуальна освітня траєкторія", "href": "/students/#trayektoriya" },
+            { "label": "Коди Google Classroom", "href": "/students/#classroom" },
+            { "label": "Рейтинг успішності", "href": "/students/#reityng" },
+            { "label": "Шаблони заяв", "href": "/students/#shablony-zayav" }
+          ]
+        },
+        {
+          "title": "Денна форма навчання",
+          "links": [
+            { "label": "Графік освітнього процесу", "href": "/students/fulltime/#grafik" },
+            { "label": "Розклад занять", "href": "/students/fulltime/#rozklad-zanyat" },
+            { "label": "Розклад екзаменів", "href": "/students/fulltime/#rozklad-ekzameniv" },
+            { "label": "Графік складання академічної заборгованості", "href": "/students/fulltime/#zaborhovanist" },
+            { "label": "Поновлення", "href": "/students/fulltime/#ponovlennya" }
+          ]
+        },
+        {
+          "title": "Заочна форма навчання",
+          "links": [
+            { "label": "Графік освітнього процесу", "href": "/students/parttime/grafik/" },
+            { "label": "Списки груп", "href": "/students/parttime/#spysky-hrup" },
+            { "label": "Розклад занять", "href": "/students/parttime/#rozklad-zanyat" },
+            { "label": "Накази, положення, інструкції", "href": "/students/parttime/#dokumenty" }
+          ]
+        },
+        {
+          "title": "PhD",
+          "links": [
+            { "label": "Розклад занять", "href": "/students/phd/#rozklad-zanyat" },
+            { "label": "Атестація здобувачів", "href": "/students/phd/#atestatsiya" },
+            { "label": "Академічна доброчесність", "href": "/students/phd/#dobrochesnist" },
+            { "label": "Процедури захисту", "href": "/students/phd/#zakhyst" },
+            { "label": "Корисно для науковців", "href": "/students/phd/#korysno" }
+          ]
+        },
+        {
+          "title": "Інші форми",
+          "links": [
+            { "label": "Дистанційна форма навчання", "href": "/students/distance/" },
+            { "label": "Дозвілля", "href": "/students/leisure/" }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "label": "Викладачу",
+    "href": "/staff/",
+    "mega": {
+      "cols": "pg-2",
+      "groups": [
+        {
+          "title": "Робота та розвиток",
+          "links": [
+            { "label": "Кабінет викладача", "href": "/staff/" },
+            { "label": "Підвищення кваліфікації", "href": "/staff/development/" },
+            { "label": "Академічна доброчесність", "href": "/staff/integrity/" }
+          ]
+        },
+        {
+          "title": "Облік та ресурси",
+          "links": [
+            { "label": "Військовий облік", "href": "/staff/military/" },
+            { "label": "Корисні ресурси", "href": "/staff/resources/" }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "label": "Наука",
+    "href": "/research/",
+    "mega": {
+      "cols": "pg-3",
+      "groups": [
+        {
+          "title": "Підготовка кадрів",
+          "links": [
+            { "label": "Аспірантура", "href": "/research/phd/" },
+            { "label": "Докторантура", "href": "/research/doctorate/" }
+          ]
+        },
+        {
+          "title": "Публікації та заходи",
+          "links": [
+            { "label": "Наукові журнали", "href": "/research/journals/" },
+            { "label": "Наукові заходи", "href": "/research/events/" }
+          ]
+        },
+        {
+          "title": "Проєкти та спільноти",
+          "links": [
+            { "label": "Проєкти", "href": "/research/projects/" },
+            { "label": "Студентські гуртки", "href": "/research/clubs/" }
+          ]
+        }
+      ]
+    }
+  },
+  { "label": "Міжнародна", "href": "/international/" },
+  { "label": "Новини", "href": "/news/" },
+  { "label": "Контакти", "href": "/contacts/" }
+]

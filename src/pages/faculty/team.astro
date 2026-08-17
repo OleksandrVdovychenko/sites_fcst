@@ -1,13 +1,12 @@
 ---
 // /faculty/team/ — команда факультету. Джерело: fcst.kai.edu.ua/stage/наша-команда/.
 import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import team from "../../data/team.json";
 ---
 <Base title="Команда факультету · ФКНТ" description="Керівництво Факультету комп'ютерних наук та технологій.">
   <section class="wrap page">
-    <nav class="crumbs" aria-label="Хлібні крихти">
-      <a href="/">Головна</a> › <a href="/faculty/">Факультет</a> › <span>Команда факультету</span>
-    </nav>
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Факультет", href: "/faculty/" }, { label: "Команда факультету" }]} />
     <h1 class="display">Команда факультету</h1>
     <p class="lead">Керівництво Факультету комп'ютерних наук та технологій.</p>
 
@@ -28,10 +27,8 @@ import team from "../../data/team.json";
 
 <style>
   .page{padding:40px 24px 60px}
-  .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:16px}
-  .crumbs a:hover{color:var(--primary)}
   h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem)}
-  .lead{color:var(--muted);font-size:1.05rem;margin:14px 0 36px;max-width:60ch}
+  .lead{margin-bottom:36px;max-width:60ch}
 
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
   .card{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff;

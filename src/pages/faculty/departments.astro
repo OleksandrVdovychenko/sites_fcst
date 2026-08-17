@@ -5,6 +5,7 @@
 // виглядала на сторінці так само, як самостійна.
 import Base from "../../layouts/Base.astro";
 import DeptAccordion from "../../components/DeptAccordion.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import departments from "../../data/departments.json";
 
 const deptCount = departments.filter((d) => d.type === "dept").length;
@@ -14,9 +15,7 @@ const labCenterCount =
 ---
 <Base title="Структура факультету · ФКНТ">
   <section class="wrap page">
-    <nav class="crumbs" aria-label="Хлібні крихти">
-      <a href="/">Головна</a> › <a href="/faculty/">Факультет</a> › <span>Кафедри</span>
-    </nav>
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Факультет", href: "/faculty/" }, { label: "Кафедри" }]} />
     <h1 class="display">Структура факультету</h1>
     <p class="lead">Дев'ять профільних кафедр, навчальні лабораторії й центри. Натисни на кафедру, щоб розгорнути.</p>
 
@@ -34,10 +33,8 @@ const labCenterCount =
 
 <style>
   .page{padding:40px 24px 60px}
-  .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:16px}
-  .crumbs a:hover{color:var(--primary)}
   h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem)}
-  .lead{color:var(--muted);font-size:1.05rem;margin:14px 0 28px;max-width:56ch}
+  .lead{max-width:56ch}
 
   .structure{display:flex;align-items:center;flex-wrap:wrap;gap:10px;background:var(--tint);
     border-radius:var(--radius-sm);padding:16px 20px;margin-bottom:24px}

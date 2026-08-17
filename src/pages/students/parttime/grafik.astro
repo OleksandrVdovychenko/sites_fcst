@@ -5,6 +5,7 @@
 // Дані розпізнано вручну з растрових сканів PDF (текстового шару в оригіналах немає) —
 // джерело: src/data/parttime-grafik.json, оригінали лежать у public/students/parttime/grafik/*.pdf.
 import Base from "../../../layouts/Base.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import schedule from "../../../data/parttime-grafik.json";
 
 const degreeLabel = (id: string) => (id === "bachelor" ? "Бакалавр" : "Магістр");
@@ -31,9 +32,7 @@ const flatGroups = schedule.programs.flatMap((program) =>
   description="Графік сесій, практик та атестацій для студентів заочної форми здобуття освіти ФКНТ на 2026-2027 навчальний рік — пошук за групою."
 >
   <section class="wrap page">
-    <nav class="crumbs" aria-label="Хлібні крихти">
-      <a href="/">Головна</a> › Здобувачу › <span>Графік освітнього процесу</span>
-    </nav>
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Здобувачам", href: "/students/" }, { label: "Графік освітнього процесу" }]} />
     <p class="eyebrow">Заочна форма здобуття освіти · 2026–2027 н.р.</p>
     <h1 class="display">Графік освітнього процесу</h1>
     <p class="lead">
@@ -75,12 +74,9 @@ const flatGroups = schedule.programs.flatMap((program) =>
 
 <style>
 .page { padding: 40px 24px 20px; }
-.crumbs { font-size: .85rem; color: var(--muted); margin-bottom: 16px; }
-.crumbs a:hover { color: var(--primary); }
-.eyebrow { font-weight: 800; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--sky); }
 h1 { color: var(--deep); font-size: clamp(2rem, 4vw, 2.8rem); margin: 12px 0 0; }
 h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); }
-.lead { color: var(--muted); font-size: 1.05rem; max-width: 70ch; margin: 14px 0 0; line-height: 1.65; }
+.lead { margin-bottom: 0; }
 
 .section { padding: 20px 24px 40px; }
 

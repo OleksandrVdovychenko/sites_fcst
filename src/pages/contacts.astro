@@ -4,12 +4,11 @@
 // видима адреса скрізь fcst@kai.edu.ua (не застарілий fcst@npp.nau.edu.ua з mailto:),
 // номер 406-78-05 (не 408-78-05 — це одруківка в шапці старого сайту).
 import Base from "../layouts/Base.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
 ---
 <Base title="Контакти · ФКНТ" description="Контакти деканату Факультету комп'ютерних наук та технологій.">
   <section class="wrap page">
-    <nav class="crumbs" aria-label="Хлібні крихти">
-      <a href="/">Головна</a> › <span>Контакти</span>
-    </nav>
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Контакти" }]} />
     <h1 class="display">Контакти</h1>
     <p class="lead">Факультет комп'ютерних наук та технологій — «ФКНТ, злітна смуга у твоє цифрове майбутнє!»</p>
 
@@ -37,10 +36,8 @@ import Base from "../layouts/Base.astro";
 
 <style>
   .page{padding:40px 24px 60px}
-  .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:16px}
-  .crumbs a:hover{color:var(--primary)}
   h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem)}
-  .lead{color:var(--muted);font-size:1.05rem;margin:14px 0 36px;max-width:60ch}
+  .lead{margin-bottom:36px;max-width:60ch}
 
   .grid{display:grid;grid-template-columns:1.3fr 1fr;gap:20px}
   .card{border:1px solid var(--line);border-radius:var(--radius);padding:28px}

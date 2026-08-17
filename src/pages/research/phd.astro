@@ -1,6 +1,7 @@
 ---
 // /research/phd/ — Аспірантура. Контент взято з fcst.kai.edu.ua/аспірантура-докторантура/.
 import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
 
 const specialties = [
   { code: "113", name: "Прикладна математика" },
@@ -23,9 +24,7 @@ const steps = [
   description="Підготовка докторів філософії (PhD) на факультеті комп'ютерних наук та технологій НАКУ «ХАІ»."
 >
   <section class="wrap page">
-    <nav class="crumbs" aria-label="Хлібні крихти">
-      <a href="/">Головна</a> › <a href="/research/">Наука</a> › <span>Аспірантура</span>
-    </nav>
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Наука", href: "/research/" }, { label: "Аспірантура" }]} />
     <p class="eyebrow">Підготовка кадрів вищої кваліфікації</p>
     <h1 class="display">Аспірантура</h1>
     <p class="lead">
@@ -164,9 +163,6 @@ const steps = [
 
 <style>
 .page { padding: 40px 24px 20px; }
-.crumbs { font-size: .85rem; color: var(--muted); margin-bottom: 16px; }
-.crumbs a:hover { color: var(--primary); }
-.eyebrow { font-weight: 800; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--sky); }
 h1 { color: var(--deep); font-size: clamp(2rem, 4vw, 2.8rem); margin: 12px 0 0; }
 h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); }
 
@@ -175,7 +171,7 @@ h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); }
 .hero-art { padding-block: 0; }
 .art-svg  { width: 100%; max-height: 260px; display: block; }
 
-.lead { color: var(--muted); font-size: 1.05rem; max-width: 70ch; margin: 14px 0 0; line-height: 1.65; }
+.lead { margin-bottom: 0; }
 
 /* Specialty cards */
 .spec-grid {

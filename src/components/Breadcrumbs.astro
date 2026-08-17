@@ -1,0 +1,14 @@
+---
+// Breadcrumbs.astro — хлібні крихти. Стилі — глобальні (.crumbs у tokens.css),
+// тут лише розмітка: останній пункт без href рендериться як поточна сторінка.
+interface Crumb { label: string; href?: string }
+const { items } = Astro.props as { items: Crumb[] };
+---
+<nav class="crumbs" aria-label="Хлібні крихти">
+  {items.map((c, i) => (
+    <>
+      {c.href ? <a href={c.href}>{c.label}</a> : <span>{c.label}</span>}
+      {i < items.length - 1 && " › "}
+    </>
+  ))}
+</nav>

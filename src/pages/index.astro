@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import DepartmentCard from "../components/DepartmentCard.astro";
+import CtaBand from "../components/CtaBand.astro";
 import departments from "../data/departments.json";
 import team from "../data/team.json";
 import { getCollection } from "astro:content";
@@ -46,7 +47,7 @@ const news = (await getCollection("news", ({ data }) => !data.draft))
         <a class="lnk" href="/news/">Усі новини →</a>
       </div>
       <div class="news-feed">
-        <a class="feature" href={`/news/${news[0].slug}/`}>
+        <a class="feature" href={`/news/${news[0].id}/`}>
           {news[0].data.cover && <img class="feature-img" src={news[0].data.cover} alt="" loading="lazy" />}
           <div class="feature-body">
             <div>
@@ -62,7 +63,7 @@ const news = (await getCollection("news", ({ data }) => !data.draft))
         {news.length > 1 && (
           <div class="news-list">
             {news.slice(1).map((p) => (
-              <a class="row" href={`/news/${p.slug}/`}>
+              <a class="row" href={`/news/${p.id}/`}>
                 <div class="row-meta">
                   <time datetime={p.data.date.toISOString()}>
                     {p.data.date.toLocaleDateString("uk-UA", { day: "numeric", month: "long", year: "numeric" })}
@@ -120,12 +121,7 @@ const news = (await getCollection("news", ({ data }) => !data.draft))
   </section>
 
   <!-- CTA -->
-  <section class="wrap">
-    <div class="cta-band">
-      <h2 class="display">Готовий вступити на ФКНТ?</h2>
-      <a class="btn dark" href="/admission/">Умови вступу →</a>
-    </div>
-  </section>
+  <CtaBand title="Готовий вступити на ФКНТ?" href="/admission/" label="Умови вступу →" />
 </Base>
 
 <style>
@@ -198,7 +194,6 @@ const news = (await getCollection("news", ({ data }) => !data.draft))
   .avatar h3{color:var(--deep,#1E2A7C);font-size:1rem;margin:0 0 4px}
   .avatar .role{color:var(--sky,#2D8CDF);font-weight:800;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;margin:0}
   .lnk.center{display:block;text-align:center;margin-top:36px;font-weight:800;color:var(--primary,#023FC1)}
-  .cta-band{background:var(--signal,#FEAB24);color:#0E1533;border-radius:20px;padding:36px;display:flex;justify-content:space-between;align-items:center;gap:20px;margin:40px 0 60px;flex-wrap:wrap}
   @media(max-width:900px){.stats{grid-template-columns:1fr 1fr;row-gap:24px}
     .stats div:nth-child(3){border-left:none}}
   @media(max-width:600px){.news-head{flex-direction:column;align-items:flex-start}

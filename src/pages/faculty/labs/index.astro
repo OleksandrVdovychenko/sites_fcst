@@ -2,17 +2,16 @@
 // /faculty/labs/ — хаб усіх навчальних лабораторій факультету: фото-картки
 // замість того, щоб ховати посилання всередині акордеона кафедр.
 import Base from "../../../layouts/Base.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import departments from "../../../data/departments.json";
+import { getCollection } from "astro:content";
 
-// Мініатюра для вже збудованих сторінок лабораторій (department.json посилань не містить).
-const thumbs: Record<string, string> = {
-  "/faculty/labs/computer-systems/": "/labs/computer-systems/cisco-rack.jpg",
-  "/faculty/labs/cisco/": "/labs/cisco/rack-room-overview.jpg",
-  "/faculty/labs/aviation-recorders/": "/labs/aviation-recorders/classroom-overview.jpg",
-  "/faculty/labs/axxonsoft/": "/labs/axxonsoft/classroom-overview.jpg",
-  "/faculty/labs/intelligent-systems/": "/labs/intelligent-systems/classroom-overview.jpg",
-  "/faculty/labs/system-programming/": "/labs/system-programming/classroom-overview.jpg",
-};
+// Мініатюра береться з фото самої сторінки лабораторії (src/content/labs/*.json),
+// а не з окремо підтримуваного мапінгу — додав .json з hero-фото, картка сама її підхопить.
+const labPages = await getCollection("labs");
+const thumbs: Record<string, string> = Object.fromEntries(
+  labPages.filter((l) => l.data.hero).map((l) => [`/faculty/labs/${l.id}/`, l.data.hero!.src])
+);
 
 type LabCard = { name: string; parent: string; url?: string; external?: boolean };
 
@@ -38,9 +37,7 @@ cards.sort((a, b) => Number(hasThumb(b)) - Number(hasThumb(a)));
   description="Навчальні та науково-дослідні лабораторії факультету комп'ютерних наук та технологій — обладнання, фото, напрями роботи."
 >
   <section class="wrap page">
-    <nav class="crumbs" aria-label="Хлібні крихти">
-      <a href="/">Головна</a> › <a href="/faculty/">Факультет</a> › <span>Лабораторії</span>
-    </nav>
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Факультет", href: "/faculty/" }, { label: "Лабораторії" }]} />
     <p class="eyebrow">Матеріальна база факультету</p>
     <h1 class="display">Навчальні лабораторії</h1>
     <p class="lead">
@@ -94,11 +91,8 @@ cards.sort((a, b) => Number(hasThumb(b)) - Number(hasThumb(a)));
 
 <style>
 .page { padding: 40px 24px 20px; }
-.crumbs { font-size: .85rem; color: var(--muted); margin-bottom: 16px; }
-.crumbs a:hover { color: var(--primary); }
-.eyebrow { font-weight: 800; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--sky); }
 h1 { color: var(--deep); font-size: clamp(2rem, 4vw, 2.8rem); margin: 12px 0 0; }
-.lead { color: var(--muted); font-size: 1.05rem; max-width: 70ch; margin: 14px 0 0; line-height: 1.65; }
+.lead { margin-bottom: 0; }
 
 .section { padding: 20px 24px 60px; }
 

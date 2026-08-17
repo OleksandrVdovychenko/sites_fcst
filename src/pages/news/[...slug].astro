@@ -1,24 +1,23 @@
 ---
 // /news/<slug>/ — окрема сторінка новини. Один файл обслуговує всю колекцію.
 import Base from "../../layouts/Base.astro";
-import { getCollection } from "astro:content";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
   const posts = await getCollection("news", ({ data }) => !data.draft);
   return posts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
     props: { post },
   }));
 }
 
 const { post } = Astro.props;
-const { Content } = await post.render();
+const { Content } = await render(post);
 ---
 <Base title={`${post.data.title} · ФКНТ`} description={post.data.summary}>
   <article class="wrap page">
-    <nav class="crumbs" aria-label="Хлібні крихти">
-      <a href="/">Головна</a> › <a href="/news/">Новини</a> › <span>{post.data.title}</span>
-    </nav>
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Новини", href: "/news/" }, { label: post.data.title }]} />
 
     <span class="cat">{post.data.category}</span>
     <h1 class="display">{post.data.title}</h1>
@@ -38,8 +37,6 @@ const { Content } = await post.render();
 
 <style>
   .page{padding:40px 24px 60px;max-width:74ch;margin:0 auto}
-  .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:20px}
-  .crumbs a:hover{color:var(--primary)}
   .cat{font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--sky)}
   h1{color:var(--deep);font-size:clamp(1.8rem,4vw,2.6rem);margin:10px 0 12px}
   time{display:block;font-size:.88rem;color:var(--muted);font-weight:700;margin-bottom:28px}

@@ -1,0 +1,19 @@
+---
+// CtaBand.astro — жовта CTA-плашка внизу сторінки. Стилі — глобальні (.cta-band у tokens.css).
+interface Props { title: string; href: string; label: string }
+const { title, href, label } = Astro.props;
+---
+<section class="wrap">
+  <div class="cta-band">
+    <h2 class="display">{title}</h2>
+    <a class="btn dark" href={href}>{label}</a>
+  </div>
+</section>
+
+<style>
+  @media (max-width: 600px) {
+    .cta-band { flex-direction: column; text-align: center; }
+    .cta-band .display { min-width: unset; width: 100%; }
+    .cta-band .btn { width: 100%; justify-content: center; }
+  }
+</style>

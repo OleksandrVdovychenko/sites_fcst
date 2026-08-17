@@ -1,13 +1,12 @@
 ---
 // /faculty/partners/ — партнери факультету. Перелік з головної сторінки старого сайту.
 import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import partners from "../../data/partners.json";
 ---
 <Base title="Наші партнери · ФКНТ" description="ІТ-компанії та організації, з якими співпрацює факультет.">
   <section class="wrap page">
-    <nav class="crumbs" aria-label="Хлібні крихти">
-      <a href="/">Головна</a> › <a href="/faculty/">Факультет</a> › <span>Наші партнери</span>
-    </nav>
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Факультет", href: "/faculty/" }, { label: "Наші партнери" }]} />
     <p class="eyebrow">Спільно з індустрією</p>
     <h1 class="display">Наші партнери</h1>
     <p class="lead">Факультет співпрацює з ІТ-компаніями та організаціями з питань освіти, кібербезпеки та практичної підготовки студентів.</p>
@@ -20,11 +19,8 @@ import partners from "../../data/partners.json";
 
 <style>
   .page{padding:40px 24px 60px}
-  .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:16px}
-  .crumbs a:hover{color:var(--primary)}
-  .eyebrow{font-weight:800;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--sky)}
   h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem);margin:12px 0 14px}
-  .lead{color:var(--muted);font-size:1.05rem;margin:0 0 40px;max-width:60ch}
+  .lead{margin:0 0 40px;max-width:60ch}
 
   .plogos{display:flex;flex-wrap:wrap;gap:16px}
   .plogo{height:64px;min-width:170px;display:grid;place-items:center;border:1px solid var(--line);border-radius:12px;

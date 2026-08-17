@@ -3,13 +3,12 @@
 // Описи, кар'єрні перспективи та зарплати — офіційний контент із сайту приймальної
 // комісії: https://pk.kai.edu.ua/faculties/fakultet-kompyuternyh-nauk-ta-tehnologij/
 import Base from "../../layouts/Base.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import specialties from "../../data/specialties.json";
 ---
 <Base title="Спеціальності ФКНТ · ФКНТ" description="Спеціальності та освітні програми факультету — бакалавр, магістр, PhD.">
   <section class="wrap page">
-    <nav class="crumbs" aria-label="Хлібні крихти">
-      <a href="/">Головна</a> › <a href="/admission/">Вступнику</a> › <span>Спеціальності ФКНТ</span>
-    </nav>
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Вступнику", href: "/admission/" }, { label: "Спеціальності ФКНТ" }]} />
     <h1 class="display">Спеціальності факультету</h1>
     <p class="lead">Сім спеціальностей на трьох освітніх рівнях — бакалавр, магістр, доктор філософії (PhD). Описи та кар'єрні перспективи — з сайту приймальної комісії КАІ.</p>
 
@@ -61,10 +60,8 @@ import specialties from "../../data/specialties.json";
 
 <style>
   .page{padding:40px 24px 60px}
-  .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:16px}
-  .crumbs a:hover{color:var(--primary)}
   h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem)}
-  .lead{color:var(--muted);font-size:1.05rem;margin:14px 0 36px;max-width:64ch}
+  .lead{margin-bottom:36px;max-width:64ch}
 
   .list{display:flex;flex-direction:column;gap:18px}
   .spec{border:1px solid var(--line);border-radius:var(--radius);padding:28px;scroll-margin-top:96px}

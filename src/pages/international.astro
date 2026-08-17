@@ -2,12 +2,11 @@
 // /international/ — Міжнародна співпраця. Контент зі старого сайту
 // fcst.kai.edu.ua/міжнародна-співпраця/.
 import Base from "../layouts/Base.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
 ---
 <Base title="Міжнародна співпраця · ФКНТ" description="Партнерства факультету з CRDF Global та USAID.">
   <section class="wrap page">
-    <nav class="crumbs" aria-label="Хлібні крихти">
-      <a href="/">Головна</a> › <span>Міжнародна</span>
-    </nav>
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Міжнародна" }]} />
     <h1 class="display">Міжнародна співпраця</h1>
 
     <article class="block">
@@ -37,8 +36,6 @@ import Base from "../layouts/Base.astro";
 
 <style>
   .page{padding:40px 24px 60px;max-width:76ch;margin:0 auto}
-  .crumbs{font-size:.85rem;color:var(--muted);margin-bottom:16px}
-  .crumbs a:hover{color:var(--primary)}
   h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem);margin-bottom:36px}
   .block{margin-bottom:40px}
   .block h2{color:var(--deep);font-size:1.4rem;margin-bottom:14px}

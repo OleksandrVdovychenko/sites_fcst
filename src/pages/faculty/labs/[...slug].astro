@@ -1,0 +1,116 @@
+---
+// /faculty/labs/<slug>/ — одна сторінка лабораторії. Дані — в src/content/labs/*.json,
+// цей шаблон лише рендерить їх. Додав .json → зʼявилась сторінка, без нового .astro.
+import Base from "../../../layouts/Base.astro";
+import Lightbox from "../../../components/Lightbox.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const labs = await getCollection("labs");
+  return labs.map((lab) => ({
+    params: { slug: lab.id },
+    props: { lab },
+  }));
+}
+
+const { lab } = Astro.props;
+const d = lab.data;
+---
+<Base title={d.metaTitle} description={d.description}>
+  <section class="wrap page">
+    <Breadcrumbs items={[
+      { label: "Головна", href: "/" },
+      { label: "Факультет", href: "/faculty/" },
+      { label: "Лабораторії", href: "/faculty/labs/" },
+      { label: d.crumbLabel },
+    ]} />
+    <p class="eyebrow">{d.department}</p>
+    <h1 class="display">{d.title}</h1>
+    <p class="lead">{d.lead}</p>
+  </section>
+
+  {d.hero && (
+    <section class="wrap hero-photo">
+      <div class="hero-frame">
+        <img src={d.hero.src} alt={d.hero.alt} />
+        <div class="hero-caption">
+          <p>{d.hero.caption}</p>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="wrap section split">
+    <div>
+      <h2 class="display">Чим займаються студенти</h2>
+      <p>{d.studentsText}</p>
+    </div>
+    <div class="equip-card">
+      <h3>{d.equipmentHeading}</h3>
+      <div class="tags">
+        {d.equipment.map((t) => <span>{t}</span>)}
+      </div>
+    </div>
+  </section>
+
+  {d.gallery.length > 0 && (
+    <section class="wrap section">
+      <h2 class="display">Лабораторія у фото</h2>
+      <div class="gallery">
+        {d.gallery.map((g) => (
+          <figure>
+            <img src={g.src} alt={g.caption} loading="lazy" />
+          </figure>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="wrap section cta-section">
+    <h2 class="display">Хочете дізнатися більше?</h2>
+    <p>{d.ctaText}</p>
+    <a class="btn" href={d.ctaHref} target="_blank" rel="noopener">{d.ctaLabel} →</a>
+  </section>
+
+  {(d.hero || d.gallery.length > 0) && <Lightbox />}
+</Base>
+
+<style>
+.page { padding: 40px 24px 20px; }
+h1 { color: var(--deep); font-size: clamp(1.7rem, 3.4vw, 2.6rem); margin: 12px 0 0; }
+h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); }
+.lead { margin-bottom: 0; }
+
+.section { padding: 40px 24px; }
+
+.hero-photo { margin-top: 12px; }
+.hero-frame { position: relative; border-radius: var(--radius); overflow: hidden; }
+.hero-frame img { width: 100%; height: 460px; object-fit: cover; }
+.hero-caption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(0deg, rgba(14,21,51,.75), transparent 65%);
+  padding: 28px 28px 20px;
+}
+.hero-caption p { margin: 0; color: #fff; font-size: .85rem; opacity: .9; }
+
+.split { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: start; }
+.split p { max-width: 70ch; margin-top: 14px; }
+.equip-card { background: var(--tint); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+.equip-card h3 { color: var(--deep); font-size: .95rem; margin-bottom: 12px; }
+.tags { display: flex; flex-wrap: wrap; gap: 7px; }
+.tags span { font-size: .78rem; font-weight: 600; color: #39406a; background: #fff; border: 1px solid var(--line); padding: 5px 11px; border-radius: 20px; }
+
+.gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+.gallery figure { margin: 0; border-radius: var(--radius-sm); overflow: hidden; background: var(--tint); }
+.gallery img { width: 100%; height: 200px; object-fit: cover; }
+
+.cta-section { text-align: center; background: var(--tint); border-radius: var(--radius); max-width: calc(var(--wrap) - 48px); margin: 8px auto 40px; }
+.cta-section p { color: var(--muted); max-width: 60ch; margin: 10px auto 20px; }
+
+@media (max-width: 820px) {
+  .split { grid-template-columns: 1fr; }
+  .gallery { grid-template-columns: repeat(2, 1fr); }
+  .hero-frame img { height: 280px; }
+}
+</style>

@@ -19,7 +19,7 @@ const title = page.currentPage === 1 ? "Новини · ФКНТ" : `Новин�
     <h1 class="display">Новини</h1>
     <div class="feed">
       {page.data.map((p) => (
-        <a class="item" href={`/news/${p.slug}/`}>
+        <a class="item" href={`/news/${p.id}/`}>
           {p.data.cover && <img class="thumb" src={p.data.cover} alt="" loading="lazy" />}
           <div class="body">
             <time datetime={p.data.date.toISOString()}>
