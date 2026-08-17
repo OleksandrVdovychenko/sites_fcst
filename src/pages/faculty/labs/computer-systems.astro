@@ -1,6 +1,7 @@
 ---
 // /faculty/labs/computer-systems/ — Навчальна лабораторія комп'ютерних систем (кафедра КСМ).
 import Base from "../../../layouts/Base.astro";
+import Lightbox from "../../../components/Lightbox.astro";
 
 const gallery = [
   { src: "/labs/computer-systems/cisco-arista-switches.jpg", caption: "Cisco 2800 Series та комутатори Arista 7150S-64" },
@@ -76,6 +77,8 @@ const equipment = ["Cisco", "Arista", "Dell PowerEdge", "VPN", "Мережева
     <p>Зв'яжіться з кафедрою комп'ютерних систем і мереж — розкажемо про навчальні курси на базі лабораторії.</p>
     <a class="btn" href="https://ksm.nau.edu.ua" target="_blank" rel="noopener">Кафедра КСМ →</a>
   </section>
+
+  <Lightbox />
 </Base>
 
 <style>

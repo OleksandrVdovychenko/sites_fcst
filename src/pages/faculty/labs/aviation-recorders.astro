@@ -2,6 +2,7 @@
 // /faculty/labs/aviation-recorders/ — Навчальна лабораторія експлуатації
 // автоматизованих систем контролю польотів (кафедра КІТ).
 import Base from "../../../layouts/Base.astro";
+import Lightbox from "../../../components/Lightbox.astro";
 
 const gallery = [
   { src: "/labs/aviation-recorders/flight-recorder-shelf.jpg", caption: "Бортові реєстратори польотної інформації на стелажах лабораторії" },
@@ -79,6 +80,8 @@ const equipment = ["Реєстратори польотної інформаці
     <p>Зв'яжіться з кафедрою комп'ютерних інформаційних технологій — розкажемо про навчальні курси на базі лабораторії.</p>
     <a class="btn" href="https://kit.nau.edu.ua" target="_blank" rel="noopener">Кафедра КІТ →</a>
   </section>
+
+  <Lightbox />
 </Base>
 
 <style>

@@ -1,6 +1,7 @@
 ---
 // /faculty/labs/cisco/ — Навчальна лабораторія «Cisco» (кафедра КСМ).
 import Base from "../../../layouts/Base.astro";
+import Lightbox from "../../../components/Lightbox.astro";
 
 const gallery = [
   { src: "/labs/cisco/1800-series-catalyst.jpg", caption: "Маршрутизатори Cisco 1800 Series та комутатори Catalyst 2960 PoE" },
@@ -79,6 +80,8 @@ const equipment = ["Cisco IOS", "Маршрутизація", "Комутаці�
     <p>Зв'яжіться з кафедрою комп'ютерних систем і мереж — розкажемо про навчальні курси на базі лабораторії.</p>
     <a class="btn" href="https://ksm.nau.edu.ua" target="_blank" rel="noopener">Кафедра КСМ →</a>
   </section>
+
+  <Lightbox />
 </Base>
 
 <style>

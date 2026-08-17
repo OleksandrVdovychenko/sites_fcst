@@ -2,6 +2,7 @@
 // /faculty/labs/intelligent-systems/ — Навчально-наукова лабораторія
 // інтелектуальних систем (кафедра інтелектуальних кібернетичних систем).
 import Base from "../../../layouts/Base.astro";
+import Lightbox from "../../../components/Lightbox.astro";
 
 const gallery = [
   { src: "/labs/intelligent-systems/classroom-workstations.jpg", caption: "Робочі місця студентів у лабораторії" },
@@ -73,6 +74,8 @@ const equipment = ["Фізичні сервери", "GPU-сервер", "Unity E
     <p>Зв'яжіться з кафедрою інтелектуальних кібернетичних систем — розкажемо про навчальні курси на базі лабораторії.</p>
     <a class="btn" href="http://ccs.nau.edu.ua" target="_blank" rel="noopener">Кафедра ІКС →</a>
   </section>
+
+  <Lightbox />
 </Base>
 
 <style>

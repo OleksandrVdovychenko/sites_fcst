@@ -2,6 +2,7 @@
 // /faculty/labs/axxonsoft/ — Лабораторія штучного інтелекту у сфері безпеки AxxonSoft
 // (створена у партнерстві AxxonSoft та КАІ, поза структурою кафедр).
 import Base from "../../../layouts/Base.astro";
+import Lightbox from "../../../components/Lightbox.astro";
 
 const gallery = [
   { src: "/labs/axxonsoft/noder-axxonsoft-wall.jpg", caption: "Стенд партнерів NODER і AxxonSoft з камерою відеоспостереження Hikvision" },
@@ -79,6 +80,8 @@ const equipment = ["Штучний інтелект", "Відеоаналіти�
     <p>Лабораторія створена у партнерстві з компанією AxxonSoft — розробником платформи Axxon PSIM.</p>
     <a class="btn" href="https://axxonsoft.com" target="_blank" rel="noopener">AxxonSoft →</a>
   </section>
+
+  <Lightbox />
 </Base>
 
 <style>

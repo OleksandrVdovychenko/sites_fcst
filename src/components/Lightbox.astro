@@ -1,0 +1,140 @@
+---
+// Lightbox.astro — повноекранний перегляд фото для сторінок лабораторій.
+// Підключається одним тегом; сам знаходить .hero-frame та .gallery figure на сторінці
+// й відкриває їхні <img> у нативному <dialog> з навігацією ‹ › та підписом (alt).
+---
+<dialog id="lightbox" class="lightbox" aria-label="Перегляд фото">
+  <button type="button" class="lb-close" aria-label="Закрити">✕</button>
+  <button type="button" class="lb-prev" aria-label="Попереднє фото">‹</button>
+  <button type="button" class="lb-next" aria-label="Наступне фото">›</button>
+  <img id="lightbox-img" alt="" />
+  <div class="lb-meta">
+    <p id="lightbox-caption"></p>
+    <span id="lightbox-counter"></span>
+  </div>
+</dialog>
+
+<style>
+  :global(.hero-frame),
+  :global(.gallery figure) {
+    cursor: zoom-in;
+  }
+  :global(.hero-frame:hover img),
+  :global(.gallery figure:hover img) {
+    transform: scale(1.03);
+  }
+  :global(.hero-frame img),
+  :global(.gallery img) {
+    transition: transform .25s;
+  }
+
+  .lightbox {
+    border: none; padding: 0; background: transparent; margin: auto;
+    max-width: 92vw; max-height: 92vh;
+  }
+  .lightbox[open] {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  .lightbox::backdrop { background: rgba(14, 21, 51, .92); }
+
+  #lightbox-img {
+    max-width: 92vw; max-height: 78vh; object-fit: contain;
+    border-radius: var(--radius-sm); display: block;
+  }
+  .lb-meta { text-align: center; max-width: 70ch; }
+  #lightbox-caption { margin: 0; color: #fff; font-size: .9rem; opacity: .9; }
+  #lightbox-counter { display: block; margin-top: 4px; color: #9aa6d6; font-size: .78rem; font-weight: 700; }
+
+  .lightbox button { all: unset; cursor: pointer; color: #fff; }
+  .lb-close, .lb-prev, .lb-next {
+    position: fixed; display: flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 50%; background: rgba(14, 21, 51, .55);
+    font-size: 1.4rem; line-height: 1; transition: background .15s;
+  }
+  .lb-close:hover, .lb-prev:hover, .lb-next:hover { background: rgba(14, 21, 51, .85); }
+  .lb-close { top: 20px; right: 20px; }
+  .lb-prev { left: 20px; top: 50%; transform: translateY(-50%); }
+  .lb-next { right: 20px; top: 50%; transform: translateY(-50%); }
+
+  @media (max-width: 600px) {
+    .lb-prev { left: 8px; }
+    .lb-next { right: 8px; }
+    .lb-close { top: 10px; right: 10px; }
+  }
+</style>
+
+<script>
+  function initLightbox() {
+    const dialog = document.getElementById("lightbox") as HTMLDialogElement | null;
+    if (!dialog) return;
+    const imgEl = document.getElementById("lightbox-img") as HTMLImageElement;
+    const captionEl = document.getElementById("lightbox-caption")!;
+    const counterEl = document.getElementById("lightbox-counter")!;
+    const prevBtn = dialog.querySelector(".lb-prev") as HTMLButtonElement;
+    const nextBtn = dialog.querySelector(".lb-next") as HTMLButtonElement;
+    const closeBtn = dialog.querySelector(".lb-close") as HTMLButtonElement;
+
+    const groups = Array.from(document.querySelectorAll<HTMLElement>(".hero-frame, .gallery figure"));
+    const items = groups
+      .map((el) => el.querySelector("img"))
+      .filter((el): el is HTMLImageElement => !!el);
+    if (!items.length) return;
+
+    let index = 0;
+
+    function render() {
+      const img = items[index];
+      imgEl.src = img.currentSrc || img.src;
+      imgEl.alt = img.alt;
+      captionEl.textContent = img.alt;
+      counterEl.textContent = items.length > 1 ? `${index + 1} / ${items.length}` : "";
+      prevBtn.hidden = nextBtn.hidden = items.length < 2;
+    }
+
+    function show(i: number) {
+      index = (i + items.length) % items.length;
+      render();
+    }
+
+    function open(i: number) {
+      show(i);
+      document.body.style.overflow = "hidden";
+      dialog!.showModal();
+    }
+
+    groups.forEach((el, i) => {
+      if (!items[i]) return;
+      el.tabIndex = 0;
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", "Переглянути фото у повному розмірі");
+      el.addEventListener("click", () => open(i));
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          open(i);
+        }
+      });
+    });
+
+    prevBtn.addEventListener("click", () => show(index - 1));
+    nextBtn.addEventListener("click", () => show(index + 1));
+    closeBtn.addEventListener("click", () => dialog!.close());
+
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) dialog!.close();
+    });
+
+    dialog.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") show(index + 1);
+      if (e.key === "ArrowLeft") show(index - 1);
+    });
+
+    // MutationObserver замість події "close" — деякі рушії ненадійно її диспетчерять,
+    // а атрибут open дialog оновлюється синхронно завжди, незалежно від того, як діалог закрили.
+    new MutationObserver(() => {
+      if (!dialog!.open) document.body.style.overflow = "";
+    }).observe(dialog, { attributes: true, attributeFilter: ["open"] });
+  }
+
+  initLightbox();
+</script>
