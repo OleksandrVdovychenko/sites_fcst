@@ -1,0 +1,26 @@
+---
+// /students/leisure/ — дозвілля студентів. Заглушка: реального контенту ще немає
+// на новому сайті. Прибрати "stub" стан, коли з'явиться реальний контент.
+import Base from "../../../layouts/Base.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import CtaBand from "../../../components/CtaBand.astro";
+---
+<Base title="Дозвілля · Здобувачам · ФКНТ" description="Позанавчальне життя студентів ФКНТ: гуртки, заходи, спільноти.">
+  <section class="wrap page">
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Здобувачам", href: "/students/" }, { label: "Дозвілля" }]} />
+    <p class="eyebrow">Здобувачам · поза навчанням</p>
+    <h1 class="display">Дозвілля</h1>
+    <p class="lead">
+      Цей розділ наповнюється. За інформацією про студентські активності,
+      гуртки та заходи факультету звертайтеся до деканату.
+    </p>
+  </section>
+
+  <CtaBand title="Потрібна допомога?" href="/contacts/" label="Контакти деканату →" />
+</Base>
+
+<style>
+.page { padding: 40px 24px 60px; }
+h1 { color: var(--deep); font-size: clamp(2rem, 4vw, 2.8rem); margin: 12px 0 0; }
+.lead { margin-top: 14px; max-width: 62ch; }
+</style>

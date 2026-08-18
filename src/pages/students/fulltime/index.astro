@@ -1,0 +1,62 @@
+---
+// /students/fulltime/ — денна форма навчання. Заглушка: реального контенту (розклади,
+// графіки) ще немає на новому сайті, тому кожен пункт — стаб з посиланням на деканат.
+// Прибрати "stub" стан, коли з'явиться реальний контент/дані для розділу.
+import Base from "../../../layouts/Base.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import CtaBand from "../../../components/CtaBand.astro";
+
+const items = [
+  { id: "grafik", title: "Графік освітнього процесу", text: "Графік навчального року для денної форми — сесії, канікули, практики — ще не опубліковано на новому сайті." },
+  { id: "rozklad-zanyat", title: "Розклад занять", text: "Розклад пар для груп денної форми готується до публікації." },
+  { id: "rozklad-ekzameniv", title: "Розклад екзаменів", text: "Розклад екзаменаційної сесії публікується деканатом окремо для кожного курсу ближче до сесії." },
+  { id: "zaborhovanist", title: "Графік складання академічної заборгованості", text: "Графік перескладань і ліквідації академічної заборгованості уточнюйте в деканаті." },
+  { id: "ponovlennya", title: "Поновлення", text: "Порядок і терміни поновлення на навчання уточнюйте в деканаті." },
+];
+---
+<Base title="Денна форма навчання · Здобувачам · ФКНТ" description="Графіки, розклади та інформація для студентів денної форми навчання ФКНТ.">
+  <section class="wrap page">
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Здобувачам", href: "/students/" }, { label: "Денна форма навчання" }]} />
+    <p class="eyebrow">Здобувачам · денна форма</p>
+    <h1 class="display">Денна форма навчання</h1>
+    <p class="lead">
+      Цей розділ наповнюється. Нижче — пункти, які будуть тут доступні; поки що
+      за актуальною інформацією звертайтеся до деканату.
+    </p>
+  </section>
+
+  <section class="wrap section">
+    <div class="stub-grid">
+      {items.map((it) => (
+        <div class="stub-card" id={it.id}>
+          <h2>{it.title}</h2>
+          <p>{it.text}</p>
+          <a class="stub-link" href="/contacts/">Уточнити в деканаті →</a>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <CtaBand title="Потрібна допомога?" href="/contacts/" label="Контакти деканату →" />
+</Base>
+
+<style>
+.page { padding: 40px 24px 20px; }
+h1 { color: var(--deep); font-size: clamp(2rem, 4vw, 2.8rem); margin: 12px 0 0; }
+.lead { margin-top: 14px; max-width: 62ch; }
+
+.section { padding: 20px 24px 40px; }
+
+.stub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.stub-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  scroll-margin-top: 90px;
+}
+.stub-card h2 { color: var(--deep); font-size: 1.05rem; margin: 0 0 10px; }
+.stub-card p { color: var(--muted); font-size: .92rem; margin: 0 0 14px; }
+.stub-link { font-weight: 700; color: var(--primary); text-decoration: none; font-size: .9rem; }
+.stub-link:hover { color: var(--deep); }
+</style>
