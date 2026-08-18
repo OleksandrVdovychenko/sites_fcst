@@ -1,0 +1,69 @@
+---
+// /students/parttime/ — заочна форма навчання. Графік освітнього процесу вже є
+// на окремій сторінці /students/parttime/grafik/ (реальні дані); решта пунктів —
+// заглушки до появи контенту. Прибрати "stub" стан, коли з'явиться реальний контент.
+import Base from "../../../layouts/Base.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import CtaBand from "../../../components/CtaBand.astro";
+
+const items = [
+  { id: "spysky-hrup", title: "Списки груп", text: "Списки груп заочної форми готуються до публікації." },
+  { id: "rozklad-zanyat", title: "Розклад занять", text: "Розклад занять для сесій заочної форми уточнюйте в деканаті." },
+  { id: "dokumenty", title: "Накази, положення, інструкції", text: "Накази та положення, що стосуються заочної форми навчання, готуються до публікації." },
+];
+---
+<Base title="Заочна форма навчання · Здобувачам · ФКНТ" description="Графік освітнього процесу, розклад та документи для студентів заочної форми навчання ФКНТ.">
+  <section class="wrap page">
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Здобувачам", href: "/students/" }, { label: "Заочна форма навчання" }]} />
+    <p class="eyebrow">Здобувачам · заочна форма</p>
+    <h1 class="display">Заочна форма навчання</h1>
+    <p class="lead">
+      Графік освітнього процесу за групами вже доступний. Решта розділу наповнюється —
+      за актуальною інформацією звертайтеся до деканату.
+    </p>
+    <a class="btn-outline" href="/students/parttime/grafik/">Графік освітнього процесу за групою →</a>
+  </section>
+
+  <section class="wrap section">
+    <div class="stub-grid">
+      {items.map((it) => (
+        <div class="stub-card" id={it.id}>
+          <h2>{it.title}</h2>
+          <p>{it.text}</p>
+          <a class="stub-link" href="/contacts/">Уточнити в деканаті →</a>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <CtaBand title="Потрібна допомога?" href="/contacts/" label="Контакти деканату →" />
+</Base>
+
+<style>
+.page { padding: 40px 24px 20px; }
+h1 { color: var(--deep); font-size: clamp(2rem, 4vw, 2.8rem); margin: 12px 0 0; }
+.lead { margin-top: 14px; max-width: 62ch; }
+
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 9px; font-weight: 800;
+  padding: 13px 24px; margin-top: 20px; border-radius: var(--radius-sm);
+  background: transparent; border: 2px solid var(--primary); color: var(--primary);
+  text-decoration: none; transition: background .18s;
+}
+.btn-outline:hover { background: color-mix(in srgb, var(--primary) 10%, transparent); }
+
+.section { padding: 20px 24px 40px; }
+
+.stub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.stub-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  scroll-margin-top: 90px;
+}
+.stub-card h2 { color: var(--deep); font-size: 1.05rem; margin: 0 0 10px; }
+.stub-card p { color: var(--muted); font-size: .92rem; margin: 0 0 14px; }
+.stub-link { font-weight: 700; color: var(--primary); text-decoration: none; font-size: .9rem; }
+.stub-link:hover { color: var(--deep); }
+</style>

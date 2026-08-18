@@ -1,0 +1,64 @@
+---
+// /students/phd/ — аспірантура/докторантура (PhD). Заглушка: реального контенту
+// ще немає на новому сайті. Прибрати "stub" стан, коли з'явиться реальний контент.
+import Base from "../../../layouts/Base.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import CtaBand from "../../../components/CtaBand.astro";
+
+const items = [
+  { id: "rozklad-zanyat", title: "Розклад занять", text: "Розклад занять для аспірантів готується до публікації." },
+  { id: "atestatsiya", title: "Атестація здобувачів", text: "Порядок і терміни атестації здобувачів наукового ступеня уточнюйте на кафедрі." },
+  { id: "dobrochesnist", title: "Академічна доброчесність", text: "Вимоги академічної доброчесності для наукових робіт готуються до публікації." },
+  { id: "zakhyst", title: "Процедури захисту", text: "Порядок подання документів і процедура захисту дисертацій уточнюються." },
+  { id: "korysno", title: "Корисно для науковців", text: "Добірка корисних матеріалів для науковців готується." },
+];
+---
+<Base title="PhD · Здобувачам · ФКНТ" description="Інформація для аспірантів та докторантів ФКНТ: розклад, атестація, академічна доброчесність, захист дисертацій.">
+  <section class="wrap page">
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Здобувачам", href: "/students/" }, { label: "PhD" }]} />
+    <p class="eyebrow">Здобувачам · аспірантура та докторантура</p>
+    <h1 class="display">PhD</h1>
+    <p class="lead">
+      Цей розділ наповнюється. Нижче — пункти, які будуть тут доступні; поки що
+      за актуальною інформацією звертайтеся до кафедри або деканату. Загальна
+      інформація про вступ до аспірантури та докторантури — у розділі
+      <a href="/research/phd/">Наука</a>.
+    </p>
+  </section>
+
+  <section class="wrap section">
+    <div class="stub-grid">
+      {items.map((it) => (
+        <div class="stub-card" id={it.id}>
+          <h2>{it.title}</h2>
+          <p>{it.text}</p>
+          <a class="stub-link" href="/contacts/">Уточнити на кафедрі →</a>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <CtaBand title="Потрібна допомога?" href="/contacts/" label="Контакти деканату →" />
+</Base>
+
+<style>
+.page { padding: 40px 24px 20px; }
+h1 { color: var(--deep); font-size: clamp(2rem, 4vw, 2.8rem); margin: 12px 0 0; }
+.lead { margin-top: 14px; max-width: 62ch; }
+.lead a { color: var(--primary); font-weight: 700; }
+
+.section { padding: 20px 24px 40px; }
+
+.stub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.stub-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  scroll-margin-top: 90px;
+}
+.stub-card h2 { color: var(--deep); font-size: 1.05rem; margin: 0 0 10px; }
+.stub-card p { color: var(--muted); font-size: .92rem; margin: 0 0 14px; }
+.stub-link { font-weight: 700; color: var(--primary); text-decoration: none; font-size: .9rem; }
+.stub-link:hover { color: var(--deep); }
+</style>

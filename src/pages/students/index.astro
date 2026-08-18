@@ -48,15 +48,19 @@ const sections = [
   },
 ];
 
+// Розділ ще наповнюється — реального контенту (посилання на кабінети,
+// порядок замовлення довідок тощо) поки немає, тому кожен пункт має власний
+// id (ціль анкорних посилань з мегаменю) і коротку заглушку замість опису.
+// Прибрати "stub" стан по кожному пункту, коли з'явиться реальний контент.
 const services = [
-  { label: "Освітні програми", href: "/students/#osvitni-prohramy" },
-  { label: "Кабінет студента Digital University", href: "/students/#digital-university" },
-  { label: "Замовлення довідок, дублікатів", href: "/students/#dovidky" },
-  { label: "Підсумкова атестація", href: "/students/#pidsumkova-atestatsiya" },
-  { label: "Індивідуальна освітня траєкторія", href: "/students/#trayektoriya" },
-  { label: "Коди Google Classroom", href: "/students/#classroom" },
-  { label: "Рейтинг успішності", href: "/students/#reityng" },
-  { label: "Шаблони заяв", href: "/students/#shablony-zayav" },
+  { id: "osvitni-prohramy", label: "Освітні програми", text: "Перелік освітніх програм ФКНТ готується до публікації." },
+  { id: "digital-university", label: "Кабінет студента Digital University", text: "Посилання на кабінет студента уточнюється." },
+  { id: "dovidky", label: "Замовлення довідок, дублікатів", text: "Порядок замовлення довідок про навчання уточнюється." },
+  { id: "pidsumkova-atestatsiya", label: "Підсумкова атестація", text: "Інформація про підсумкову атестацію готується до публікації." },
+  { id: "trayektoriya", label: "Індивідуальна освітня траєкторія", text: "Порядок формування індивідуальної освітньої траєкторії уточнюється." },
+  { id: "classroom", label: "Коди Google Classroom", text: "Коди для приєднання до класів уточнюйте на кафедрі." },
+  { id: "reityng", label: "Рейтинг успішності", text: "Інформація про рейтинг успішності готується до публікації." },
+  { id: "shablony-zayav", label: "Шаблони заяв", text: "Шаблони типових заяв готуються до публікації." },
 ];
 ---
 
@@ -101,10 +105,14 @@ const services = [
     </div>
     <div class="services-grid">
       {services.map((service) => (
-        <a href={service.href} class="service-link">
-          {service.label}
-          <span class="arrow">→</span>
-        </a>
+        <div class="service-card" id={service.id}>
+          <h3>{service.label}</h3>
+          <p>{service.text}</p>
+          <a class="service-link" href="/contacts/">
+            Уточнити в деканаті
+            <span class="arrow">→</span>
+          </a>
+        </div>
       ))}
     </div>
   </section>
@@ -219,31 +227,44 @@ const services = [
   .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 12px;
+    gap: 16px;
+  }
+
+  .service-card {
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    scroll-margin-top: 90px;
+  }
+
+  .service-card h3 {
+    color: var(--deep);
+    font-size: 1rem;
+    margin: 0 0 8px;
+  }
+
+  .service-card p {
+    color: var(--muted);
+    font-size: 0.88rem;
+    margin: 0 0 12px;
   }
 
   .service-link {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    background: #fff;
-    border-radius: 8px;
-    font-weight: 600;
-    color: var(--deep);
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--primary);
     text-decoration: none;
-    transition: background 0.2s, color 0.2s;
-    border: 1px solid var(--line);
   }
 
   .service-link:hover {
-    background: #fff;
-    color: var(--primary);
-    border-color: var(--primary);
+    color: var(--deep);
   }
 
   .arrow {
-    margin-left: 8px;
+    margin-left: 6px;
     font-size: 0.9rem;
   }
 
