@@ -11,7 +11,23 @@ const items = [
   { id: "rozklad-zanyat", title: "Розклад занять", text: "Розклад пар для груп денної форми готується до публікації." },
   { id: "rozklad-ekzameniv", title: "Розклад екзаменів", text: "Розклад екзаменаційної сесії публікується деканатом окремо для кожного курсу ближче до сесії." },
   { id: "zaborhovanist", title: "Графік складання академічної заборгованості", text: "Графік перескладань і ліквідації академічної заборгованості уточнюйте в деканаті." },
-  { id: "ponovlennya", title: "Поновлення", text: "Порядок і терміни поновлення на навчання уточнюйте в деканаті." },
+];
+
+// "Поновлення" — контент з fcst.kai.edu.ua/поновлення/ (перенесено 1:1, факти/дати/посилання не змінювались).
+const readmissionYears = [
+  { course: "2 курс бакалаврату", years: "2023, 2024, 2025 років вступу" },
+  { course: "3 курс бакалаврату", years: "2022, 2023, 2024, 2025 років вступу" },
+  { course: "4 курс бакалаврату", years: "2021, 2022, 2023, 2024, 2025 років вступу" },
+  { course: "1 курс магістратури", years: "2025 рік вступу" },
+  { course: "2 курс магістратури", years: "2024, 2025 років вступу" },
+];
+const readmissionDocs = [
+  "сканкопія академічної довідки",
+  "лист перезаліку (отримати у методиста в 1.417 або на пошту)",
+  "сканкопії документів, на підставі яких здійснювався вступ на навчання (документ про повну загальну середню освіту, сертифікат ЗНО/НМТ, мотиваційний лист)",
+  "сканкопія документа, що засвідчує особу (усі сторінки або обидві сторони; для ID-картки — ще й витяг з місця реєстрації)",
+  "сканкопія ідентифікаційного номера (ІПН)",
+  "сканкопія військово-облікового документа",
 ];
 ---
 <Base title="Денна форма навчання · Здобувачам · ФКНТ" description="Графіки, розклади та інформація для студентів денної форми навчання ФКНТ.">
@@ -37,6 +53,60 @@ const items = [
     </div>
   </section>
 
+  <section class="wrap section">
+    <div class="ponov-card" id="ponovlennya">
+      <p class="eyebrow">Денна форма навчання</p>
+      <h2 class="display">Поновлення на навчання</h2>
+
+      <div class="deadline">
+        <b>Прийом заяв — до 07.08.2026</b>
+        <span>на непарний семестр 2026–2027 н.р.</span>
+      </div>
+
+      <p>Поновлення на навчання здійснюється за умови:</p>
+
+      <ol class="conditions">
+        <li>
+          <p>Виконання вступником (особою, яка поновлюється) вимог, установлених для вступу на відповідну освітню програму — відповідно до Правил прийому до КАІ:</p>
+          <ul class="years-list">
+            {readmissionYears.map((r) => (
+              <li><span class="course">{r.course}</span><span class="years">{r.years}</span></li>
+            ))}
+          </ul>
+          <p class="footnote">
+            Вимоги до вступників за роками й спеціальностями — на <a href="https://vstup.edbo.gov.ua/" target="_blank" rel="noopener">vstup.edbo.gov.ua</a>. Якщо потрібно скласти додаткові іспити (НМТ тощо), вимоги мають бути виконані не пізніше дати допуску до атестації здобувачів вищої освіти.
+          </p>
+        </li>
+        <li><p>Наявності позитивної оцінки результатів навчання, здобутих особою під час попередніх періодів навчання, та підтвердження її здатності успішно опанувати відповідну освітню програму — рішення ухвалює Комісія з визнання результатів навчання факультету й оформлює протоколом.</p></li>
+        <li><p>Виконання освітніх компонентів навчального плану, які не були зараховані за результатами визнання попереднього навчання (академічної різниці), — до моменту поновлення або протягом шести місяців після нього.</p></li>
+      </ol>
+
+      <p>Поновлення здійснюється <strong>виключно на місця за кошти фізичних (юридичних) осіб</strong>. Заяву слід писати без зазначення курсу поновлення та заповнити <a href="https://docs.google.com/document/d/1Eh9JnOKbRLGTAdu51S7pQECZ9d_fadmC/edit?usp=sharing&ouid=101815707745276378573&rtpof=true&sd=true" target="_blank" rel="noopener">Додаток 1 (у формі заяви)</a>.</p>
+
+      <div class="submit-box">
+        <h3>Як подати документи</h3>
+        <p>Особисто — в кабінеті 1.417, або дистанційно — на <a href="mailto:fcst@kai.edu.ua">fcst@kai.edu.ua</a>.</p>
+        <p class="docs-label">До заяви додаються:</p>
+        <ul class="docs-list">
+          {readmissionDocs.map((d) => <li>{d}</li>)}
+        </ul>
+        <p class="warn">За відсутності потрібної інформації чи документів заяву може бути відхилено.</p>
+      </div>
+
+      <p class="warn">Якщо ці вимоги не виконано у встановлений строк, здобувача відраховують за порушення умов договору про навчання — відповідно до <a href="https://zakon.rada.gov.ua/laws/show/1556-18#n777" target="_blank" rel="noopener">частини шістнадцятої статті 44</a> Закону України «Про вищу освіту» — і він не допускається до атестації здобувачів вищої освіти.</p>
+
+      <p>Освітні компоненти навчального плану для попередніх періодів навчання (обов'язкові та/або вибіркові), а також передбачені законодавством етапи атестації включаються до індивідуального навчального плану (ІНП) студента. <strong class="warn-inline">Невиконання ІНП призводить до відрахування з університету.</strong></p>
+
+      <div class="docs-refs">
+        <h3>Нормативна база</h3>
+        <ul>
+          <li><a href="https://zakon.rada.gov.ua/laws/show/z0509-24#Text" target="_blank" rel="noopener">Положення про порядок відрахування, переривання навчання, поновлення і переведення осіб, які навчаються у закладах вищої освіти, та надання їм академічної відпустки</a> (наказ МОН України №134 від 07.02.2024)</li>
+          <li><a href="https://nau.edu.ua/site/variables/news/2025/1/%D0%9F%D0%BE%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F%20%D0%BF%D1%80%D0%BE%20%D0%BE%D1%80%D0%B3%D0%B0%D0%BD%D1%96%D0%B7%D0%B0%D1%86%D1%96%D1%8E%20%D0%BE%D1%81%D0%B2%D1%96%D1%82%D0%BD%D1%8C%D0%BE%D0%B3%D0%BE%20%D0%BF%D1%80%D0%BE%D1%86%D0%B5%D1%81%D1%83%20%D0%9A%D0%90%D0%86%20(2024)_compressed.pdf" target="_blank" rel="noopener">Положення про організацію освітнього процесу в державному некомерційному підприємстві «Державний університет «Київський авіаційний інститут»</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <CtaBand title="Потрібна допомога?" href="/contacts/" label="Контакти деканату →" />
 </Base>
 
@@ -59,4 +129,55 @@ h1 { color: var(--deep); font-size: clamp(2rem, 4vw, 2.8rem); margin: 12px 0 0; 
 .stub-card p { color: var(--muted); font-size: .92rem; margin: 0 0 14px; }
 .stub-link { font-weight: 700; color: var(--primary); text-decoration: none; font-size: .9rem; }
 .stub-link:hover { color: var(--deep); }
+
+.ponov-card {
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 32px; scroll-margin-top: 90px; max-width: 78ch;
+}
+.ponov-card h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 10px 0 20px; }
+.ponov-card > p { color: #404869; font-size: .98rem; line-height: 1.65; margin: 0 0 16px; }
+.ponov-card a { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
+.ponov-card a:hover { color: var(--sky); }
+.ponov-card h3 { color: var(--deep); font-size: .95rem; margin: 0 0 10px; }
+
+.deadline {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;
+  background: var(--tint); border-left: 4px solid var(--signal); border-radius: 0 8px 8px 0;
+  padding: 12px 16px; margin: 0 0 20px;
+}
+.deadline b { color: var(--deep); font-size: 1rem; }
+.deadline span { color: var(--muted); font-size: .88rem; }
+
+.conditions { list-style: none; counter-reset: cond; margin: 0 0 18px; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.conditions > li { counter-increment: cond; position: relative; padding-left: 34px; }
+.conditions > li::before {
+  content: counter(cond); position: absolute; left: 0; top: 1px;
+  width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: #fff;
+  font-size: .78rem; font-weight: 800; display: flex; align-items: center; justify-content: center;
+}
+.conditions > li p { margin: 0 0 10px; }
+.conditions > li p:last-child { margin-bottom: 0; }
+
+.years-list { list-style: none; margin: 0 0 10px; padding: 12px 16px; background: var(--tint); border-radius: var(--radius-sm); display: flex; flex-direction: column; gap: 6px; }
+.years-list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: .88rem; }
+.years-list .course { color: var(--deep); font-weight: 700; }
+.years-list .years { color: #39406a; }
+
+.footnote { font-size: .84rem; color: var(--muted); margin-top: 8px; }
+
+.submit-box { background: var(--tint); border-radius: var(--radius-sm); padding: 20px 22px; margin: 4px 0 20px; }
+.submit-box p { margin: 0 0 12px; }
+.docs-label { color: var(--deep); font-weight: 700; font-size: .9rem; }
+.docs-list { margin: 0 0 14px; padding-left: 20px; color: #404869; font-size: .92rem; display: flex; flex-direction: column; gap: 5px; }
+
+.warn {
+  background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--signal);
+  border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: .92rem !important; color: #404869 !important;
+}
+.warn-inline { color: var(--deep); }
+
+.docs-refs { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 4px; }
+.docs-refs ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.docs-refs li { font-size: .9rem; color: var(--muted); padding-left: 16px; position: relative; }
+.docs-refs li::before { content: ""; position: absolute; left: 0; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--sky); }
 </style>
