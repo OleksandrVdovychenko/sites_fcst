@@ -33,16 +33,18 @@ const departmentList = [
     <p class="eyebrow">Вивчай ІТ, досліджуючи!</p>
     <h1 class="display">Наш Факультет комп'ютерних наук та технологій</h1>
 
-    <div class="intro">
-      <p>Факультет було засновано у далекому 1965 році. За цей час він пройшов тривалу еволюцію та складні випробування часом. Сьогодні Факультет комп'ютерних наук та технологій (сучасна назва з 2023 року) готує висококласних та успішних ІТ-фахівців для різних галузей промисловості, у тому числі й для таких високотехнологічних, як авіаційна техніка та авіабудування.</p>
-      <p>Наші викладачі регулярно підвищують кваліфікацію у провідних ІТ-компаніях та закордонних університетах. Науковці факультету успішно беруть участь у виконанні вітчизняних і закордонних науково-дослідних робіт та дослідницьких проєктів у галузі інформаційних технологій, що стосуються обробки та аналізу даних, машинного навчання і штучного інтелекту, захисту критичної інформаційної інфраструктури держави.</p>
-    </div>
+    <div class="hero-grid">
+      <div class="intro">
+        <p>Факультет було засновано у далекому 1965 році. За цей час він пройшов тривалу еволюцію та складні випробування часом. Сьогодні Факультет комп'ютерних наук та технологій (сучасна назва з 2023 року) готує висококласних та успішних ІТ-фахівців для різних галузей промисловості, у тому числі й для таких високотехнологічних, як авіаційна техніка та авіабудування.</p>
+        <p>Наші викладачі регулярно підвищують кваліфікацію у провідних ІТ-компаніях та закордонних університетах. Науковці факультету успішно беруть участь у виконанні вітчизняних і закордонних науково-дослідних робіт та дослідницьких проєктів у галузі інформаційних технологій, що стосуються обробки та аналізу даних, машинного навчання і штучного інтелекту, захисту критичної інформаційної інфраструктури держави.</p>
+      </div>
 
-    <div class="stats">
-      <div><b class="display">1965</b><span>Рік заснування</span></div>
-      <div><b class="display">9</b><span>Кафедр</span></div>
-      <div><b class="display">7</b><span>Спеціальностей</span></div>
-      <div><b class="display">60+</b><span>Років досвіду</span></div>
+      <div class="stats">
+        <div><b class="display">1965</b><span>Рік заснування</span></div>
+        <div><b class="display">9</b><span>Кафедр</span></div>
+        <div><b class="display">7</b><span>Спеціальностей</span></div>
+        <div><b class="display">60+</b><span>Років досвіду</span></div>
+      </div>
     </div>
   </section>
 
@@ -84,12 +86,15 @@ const departmentList = [
 <style>
   .page{padding:40px 24px 20px}
   h1{color:var(--deep);font-size:clamp(2rem,4vw,2.8rem);margin:12px 0 24px}
+
+  .hero-grid{display:grid;grid-template-columns:1fr minmax(240px,320px);gap:40px;align-items:start}
   .intro{max-width:70ch;display:flex;flex-direction:column;gap:14px}
   .intro p{color:#404869;font-size:1.02rem;margin:0}
 
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:44px 0 0;text-align:center;margin-top:24px;border-top:1px solid var(--line)}
-  .stats b{display:block;font-size:2.2rem;color:var(--primary)}
-  .stats span{font-size:.85rem;color:var(--muted)}
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:20px 16px;text-align:center;
+    background:var(--tint);border:1px solid var(--line);border-radius:var(--radius);padding:28px}
+  .stats b{display:block;font-size:2rem;color:var(--primary)}
+  .stats span{font-size:.8rem;color:var(--muted)}
 
   .section{padding:56px 24px}
   .depts-block{background:var(--tint);border-radius:var(--radius);padding:36px}
@@ -112,6 +117,6 @@ const departmentList = [
   .plogo{height:60px;min-width:150px;display:grid;place-items:center;border:1px solid var(--line);border-radius:12px;
     padding:0 24px;color:var(--muted);font-weight:800;letter-spacing:.02em;background:#fff;font-size:.92rem}
 
-  @media(max-width:900px){.values{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr;gap:24px}}
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(4,1fr)}.values{grid-template-columns:1fr 1fr}}
   @media(max-width:600px){.values{grid-template-columns:1fr}.dept-list{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
 </style>
