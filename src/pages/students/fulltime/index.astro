@@ -10,7 +10,20 @@ const items = [
   { id: "grafik", title: "Графік освітнього процесу", text: "Графік навчального року для денної форми — сесії, канікули, практики — ще не опубліковано на новому сайті." },
   { id: "rozklad-zanyat", title: "Розклад занять", text: "Розклад пар для груп денної форми готується до публікації." },
   { id: "rozklad-ekzameniv", title: "Розклад екзаменів", text: "Розклад екзаменаційної сесії публікується деканатом окремо для кожного курсу ближче до сесії." },
-  { id: "zaborhovanist", title: "Графік складання академічної заборгованості", text: "Графік перескладань і ліквідації академічної заборгованості уточнюйте в деканаті." },
+];
+
+// "Графік складання академічної заборгованості" — контент з fcst.kai.edu.ua/home-2/session-schedule/
+// (перенесено 1:1: та сама назва графіка на кафедру, ті самі посилання на Google Docs).
+const debtSchedules = [
+  { dept: "Комп'ютерних інформаційних технологій", url: "https://docs.google.com/document/d/1Pu-gEp6KQq58n4WHavcSfsaGIaKfXNtB/edit?usp=drive_link&ouid=102070682899203158835&rtpof=true&sd=true" },
+  { dept: "Прикладної математики", url: "https://docs.google.com/document/d/1VyHuTE39cEZ4QZRTu_1JfzHCgSopwbwA/edit?usp=drive_link&ouid=102070682899203158835&rtpof=true&sd=true" },
+  { dept: "Інтелектуальних кібернетичних систем", url: "https://docs.google.com/document/d/16Cna3FWCY-_LFILqMoFNhLgw6q0NVSYM/edit?usp=drive_link&ouid=102070682899203158835&rtpof=true&sd=true" },
+  { dept: "Комп'ютерних систем і мереж", url: "https://docs.google.com/document/d/1-OQBlgwqpyfboO1ineoDIcN6LAdeVJT3/edit?usp=drive_link&ouid=102070682899203158835&rtpof=true&sd=true" },
+  { dept: "Інженерії програмного забезпечення", url: "https://docs.google.com/document/d/1WPNDyREFRdn2uP5_STbPr9yrJDd7arkg/edit?usp=drive_link&ouid=102070682899203158835&rtpof=true&sd=true" },
+  { dept: "Кібербезпеки", url: "https://docs.google.com/document/d/1HwulTtb-WE-sX_rKg9aTqsMz-c1nqU7I/edit?usp=drive_link&ouid=102070682899203158835&rtpof=true&sd=true" },
+  { dept: "Технічних засобів захисту інформації", url: "https://docs.google.com/document/d/1rilaqjEZDFqnFItBEhCkfV46ZUIx5fFJ/edit?usp=drive_link&ouid=102070682899203158835&rtpof=true&sd=true" },
+  { dept: "Комп'ютерних мультимедійних технологій", url: "https://docs.google.com/document/d/1jCGF9oHAz8SABidEZAHYbX3Ry0oephIX/edit?usp=drive_link&ouid=102070682899203158835&rtpof=true&sd=true" },
+  { dept: "Вищої математики", url: "https://docs.google.com/document/d/1tQTQuPTdecTlep9kACeeF7l1fULhCfX9/edit?usp=drive_link&ouid=102070682899203158835&rtpof=true&sd=true" },
 ];
 
 // "Поновлення" — контент з fcst.kai.edu.ua/поновлення/ (перенесено 1:1, факти/дати/посилання не змінювались).
@@ -107,6 +120,24 @@ const readmissionDocs = [
     </div>
   </section>
 
+  <section class="wrap section">
+    <div class="debt-card" id="zaborhovanist">
+      <p class="eyebrow">Денна форма навчання</p>
+      <h2 class="display">Графік складання академічної заборгованості</h2>
+      <p>Графік перескладань і ліквідації академічної заборгованості — окремий для кожної кафедри. Оберіть свою:</p>
+      <ul class="dept-links">
+        {debtSchedules.map((d) => (
+          <li>
+            <a href={d.url} target="_blank" rel="noopener">
+              <span class="dept-name">Кафедра {d.dept}</span>
+              <span class="arw">Переглянути графік →</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
   <CtaBand title="Потрібна допомога?" href="/contacts/" label="Контакти деканату →" />
 </Base>
 
@@ -180,4 +211,23 @@ h1 { color: var(--deep); font-size: clamp(2rem, 4vw, 2.8rem); margin: 12px 0 0; 
 .docs-refs ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .docs-refs li { font-size: .9rem; color: var(--muted); padding-left: 16px; position: relative; }
 .docs-refs li::before { content: ""; position: absolute; left: 0; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--sky); }
+
+.debt-card {
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 32px; scroll-margin-top: 90px; max-width: 78ch;
+}
+.debt-card h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 10px 0 16px; }
+.debt-card > p { color: #404869; font-size: .98rem; line-height: 1.65; margin: 0 0 20px; }
+
+.dept-links { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dept-links a {
+  display: flex; flex-direction: column; gap: 6px; padding: 16px 18px;
+  background: var(--tint); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  text-decoration: none; transition: border-color .15s, transform .15s;
+}
+.dept-links a:hover { border-color: var(--primary); transform: translateY(-2px); }
+.dept-links .dept-name { color: var(--deep); font-weight: 700; font-size: .92rem; }
+.dept-links .arw { color: var(--primary); font-weight: 700; font-size: .84rem; }
+
+@media (max-width: 600px) { .dept-links { grid-template-columns: 1fr; } }
 </style>
