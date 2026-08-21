@@ -1,0 +1,63 @@
+---
+// SectionNav.astro — липкий бічний список розділів для довгих "хаб"-сторінок
+// (кілька #id-секцій на одній сторінці). Підсвічує активний розділ під час скролу.
+// Використання: <SectionNav items={[{ id, label }, ...]} /> поруч з .content у грід-обгортці .layout.
+interface Item { id: string; label: string }
+const { items } = Astro.props as { items: Item[] };
+---
+<aside class="section-nav">
+  <nav aria-label="Розділи сторінки">
+    <p class="section-nav-title">На цій сторінці</p>
+    <ul>
+      {items.map((it) => (
+        <li><a href={`#${it.id}`} data-target={it.id}>{it.label}</a></li>
+      ))}
+    </ul>
+  </nav>
+</aside>
+
+<style>
+  .section-nav { position: sticky; top: 96px; }
+  .section-nav-title {
+    font-weight: 800; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--sky); margin: 0 0 12px;
+  }
+  .section-nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border-left: 2px solid var(--line); }
+  .section-nav a {
+    display: block; padding: 8px 0 8px 16px; margin-left: -2px;
+    font-size: .87rem; font-weight: 600; color: var(--muted); line-height: 1.35;
+    border-left: 2px solid transparent; transition: color .15s, border-color .15s;
+  }
+  .section-nav a:hover { color: var(--primary); }
+  .section-nav a.is-active { color: var(--primary); border-left-color: var(--primary); font-weight: 800; }
+
+  @media (max-width: 900px) {
+    .section-nav { display: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".section-nav").forEach((nav) => {
+    const links = Array.from(nav.querySelectorAll<HTMLAnchorElement>("a[data-target]"));
+    const targets = links
+      .map((l) => document.getElementById(l.dataset.target!))
+      .filter((el): el is HTMLElement => !!el);
+    if (!targets.length) return;
+
+    const setActive = (id: string) => {
+      links.forEach((l) => l.classList.toggle("is-active", l.dataset.target === id));
+    };
+    setActive(targets[0].id);
+
+    // Вузька "смуга активації" біля верху в'юпорта — коли заголовок секції
+    // потрапляє в неї під час скролу, ця секція стає активною в меню.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting);
+        if (visible.length) setActive(visible[0].target.id);
+      },
+      { rootMargin: "-100px 0px -70% 0px", threshold: 0 }
+    );
+    targets.forEach((t) => observer.observe(t));
+  });
+</script>
