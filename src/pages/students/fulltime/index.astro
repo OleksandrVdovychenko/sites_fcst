@@ -8,7 +8,6 @@ import CtaBand from "../../../components/CtaBand.astro";
 import SectionNav from "../../../components/SectionNav.astro";
 
 const items = [
-  { id: "grafik", title: "Графік освітнього процесу", text: "Графік навчального року для денної форми — сесії, канікули, практики — ще не опубліковано на новому сайті." },
   { id: "rozklad-zanyat", title: "Розклад занять", text: "Розклад пар для груп денної форми готується до публікації." },
   { id: "rozklad-ekzameniv", title: "Розклад екзаменів", text: "Розклад екзаменаційної сесії публікується деканатом окремо для кожного курсу ближче до сесії." },
 ];
@@ -56,9 +55,10 @@ const readmissionDocs = [
     <p class="eyebrow">Здобувачам · денна форма</p>
     <h1 class="display">Денна форма навчання</h1>
     <p class="lead">
-      Цей розділ наповнюється. Нижче — пункти, які будуть тут доступні; поки що
+      Графік освітнього процесу за групою вже доступний. Решта розділу наповнюється —
       за актуальною інформацією звертайтеся до деканату.
     </p>
+    <a class="btn-outline" href="/students/fulltime/grafik/">Графік освітнього процесу за групою →</a>
   </section>
 
   <div class="wrap layout">
@@ -153,6 +153,14 @@ const readmissionDocs = [
 .page { padding: 40px 24px 20px; }
 h1 { color: var(--deep); font-size: clamp(2rem, 4vw, 2.8rem); margin: 12px 0 0; }
 .lead { margin-top: 14px; max-width: 62ch; }
+
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 9px; font-weight: 800;
+  padding: 13px 24px; margin-top: 20px; border-radius: var(--radius-sm);
+  background: transparent; border: 2px solid var(--primary); color: var(--primary);
+  text-decoration: none; transition: background .18s;
+}
+.btn-outline:hover { background: color-mix(in srgb, var(--primary) 10%, transparent); }
 
 .layout { padding: 20px 24px 40px; display: grid; grid-template-columns: 1fr 240px; gap: 40px; align-items: start; }
 .content { display: flex; flex-direction: column; gap: 24px; min-width: 0; }

@@ -92,7 +92,7 @@
         {
           "title": "Денна форма навчання",
           "links": [
-            { "label": "Графік освітнього процесу", "href": "/students/fulltime/#grafik" },
+            { "label": "Графік освітнього процесу", "href": "/students/fulltime/grafik/" },
             { "label": "Розклад занять", "href": "/students/fulltime/#rozklad-zanyat" },
             { "label": "Розклад екзаменів", "href": "/students/fulltime/#rozklad-ekzameniv" },
             { "label": "Графік складання академічної заборгованості", "href": "/students/fulltime/#zaborhovanist" },

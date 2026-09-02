@@ -1,0 +1,345 @@
+---
+// /students/fulltime/grafik/ — Графік освітнього процесу для денної форми здобуття освіти.
+// Оригінал — щотижнева сітка на 52 тижні з позначками (::, Н, В, К, П, > тощо) для кожного
+// рядка груп; тут перенесено лише позначені періоди (сесія/практика/кваліфікаційна робота/
+// атестація), консолідовані в дати. Канікули й звичайне теоретичне навчання не показані.
+// Джерело: src/data/fulltime-grafik.json, оригінал лежить у public/students/fulltime/grafik/*.pdf.
+import Base from "../../../layouts/Base.astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import schedule from "../../../data/fulltime-grafik.json";
+
+const degreeLabel = (id: string) => (id === "bachelor" ? "Бакалавр" : "Магістр");
+
+const flatGroups = schedule.programs.flatMap((program) =>
+  program.courses.flatMap((course) =>
+    course.rows.flatMap((row) =>
+      row.groups.map((group) => ({
+        group,
+        degree: program.id,
+        degreeLabel: degreeLabel(program.id),
+        course: course.course,
+        groupNote: row.groupNote,
+        periods: row.periods,
+        footnoteRefs: row.footnoteRefs,
+      })),
+    ),
+  ),
+);
+---
+<Base
+  title="Графік освітнього процесу · денна форма · ФКНТ"
+  description="Графік сесій, практик та атестацій для студентів денної форми здобуття освіти ФКНТ на 2026-2027 навчальний рік — пошук за групою."
+>
+  <section class="wrap page">
+    <Breadcrumbs items={[{ label: "Головна", href: "/" }, { label: "Здобувачам", href: "/students/" }, { label: "Денна форма навчання", href: "/students/fulltime/" }, { label: "Графік освітнього процесу" }]} />
+    <p class="eyebrow">Денна форма здобуття освіти · 2026–2027 н.р.</p>
+    <h1 class="display">Графік освітнього процесу</h1>
+    <p class="lead">
+      Оберіть свою групу — нижче з'являться сесії, практики, кваліфікаційні роботи та атестації.
+      Дані перенесено з офіційного графіка навчального відділу; оригінальний PDF доступний для
+      завантаження.
+    </p>
+  </section>
+
+  <section class="wrap section finder">
+    <div class="card">
+      <div class="pillrow" id="degree-pills" role="group" aria-label="Ступінь"></div>
+      <div class="pillrow" id="course-pills" role="group" aria-label="Курс"></div>
+      <div class="search-row">
+        <input type="text" id="group-search" placeholder="Наприклад, Б-F5-25-1-БІ" autocomplete="off" aria-label="Пошук за шифром групи" />
+      </div>
+      <p class="count" id="group-count"></p>
+      <div class="chipgrid" id="chipgrid"></div>
+    </div>
+
+    <div class="card" id="detail"></div>
+  </section>
+
+  <section class="wrap section cta-section downloads">
+    <h2 class="display">Офіційний документ</h2>
+    <p>Повний графік, затверджений навчальним відділом, — у форматі PDF.</p>
+    <div class="cta-btns">
+      <a class="btn-outline" href={encodeURI(schedule.sourceFile)} target="_blank" rel="noopener">
+        Графік освітнього процесу (PDF) →
+      </a>
+    </div>
+  </section>
+
+  <script type="application/json" id="schedule-data" set:html={JSON.stringify(flatGroups)} />
+</Base>
+
+<style>
+.page { padding: 40px 24px 20px; }
+h1 { color: var(--deep); font-size: clamp(2rem, 4vw, 2.8rem); margin: 12px 0 0; }
+h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); }
+.lead { margin-bottom: 0; }
+
+.section { padding: 20px 24px 40px; }
+
+.finder { display: grid; gap: 1.25rem; }
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  padding: 1.25rem 1.5rem;
+}
+
+.pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: .85rem; }
+
+.search-row { margin-bottom: .75rem; }
+.search-row input {
+  width: 100%;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--tint);
+  color: var(--ink);
+  padding: 0 14px;
+  font-size: .95rem;
+  font-family: inherit;
+}
+.search-row input:focus-visible { outline: 3px solid var(--signal); outline-offset: 1px; }
+
+.count { font-size: .8rem; color: var(--muted); margin: 0 0 .6rem; }
+
+.chipgrid { display: flex; flex-wrap: wrap; gap: 6px; max-height: 220px; overflow-y: auto; padding-right: 2px; }
+
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 9px; font-weight: 800;
+  padding: 13px 24px; border-radius: var(--radius-sm);
+  background: transparent; border: 2px solid var(--primary); color: var(--primary);
+  transition: background .18s;
+}
+.btn-outline:hover { background: color-mix(in srgb, var(--primary) 10%, transparent); }
+
+.downloads.cta-section { text-align: center; }
+.downloads.cta-section p { color: var(--muted); max-width: 60ch; margin-inline: auto; margin-bottom: 1.5rem; }
+.cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+@media (min-width: 860px) {
+  .finder { grid-template-columns: 1fr 1fr; align-items: start; }
+}
+</style>
+
+<style is:global>
+/*
+  Ці класи розставляються клієнтським JS (document.createElement / innerHTML),
+  тому елементи не існують у серверному рендері й не отримують Astro-scoping
+  атрибут data-astro-cid-* — звичайний scoped <style> їх не бачить.
+  Звідси префікс sch- і is:global, аби нічого не перетнулось з рештою сайту.
+*/
+.sch-pill {
+  font: inherit;
+  font-size: .86rem;
+  font-weight: 700;
+  color: #39406a;
+  background: var(--tint);
+  border: 1px solid var(--line);
+  padding: 7px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.sch-pill:hover { border-color: var(--sky); }
+.sch-pill[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+.sch-chip {
+  font: inherit;
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: .78rem;
+  color: var(--ink);
+  background: var(--tint);
+  border: 1px solid var(--line);
+  padding: 7px 11px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+}
+.sch-chip:hover { border-color: var(--sky); }
+.sch-chip[aria-pressed="true"] { background: var(--deep); border-color: var(--deep); color: #fff; }
+
+.sch-empty { color: var(--muted); font-size: .9rem; padding: 1.75rem .5rem; text-align: center; }
+
+.sch-detail-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 2px; }
+.sch-group-code { font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; font-size: 1.25rem; font-weight: 700; color: var(--deep); }
+.sch-detail-meta { font-size: .88rem; color: var(--muted); margin: 0 0 .85rem; }
+
+.sch-note-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
+.sch-note-badge { font-size: .74rem; font-weight: 700; color: #39406a; background: var(--tint); border: 1px solid var(--line); padding: 4px 10px; border-radius: 20px; }
+
+.sch-period-list { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.sch-period { display: flex; align-items: flex-start; gap: 12px; padding: .7rem 0; border-bottom: 1px solid var(--line); }
+.sch-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: .5em; background: var(--muted); }
+.sch-dot.is-session { background: var(--primary); }
+.sch-dot.is-practice { background: var(--sky); }
+.sch-dot.is-thesis { background: var(--deep); }
+.sch-dot.is-exam { background: var(--signal); }
+.sch-period-body { flex: 1; min-width: 0; }
+.sch-period-label { font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.sch-period-date { font-size: .98rem; font-variant-numeric: tabular-nums; margin-top: 2px; }
+
+.sch-detail-foot { margin-top: 1.1rem; padding-top: .9rem; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.sch-footnote { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+
+.sch-btn-outline {
+  display: inline-flex; align-items: center; gap: 9px; font-weight: 800;
+  padding: 13px 24px; border-radius: var(--radius-sm);
+  background: transparent; border: 2px solid var(--primary); color: var(--primary);
+  transition: background .18s;
+}
+.sch-btn-outline:hover { background: color-mix(in srgb, var(--primary) 10%, transparent); }
+</style>
+
+<script>
+type Period = { raw: string; start: string | null; end: string | null; label: string | null };
+type FlatGroup = {
+  group: string;
+  degree: string;
+  degreeLabel: string;
+  course: number;
+  groupNote: string | null;
+  periods: Period[];
+  footnoteRefs: string[];
+};
+
+const dataEl = document.getElementById("schedule-data");
+const DATA: FlatGroup[] = JSON.parse(dataEl?.textContent || "[]");
+
+const MONTHS_UA = ["", "січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"];
+
+function parseDMY(s: string | null) {
+  if (!s) return null;
+  const [d, m, y] = s.split(".");
+  return { day: +d, month: MONTHS_UA[+m], year: +y };
+}
+function fmtRange(start: string | null, end: string | null) {
+  const s = parseDMY(start), e = parseDMY(end);
+  if (!s) return null;
+  if (!e) return `${s.day} ${s.month} ${s.year}`;
+  if (s.month === e.month && s.year === e.year) return `${s.day}–${e.day} ${s.month} ${s.year}`;
+  if (s.year === e.year) return `${s.day} ${s.month} – ${e.day} ${e.month} ${s.year}`;
+  return `${s.day} ${s.month} ${s.year} – ${e.day} ${e.month} ${e.year}`;
+}
+function categorize(label: string | null) {
+  if (!label) return { cls: "", text: "без позначки в документі" };
+  const l = label.toLowerCase();
+  if (l.includes("сесі")) return { cls: "is-session", text: label };
+  if (l.includes("практ")) return { cls: "is-practice", text: label };
+  if (l.includes("кваліфікаційна")) return { cls: "is-thesis", text: label };
+  if (l.includes("єдкі") || l.includes("атестаційний")) return { cls: "is-exam", text: label };
+  return { cls: "", text: label };
+}
+
+const degreePills = document.getElementById("degree-pills")!;
+const coursePills = document.getElementById("course-pills")!;
+const searchInput = document.getElementById("group-search") as HTMLInputElement;
+const chipgrid = document.getElementById("chipgrid")!;
+const countEl = document.getElementById("group-count")!;
+const detailEl = document.getElementById("detail")!;
+
+const degreeLabel = (d: string) => (d === "bachelor" ? "Бакалавр" : d === "master" ? "Магістр" : "Усі ступені");
+
+const state: { degree: string; course: number | "all"; q: string; selected: string | null } = {
+  degree: "all", course: "all", q: "", selected: null,
+};
+
+function coursesFor(degree: string) {
+  const set = new Set<number>();
+  DATA.forEach((r) => { if (degree === "all" || r.degree === degree) set.add(r.course); });
+  return Array.from(set).sort((a, b) => a - b);
+}
+
+function renderDegreePills() {
+  const items = ["all", "bachelor", "master"];
+  degreePills.innerHTML = "";
+  items.forEach((d) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "sch-pill";
+    b.textContent = degreeLabel(d);
+    b.setAttribute("aria-pressed", String(state.degree === d));
+    b.addEventListener("click", () => { state.degree = d; state.course = "all"; render(); });
+    degreePills.appendChild(b);
+  });
+}
+function renderCoursePills() {
+  const items: (number | "all")[] = ["all", ...coursesFor(state.degree)];
+  coursePills.innerHTML = "";
+  items.forEach((c) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "sch-pill";
+    b.textContent = c === "all" ? "Усі курси" : `${c} курс`;
+    b.setAttribute("aria-pressed", String(state.course === c));
+    b.addEventListener("click", () => { state.course = c; render(); });
+    coursePills.appendChild(b);
+  });
+}
+function filteredRows() {
+  const q = state.q.trim().toUpperCase();
+  return DATA.filter((r) => {
+    if (state.degree !== "all" && r.degree !== state.degree) return false;
+    if (state.course !== "all" && r.course !== state.course) return false;
+    if (q && !r.group.toUpperCase().includes(q)) return false;
+    return true;
+  });
+}
+function renderChips() {
+  const rows = filteredRows();
+  countEl.textContent = rows.length === DATA.length ? `Усього груп: ${rows.length}` : `Знайдено: ${rows.length}`;
+  chipgrid.innerHTML = "";
+  if (rows.length === 0) {
+    const p = document.createElement("p");
+    p.className = "sch-empty";
+    p.textContent = "Групу не знайдено. Перевірте шифр або скиньте фільтри.";
+    chipgrid.appendChild(p);
+    return;
+  }
+  rows.forEach((r) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "sch-chip";
+    b.textContent = r.group;
+    b.setAttribute("aria-pressed", String(state.selected === r.group));
+    b.addEventListener("click", () => { state.selected = r.group; renderChips(); renderDetail(); });
+    chipgrid.appendChild(b);
+  });
+}
+function renderDetail() {
+  if (!state.selected) {
+    detailEl.innerHTML = `<p class="sch-empty">Оберіть групу зі списку ліворуч, щоб побачити графік.</p>`;
+    return;
+  }
+  const r = DATA.find((x) => x.group === state.selected);
+  if (!r) { detailEl.innerHTML = `<p class="sch-empty">Групу не знайдено.</p>`; return; }
+
+  let html = "";
+  html += `<div class="sch-detail-head"><span class="sch-group-code">${r.group}</span></div>`;
+  html += `<p class="sch-detail-meta">${r.degreeLabel} · ${r.course} курс</p>`;
+  if (r.groupNote) {
+    html += `<div class="sch-note-badges">${r.groupNote.split(",").map((t) => `<span class="sch-note-badge">${t.trim()}</span>`).join("")}</div>`;
+  }
+  if (r.periods.length === 0) {
+    html += `<p class="sch-empty">Позначених періодів (сесій/практик) для цієї групи в графіку немає — решта року теоретичне навчання.</p>`;
+  } else {
+    html += `<div class="sch-period-list">`;
+    r.periods.forEach((p) => {
+      const cat = categorize(p.label);
+      const rangeText = fmtRange(p.start, p.end) || p.raw;
+      html += `<div class="sch-period"><span class="sch-dot ${cat.cls}"></span><div class="sch-period-body"><div class="sch-period-label">${cat.text}</div><div class="sch-period-date">${rangeText}</div></div></div>`;
+    });
+    html += `</div>`;
+  }
+  if (r.footnoteRefs && r.footnoteRefs.length) {
+    html += `<p class="sch-footnote" style="margin-top:.85rem;">* Фактичні терміни підготовки до ЄДКІ визначаються термінами його проведення, встановленими відповідними державними органами відповідно до постанови КМУ від 19.05.2021 № 497 (із змінами).</p>`;
+  }
+  detailEl.innerHTML = html;
+}
+function render() {
+  renderDegreePills();
+  renderCoursePills();
+  renderChips();
+  renderDetail();
+}
+searchInput.addEventListener("input", () => { state.q = searchInput.value; renderChips(); });
+render();
+</script>
