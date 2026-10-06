@@ -19,7 +19,10 @@
     { "src": "/labs/cisco/2800-series.jpg", "caption": "Маршрутизатори Cisco 2800 Series" },
     { "src": "/labs/cisco/1921-1841-rear.jpg", "caption": "Задні панелі маршрутизаторів Cisco 1921 та 1841" },
     { "src": "/labs/cisco/wall-rack-workstations.jpg", "caption": "Настінна стійка з обладнанням і два робочих місця для практики" },
-    { "src": "/labs/cisco/desk-and-rack.jpg", "caption": "Робоче місце студента поруч зі стійкою комутаторів" }
+    { "src": "/labs/cisco/desk-and-rack.jpg", "caption": "Робоче місце студента поруч зі стійкою комутаторів" },
+    { "src": "/labs/cisco/1800-series-rack-closeup.jpg", "caption": "Маршрутизатори Cisco 1800 Series у телекомунікаційній стійці" },
+    { "src": "/labs/cisco/wall-cabinet-workstation.jpg", "caption": "Настінна шафа з комутаційним обладнанням і робоче місце студента" },
+    { "src": "/labs/cisco/routers-on-desk.jpg", "caption": "Маршрутизатори Cisco та мережеве обладнання на лабораторному столі" }
   ],
   "ctaText": "Зв'яжіться з кафедрою комп'ютерних систем і мереж — розкажемо про навчальні курси на базі лабораторії.",
   "ctaLabel": "Кафедра КСМ",

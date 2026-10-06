@@ -1,7 +1,68 @@
 [
-  { "name": "Microsoft" },
-  { "name": "Scientific Cyber Security Association" },
-  { "name": "AUES" },
-  { "name": "ISCA" },
-  { "name": "OmegaTelecom" }
+  {
+    "name": "AxxonSoft",
+    "logo": "/partners/axxonsoft.png",
+    "url": "https://www.axxonsoft.com",
+    "desc": "Розробник програмного забезпечення для відеоспостереження та систем фізичної безпеки (Axxon One, Axxon PSIM), працює на ринку з 2003 року. Партнер лабораторії штучного інтелекту у сфері безпеки на факультеті."
+  },
+  {
+    "name": "Microsoft",
+    "logo": "/partners/microsoft.png",
+    "url": "https://www.microsoft.com/uk-ua",
+    "desc": "Світовий виробник програмного забезпечення, хмарних сервісів і пристроїв — Windows, Microsoft 365, Azure."
+  },
+  {
+    "name": "EPAM",
+    "logo": "/partners/epam.png",
+    "url": "https://www.epam.com",
+    "desc": "Міжнародна компанія з розробки програмного забезпечення та цифрового інжинірингу, заснована 1993 року; працює в багатьох країнах, зокрема в Україні."
+  },
+  {
+    "name": "GlobalLogic",
+    "logo": "/partners/globallogic.png",
+    "url": "https://www.globallogic.com",
+    "desc": "Компанія цифрового інжинірингу: стратегія, дизайн і розробка програмних продуктів та платформ. Входить до Hitachi Group."
+  },
+  {
+    "name": "SoftServe",
+    "logo": "/partners/softserve.png",
+    "url": "https://www.softserveinc.com",
+    "desc": "Технологічна компанія з розробки програмного забезпечення та ІТ-консалтингу, заснована 1993 року у Львові."
+  },
+  {
+    "name": "Yalantis",
+    "logo": "/partners/yalantis.png",
+    "url": "https://yalantis.com",
+    "desc": "Компанія з розробки програмного забезпечення з Дніпра, заснована 2008 року; спеціалізується на індивідуальній розробці та інжинірингу даних."
+  },
+  {
+    "name": "OmegaTelecom",
+    "logo": "/partners/omegatelecom.png",
+    "url": "https://omegatelecom.ua",
+    "desc": "Український телекомунікаційний оператор (з 2012 року): канали зв'язку, швидкісний інтернет, колокація та оренда оптичних волокон на власних магістралях."
+  },
+  {
+    "name": "CyberLab",
+    "logo": "/partners/cyberlab.png",
+    "url": "https://cyberlab.ua",
+    "desc": "Українська компанія з кібербезпеки та комп'ютерної криміналістики (з 2015 року): аудит ІТ-інфраструктури, реагування на інциденти, цифрові розслідування, навчання фахівців."
+  },
+  {
+    "name": "CRDF Global",
+    "logo": "/partners/crdf-global.png",
+    "url": "https://www.crdfglobal.org",
+    "desc": "Незалежна неприбуткова організація, заснована 1995 року; реалізує програми у сфері безпеки, науки та інновацій, зокрема з кібербезпеки та цифрової стійкості в Україні."
+  },
+  {
+    "name": "Scientific Cyber Security Association",
+    "logo": "/partners/scsa.png",
+    "url": "https://scsa.org.ua",
+    "desc": "Наукова асоціація кібербезпеки України (SCSA, ISCA) — громадська організація, що підвищує рівень кібербезпеки суспільства через наукову, технічну та освітню діяльність."
+  },
+  {
+    "name": "AUES",
+    "logo": "/partners/aues.png",
+    "url": "https://energo.university",
+    "desc": "Алматинський університет енергетики та зв'язку імені Гумарбека Даукеєва (Казахстан) — технічний університет, що веде свою історію від Алматинського енергетичного інституту, заснованого 1975 року."
+  }
 ]
