@@ -36,9 +36,12 @@ const labs = defineCollection({
     title: z.string(),
     lead: z.string(),
     hero: z.object({ src: z.string(), alt: z.string(), caption: z.string() }).optional(),
-    studentsText: z.string(),
-    equipmentHeading: z.string(),
+    // Блок «Чим займаються студенти» і плашка з тегами — необов'язкові: сторінка
+    // без опису діяльності (лише назва + фото) теж валідна, жодних вигаданих текстів.
+    studentsText: z.string().optional(),
+    equipmentHeading: z.string().optional(),
     equipment: z.array(z.string()).default([]),
+    galleryHeading: z.string().optional(),
     gallery: z.array(z.object({ src: z.string(), caption: z.string() })).default([]),
     ctaText: z.string(),
     ctaLabel: z.string(),

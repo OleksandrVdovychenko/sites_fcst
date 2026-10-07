@@ -41,22 +41,28 @@ const d = lab.data;
     </section>
   )}
 
-  <section class="wrap section split">
-    <div>
-      <h2 class="display">Чим займаються студенти</h2>
-      <p>{d.studentsText}</p>
-    </div>
-    <div class="equip-card">
-      <h3>{d.equipmentHeading}</h3>
-      <div class="tags">
-        {d.equipment.map((t) => <span>{t}</span>)}
-      </div>
-    </div>
-  </section>
+  {(d.studentsText || d.equipment.length > 0) && (
+    <section class:list={["wrap section split", { solo: !(d.studentsText && d.equipment.length > 0) }]}>
+      {d.studentsText && (
+        <div>
+          <h2 class="display">Чим займаються студенти</h2>
+          <p>{d.studentsText}</p>
+        </div>
+      )}
+      {d.equipment.length > 0 && (
+        <div class="equip-card">
+          <h3>{d.equipmentHeading ?? "Напрями роботи"}</h3>
+          <div class="tags">
+            {d.equipment.map((t) => <span>{t}</span>)}
+          </div>
+        </div>
+      )}
+    </section>
+  )}
 
   {d.gallery.length > 0 && (
     <section class="wrap section">
-      <h2 class="display">Лабораторія у фото</h2>
+      <h2 class="display">{d.galleryHeading ?? "Лабораторія у фото"}</h2>
       <div class="gallery">
         {d.gallery.map((g) => (
           <figure>
@@ -70,7 +76,7 @@ const d = lab.data;
   <section class="wrap section cta-section">
     <h2 class="display">Хочете дізнатися більше?</h2>
     <p>{d.ctaText}</p>
-    <a class="btn" href={d.ctaHref} target="_blank" rel="noopener">{d.ctaLabel} →</a>
+    <a class="btn" href={d.ctaHref} {...(/^https?:\/\//.test(d.ctaHref) ? { target: "_blank", rel: "noopener" } : {})}>{d.ctaLabel} →</a>
   </section>
 
   {(d.hero || d.gallery.length > 0) && <Lightbox />}
@@ -95,6 +101,7 @@ h2.display { color: var(--deep); font-size: clamp(1.4rem, 3vw, 1.8rem); }
 .hero-caption p { margin: 0; color: #fff; font-size: .85rem; opacity: .9; }
 
 .split { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: start; }
+.split.solo { grid-template-columns: 1fr; }
 .split p { max-width: 70ch; margin-top: 14px; }
 .equip-card { background: var(--tint); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
 .equip-card h3 { color: var(--deep); font-size: .95rem; margin-bottom: 12px; }
